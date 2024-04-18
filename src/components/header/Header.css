@@ -7,8 +7,8 @@ header {
     flex-direction: row;
     width: 100%;
     height: 5rem;
-    background-color: var(--main-color);
-    color: #ffffff;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 .navbar {
@@ -24,22 +24,39 @@ header {
 }
 
 .navbar-logo-img {
-    max-width: 80px; /* Ajusta este valor según tus necesidades */
-    height: auto; /* Mantiene la proporción del logo */
+    margin: 1rem 0;
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .navbar-logo {
     display: flex;
-    align-items: center; /* Alinea verticalmente el logo con los enlaces, si es necesario */
-    margin-right: 20px; /* Añade un margen si es necesario para separar el logo de los enlaces */
+    align-items: center;
+    margin-right: 20px;
 }
 
-.nav-links > *{
+.nav-links > .navbar-link {
     margin: 1rem;
     cursor: pointer;
     color: #ffffff;
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
 }
 
-.nav-links > *:hover{
-    color: #878787;
+.nav-links > .navbar-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease;
+}
+
+.nav-links > .navbar-link:hover::after {
+    width: 100%;
 }
