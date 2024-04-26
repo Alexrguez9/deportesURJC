@@ -9,7 +9,7 @@ footer {
     background-color: #242424;
     color:#ffffff
 }
-footer #content{
+footer #footer-content{
     border-bottom: 1px solid #ffffff;
     padding-bottom: 1rem;
 }
@@ -17,7 +17,7 @@ footer #legal{
     border-bottom: 1px solid #ffffff;
     padding-bottom: 1rem;
 }
-footer #content {
+footer #footer-content {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
@@ -25,7 +25,7 @@ footer #content {
     width: 100%;
     color: #ffffff;
 }
-footer #content > * {
+footer #footer-content > * {
     display: flex;
     flex-direction: column;
     margin: 1rem 5rem;
@@ -42,8 +42,9 @@ footer #legal a {
     margin: 0 1rem;
 }
 
-#content > * > * {
-    color:#ffffff
+#footer-content > * > * ,
+footer > #license_copyright > *{
+    color:#ffffff;
 }
 #enlaces_interes > a:hover,
 #contact > a:hover,
@@ -56,10 +57,10 @@ footer #legal a {
 
 
 @media (max-width: 768px) {
-    footer #content {
+    footer #footer-content {
         flex-direction: column;
     }
-    footer #content > * {
+    footer #footer-content > * {
         margin: 1rem 0;
     }
 }

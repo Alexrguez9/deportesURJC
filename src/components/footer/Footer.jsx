@@ -5,7 +5,7 @@ import './Footer.css';
 const Footer = () => {
     return (
         <footer>
-            <div id="content">
+            <div id="footer-content">
                 <div id="enlaces_interes">
                     <h2>Enlaces de Interés</h2>
                     <a href="https://www.urjc.es/" target="_blank">URJC</a>
