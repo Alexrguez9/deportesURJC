@@ -1,4 +1,10 @@
 :root {
+  /*max-width: 1280px;*/
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  box-sizing: border-box;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -10,7 +16,13 @@
   --primary-color: #CB0017;
   --secondary-color: #242424;
   --tertiary-color: #F2F2F2;
+  --quaternary-color: #97000E;
   --white-color: #ffffff;
+}
+
+body{
+  margin: 0;
+  padding: 0;
 }
 
 a {
@@ -104,4 +116,8 @@ button.navbar-button {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.card {
+  padding: 2em;
 }

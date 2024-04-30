@@ -20,10 +20,10 @@ const Footer = () => {
                 </div>
                 <div id="contact">
                     <h2>Contacto</h2>
-                    <h4 style={{ marginTop: 0 }}>Para alumnos</h4>
+                    <h6 style={{ marginTop: 0, marginBottom: 0}}>Para alumnos:</h6>
                     <a href="mailto:alumnos@urjc.es">Email: alumnos@urjc.es</a>
                     <a href="tel:+34914889393">Teléfono: (+34) 914 889 393</a>
-                    <h4>Contacto general</h4>
+                    <h6 style={{ marginBottom: 0}}>Contacto general</h6>
                     <a href="mailto:info@urjc.es">Email: info@urjc.es</a>
                     <a href="tel:+34916655060">Teléfono: (+34) 916 655 060</a>
                 </div>
