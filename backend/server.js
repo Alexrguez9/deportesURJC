@@ -1,8 +1,12 @@
 const express = require('express');
 const initDB = require('./config/db');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
+
+app.use(cors({ origin: 'http://localhost:5173' }));
+
 
 // Configurar express para parsear JSON
 app.use(express.json({ limit: '50mb' }));

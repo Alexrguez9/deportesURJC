@@ -1,5 +1,4 @@
 const express = require('express')
-
 const controller = require('../controllers/equipo')
 
 const router = express.Router()
