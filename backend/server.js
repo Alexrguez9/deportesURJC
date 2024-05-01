@@ -20,6 +20,10 @@ app.use(teamRouters);
 const userRouters = require('./app/routes/user');
 app.use(userRouters);
 
+// Traemos rutas de resultados
+const resultadosRouters = require('./app/routes/resultado');
+app.use(resultadosRouters);
+
 // Iniciar el servidor
 app.listen(port, () => {
     console.log(`La app está en línea en el puerto ${port}`);
