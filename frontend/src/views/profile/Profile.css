@@ -1,0 +1,39 @@
+#profile-card {
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    margin: 3rem;
+    background-color: #ccc;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 844px;
+}
+
+.inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Se ajusta automáticamente al ancho del contenedor */
+    gap: 1rem; /* Espacio entre columnas */
+    margin: 2rem;
+}
+
+.input-container {
+    margin-bottom: 10px;
+    padding: 0 1rem;
+}
+
+input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .inputs {
+        grid-template-columns: 1fr; /* Cambia a una sola columna en pantallas pequeñas */
+    }
+}
