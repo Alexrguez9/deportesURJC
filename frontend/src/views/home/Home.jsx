@@ -5,7 +5,7 @@ import Card from '../../components/card/Card';
 const Home = () => {
     return (
         <div id="home-content">
-            <h1>Home</h1>
+            <h1>Inicio</h1>
             <p>Bienvenido a la página de inicio de URJC Deportes</p>
             <section>
                 <h2>Ligas Internas</h2>
