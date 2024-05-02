@@ -87,7 +87,16 @@ const Profile = () => {
                 </p>
                 <section>
                     <h2>Consulta de perfil</h2>
+                    {user ?
+                        <div>
+                            <p>Nombre: {user.name}</p>
+                            <p>Email: {user.email}</p>
+                        
+                        </div>
+                        : <p>Por favor, inicia sesión para ver tu perfil</p>
+                    }
                     <h2>Modificación de perfil</h2>
+                    <p>Próximamente...</p>
 
                 </section>
                 <section>
