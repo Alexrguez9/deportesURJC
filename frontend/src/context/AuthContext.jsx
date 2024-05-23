@@ -5,26 +5,82 @@ const AuthContext = createContext();
 
 // Creamos provider
 export const AuthProvider = ({ children }) => {
-    //1. Traemos los datos del usuario del localStorage
-    const storedUserData = JSON.parse(localStorage.getItem('userData')) || null;
-    
-    const [user, setUser] = useState(storedUserData);
-    const [isAuthenticated, setIsAuthenticated] = useState(storedUserData !== null);
+    const [user, setUser] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const login = (userData) => {
-        localStorage.setItem('userData', JSON.stringify(userData));
-        setUser(userData);
-        setIsAuthenticated(true);
+
+    const login = async (userData) => {
+        try {
+            // Llamamos al backend para iniciar sesión
+            const response = await fetch('http://localhost:3000/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData),
+                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+            });
+
+            if (response.ok) {
+                const loggedInUser = await response.json();
+                setUser(loggedInUser);
+                setIsAuthenticated(true);
+            } else {
+                console.error("Error en el fetch al back de iniciar sesión:", response.status);
+                // mostrar un mensaje de error al usuario
+            }
+        } catch (error) {
+            console.error("Error2 al iniciar sesión:", error);
+        }
     };
 
-    const logout = () => {
-        localStorage.removeItem('userData');
-        setIsAuthenticated(false);
-        setUser(null);
+    const register = async (userData) => {
+        try {
+            // Llamamos al backend para iniciar sesión
+            const response = await fetch('http://localhost:3000/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData),
+                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+            });
+
+            if (response.ok) {
+                const registeredUser = await response.json();
+                setUser(registeredUser);
+                setIsAuthenticated(true);
+            } else {
+                console.error("Error en el fetch al back de registrarse:", response.status);
+                // mostrar un mensaje de error al usuario
+            }
+        } catch (error) {
+            console.error("Error2 al registrarse:", error);
+        }
+    };
+
+    const logout = async () => {
+        try {
+            // Llamamos al backend para cerrar sesión
+            const response = await fetch('http://localhost:3000/users/logout', {
+                method: 'POST',
+                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+            });
+
+            if (response.ok) {
+                setUser(null);
+                setIsAuthenticated(false);
+            } else {
+                // Manejar errores de cierre de sesión según sea necesario
+            }
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            // Manejar errores según sea necesario
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, register }}>
         {children}
         </AuthContext.Provider>
     );
