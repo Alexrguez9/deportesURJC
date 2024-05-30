@@ -36,6 +36,14 @@ app.use('/', userRouters);
 const resultadosRouters = require('./app/routes/resultado');
 app.use(resultadosRouters);
 
+// Traemos rutas de instalaciones
+const instalacionesRouters = require('./app/routes/instalaciones');
+app.use(instalacionesRouters);
+
+// Traemos rutas de reservas
+const reservasRouters = require('./app/routes/reservas');
+app.use(reservasRouters);
+
 // Iniciar el servidor
 app.listen(port, () => {
     console.log(`La app está en línea en el puerto ${port}`);
