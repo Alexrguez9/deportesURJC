@@ -1,0 +1,7 @@
+.content-mis-reservas {
+    display: flex;
+    place-content: center;
+}
+.table-mis-reservas > tbody > tr > * {
+    padding: 1rem;;
+}
