@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser);
+        res.status(201).json(savedUser); // aquí, incluimos el _id
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });
@@ -55,14 +55,12 @@ exports.login = async (req, res) => {
         //const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
 
         res.json({
-            message: 'Inicio de sesión exitoso',
-            user: {
+                _id: user._id,
                 name: user.name,
                 email: user.email,
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
                 //token
-            }
         });
     } catch (error) {
         console.error(error);

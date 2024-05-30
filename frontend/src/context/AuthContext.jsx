@@ -8,8 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-
-    const login = async (userData) => {
+    const login = async (userData, navigate) => {
         try {
             // Llamamos al backend para iniciar sesión
             const response = await fetch('http://localhost:3000/users/login', {
@@ -25,17 +24,23 @@ export const AuthProvider = ({ children }) => {
                 const loggedInUser = await response.json();
                 setUser(loggedInUser);
                 setIsAuthenticated(true);
+                console.log("Usuario logueado:", loggedInUser);
+                navigate("/");
+                return response;
             } else {
                 console.error("Error en el fetch al back de iniciar sesión:", response.status);
                 // mostrar un mensaje de error al usuario
+                return response;
             }
         } catch (error) {
             console.error("Error2 al iniciar sesión:", error);
+            return error;
         }
     };
 
-    const register = async (userData) => {
+    const register = async (userData, navigate) => {
         try {
+            //TODO: ver si hay que revisar si existe previamente el usuario
             // Llamamos al backend para iniciar sesión
             const response = await fetch('http://localhost:3000/users/register', {
                 method: 'POST',
@@ -50,6 +55,7 @@ export const AuthProvider = ({ children }) => {
                 const registeredUser = await response.json();
                 setUser(registeredUser);
                 setIsAuthenticated(true);
+                navigate("/");
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
                 // mostrar un mensaje de error al usuario

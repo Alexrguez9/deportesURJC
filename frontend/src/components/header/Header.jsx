@@ -24,6 +24,18 @@ const Header = () => {
                     <Link className="navbar-link" to="/instalaciones">Instalaciones</Link>
                     <a className="navbar-link" href="#">Recargar monedero</a>
                 </div>
+                {user ?
+                    <div>
+                        <Link to="profile">
+                        <button className="navbar-button">Mi cuenta</button>
+                        </Link>
+                    </div>
+                : <div>
+                    <Link to="profile/login">
+                    <button className="navbar-button">Iniciar sesión</button>
+                    </Link>
+                </div>
+                }
             </nav>
         </header>
     )
