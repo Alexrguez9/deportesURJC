@@ -32,52 +32,51 @@ const Encuentros = () => {
 
     return (
         <div id="encuentros-content">
-        <h1>Encuentros</h1>
-        <p>
-            Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
-        </p>
-        <section>
-        <select value={filtroDeporte} onChange={handleDeporteChange}>
-                <option value="Todos">Todos</option>
-                <option value="Fútbol-7">Fútbol-7</option>
-                <option value="Fútbol-sala">Fútbol-sala</option>
-                <option value="Baloncesto">Baloncesto</option>
-                <option value="Voleibol">Voleibol</option>
-            </select>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Deporte</th>
-                        <th>Jornada</th>
-                        <th>Equipo local</th>
-                        <th>Goles local</th>
-                        <th></th>
-                        <th>Goles visitante</th>
-                        <th>Equipo visitante</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Lugar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {resultadosFiltrados.map((resultados) => (
-                        <tr key={resultados._id}>
-                            <td>{resultados.deporte}</td>
-                            <td>{resultados.jornada}</td>
-                            <td>{resultados.equipo_local}</td>
-                            <td>{resultados.goles_local}</td>
-                            <td>-</td>
-                            <td>{resultados.goles_visitante}</td>
-                            <td>{resultados.equipo_visitante}</td>
-                            <td>{resultados.fecha}</td>
-                            <td>{resultados.hora}</td>
-                            <td>{resultados.lugar}</td>
+            <h1>Encuentros</h1>
+            <p>
+                Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
+            </p>
+            <section>
+                <select value={filtroDeporte} onChange={handleDeporteChange}>
+                    <option value="Todos">Todos</option>
+                    <option value="Fútbol-7">Fútbol-7</option>
+                    <option value="Fútbol-sala">Fútbol-sala</option>
+                    <option value="Baloncesto">Baloncesto</option>
+                    <option value="Voleibol">Voleibol</option>
+                </select>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Deporte</th>
+                            <th>Jornada</th>
+                            <th>Equipo local</th>
+                            <th>Goles local</th>
+                            <th></th>
+                            <th>Goles visitante</th>
+                            <th>Equipo visitante</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Lugar</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-        </section>
+                    </thead>
+                    <tbody>
+                        {resultadosFiltrados.map((resultados) => (
+                            <tr key={resultados._id}>
+                                <td>{resultados.deporte}</td>
+                                <td>{resultados.jornada}</td>
+                                <td>{resultados.equipo_local}</td>
+                                <td>{resultados.goles_local}</td>
+                                <td>-</td>
+                                <td>{resultados.goles_visitante}</td>
+                                <td>{resultados.equipo_visitante}</td>
+                                <td>{resultados.fecha}</td>
+                                <td>{resultados.hora}</td>
+                                <td>{resultados.lugar}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </section>
         </div>
     );
 }
