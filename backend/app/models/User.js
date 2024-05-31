@@ -18,9 +18,15 @@ const UserSchema = new mongoose.Schema(
       required: true
     },
     estado_alta: {
-      type: Boolean,
-      required: true,
-      default: false  // Falso hasta que el usuario se de de alta
+      gimnasio: {
+        type: Boolean,
+        default: false  // Falso hasta que el usuario se de de alta
+      },
+      atletismo: {
+        type: Boolean,
+        default: false  // Falso hasta que el usuario se de de alta
+      }
+     
     },
     abono_renovado: {
       fecha_inicio: {

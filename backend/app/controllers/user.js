@@ -79,7 +79,7 @@ exports.logout = async (req, res) => {
     }
 };
 
-// Editar un usuario
+// Actualizar un usuario
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;

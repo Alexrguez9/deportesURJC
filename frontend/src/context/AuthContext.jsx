@@ -85,8 +85,33 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUser = async (userId, updateData) => {
+        try {
+            const response = await fetch(`http://localhost:3000/users/${userId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                // Add authorization header if necessary (e.g., with token)
+              },
+              body: JSON.stringify(updateData),
+            });
+      
+            if (!response.ok) {
+              throw new Error(`Error updating user: ${response.statusText}`);
+            }
+      
+            const updatedUser = await response.json();
+            setUser(updatedUser); // Update user state in context
+            return response;
+            
+          } catch (error) {
+            console.error('Error updating user:', error);
+            throw error;
+          }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated, register }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser }}>
         {children}
         </AuthContext.Provider>
     );
