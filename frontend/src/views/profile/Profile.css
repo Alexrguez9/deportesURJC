@@ -1,9 +1,16 @@
+.profile-content{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 #profile-card {
     display: flex;
     justify-content: center;
+    max-width: 555px;
 }
 
-.content {
+.profile-card-content {
     margin: 3rem;
     background-color: #ccc;
     border-radius: 15px;

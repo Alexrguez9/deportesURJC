@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 const Header = () => {
     const { user } = useAuth();
 
+
     return (
         <header>
             <nav className="navbar">
@@ -19,15 +20,22 @@ const Header = () => {
                 <div className="nav-links">
                     <Link className="navbar-link" to="/">Inicio</Link>
                     <Link className="navbar-link" to="/ligas-internas">Ligas Internas</Link>
-                    <a className="navbar-link" href="#">Salas y gimnasio</a>
-                    <a className="navbar-link" href="#">Instalaciones</a>
+                    <Link className="navbar-link" to="/salas-preparacion">Salas y gimnasio</Link>
+                    <Link className="navbar-link" to="/instalaciones">Instalaciones</Link>
                     <a className="navbar-link" href="#">Recargar monedero</a>
                 </div>
-                <div>
-                    <Link to="login">
-                    {user ? <button className="navbar-button">Mi cuenta</button> : <button className="navbar-button">Iniciar sesión</button>}
+                {user ?
+                    <div>
+                        <Link to="profile">
+                        <button className="navbar-button">Mi cuenta</button>
+                        </Link>
+                    </div>
+                : <div>
+                    <Link to="profile/login">
+                    <button className="navbar-button">Iniciar sesión</button>
                     </Link>
                 </div>
+                }
             </nav>
         </header>
     )

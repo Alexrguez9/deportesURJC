@@ -1,0 +1,22 @@
+.form-reservar {
+    margin: 2rem;
+    div:first-child {
+        margin: 0.5rem;
+        * {
+            margin: 0 0.5rem 0 0.5rem;
+        }
+    }
+}
+.success-message{
+    color: green;
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;;
+}
+
+.text-error {
+    color: red;
+}
+.text-success {
+    color: green;
+}

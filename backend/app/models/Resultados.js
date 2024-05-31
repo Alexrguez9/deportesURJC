@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Creamos Schema de moongose
+// Rsquema de Resultados
 const ResultadosSchema = new mongoose.Schema(
   { 
     sport: {
@@ -46,6 +46,6 @@ const ResultadosSchema = new mongoose.Schema(
   }
 );
 
-const Resultados = mongoose.model('Resultados', ResultadosSchema);
+const Resultados = mongoose.model('resultados', ResultadosSchema);
 
 module.exports = Resultados;
