@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-
+import "./ReservasPreparacion.css";
+import { useAuth } from '../../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const ReservasPreparacion = () => {
-
     const [reservas, setReservas] = useState([]);
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
+    const { user } = useAuth();
 
     useEffect(() => {
         const fetchreservas = async () => {
@@ -29,46 +31,40 @@ const ReservasPreparacion = () => {
     // TODO: las reservas filtradas deben filtrarse por instalacion (solo tenemos el id de instalaciones)
     // TODO 2: para ello, hace falta importar todas las instalaciones como estado global. 
     // (también nos sirve para la view de reservas de instalaciones deportivas)
-    const reservasFiltradas = reservas.filter((reservas) => {
-        return filtroDeporte === 'Todos' || reservas.deporte === filtroDeporte;
-    });
 
     return (
         <div id="reservas-preparacion-content">
             <h1>Reservas de sala de preparación física</h1>
             <p>Bienvenido a la página de Reservas de salas de preparación física URJC Deportes.</p>
-            <section>
+      
+            {user ? (
+            user.estado_alta ? (
+                <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
-                    <option value="Todos">Todos</option>
-                    <option value="Fútbol-7">Fútbol-7</option>
+                    <option value="">Escoge una opción</option>
+                    <option value="Gimnasio">Gimnasio</option>
+                    <option value="Atletismo">Atletismo</option>
                 </select>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Deporte</th>
-                            <th>Jornada</th>
-                            <th>Equipo local</th>
-                            <th>Goles local</th>
-                            <th></th>
-                            <th>Goles visitante</th>
-                            <th>Equipo visitante</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Lugar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {reservasFiltradas.map((reservas) => (
-                            <tr key={reservas._id}>
-                                <td>{reservas.instalacionId}</td>
-                                <td>{reservas.fecha_inicio}</td>
-                                <td>{reservas.fecha_fin}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </section>
+        
+                <p>PRÓXIMAMENTE...</p>
+                </section>
+            ) : (
+                <div>
+                <Link to="/salas-preparacion/alta">
+                    <p>Debes estar dado de alta en el servicio de deportes para poder reservar salas de preparación física.</p>
+                    <button>Darme de alta</button>
+                </Link>
+                </div>
+            )
+            ) : (
+            <div>
+                <Link to="/login">
+                <p>Debes iniciar sesión para poder reservar salas de preparación física.</p>
+                <button>Iniciar sesión</button>
+                </Link>
+            </div>
+            )}
         </div>
     );
-}
+}      
 export default ReservasPreparacion;

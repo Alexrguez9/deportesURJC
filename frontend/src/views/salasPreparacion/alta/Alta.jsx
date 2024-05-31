@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
+import './Alta.css';
 
 const Alta = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('');
-    const { user, setUser, updateUser } = useAuth();
+    const { user, updateUser } = useAuth();
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
@@ -21,6 +22,9 @@ const Alta = () => {
                 updateData.estado_alta = { gimnasio: true, atletismo: user.estado_alta.atletismo };
             } else if (filtroDeporte === 'Atletismo') {
                 updateData.estado_alta = { atletismo: true, gimnasio: user.estado_alta.gimnasio };
+            } else {
+                alert('Escoge Gimnasio o Atletismo por favor.');
+                return;
             }
         
             try {
@@ -38,6 +42,8 @@ const Alta = () => {
             }
         }
     };
+    
+    // TODO: hacer simulación de pasarela de pago
 
     return (
         <div id="alta-content">
@@ -49,7 +55,7 @@ const Alta = () => {
                     <option value="Gimnasio">Gimnasio</option>
                     <option value="Atletismo">Atletismo</option>
                 </select>
-                <div>
+                <div className="button-alta">
                     {user ? <button onClick={handleAlta}>Darme de alta</button>: <p>Debes iniciar sesión para poder darte de alta</p>}
                 </div>
             </section>
