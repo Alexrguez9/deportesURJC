@@ -60,7 +60,7 @@ const Instalaciones = () => {
         }
         // TODO: ver que hacer con precioTotal
         const reserva = {
-            userId: user.user._id,
+            userId: user._id,
             instalacionId: selectedInstalacion,
             fechaInicio: startDate,
             fechaFin: '2024-05-05T18:00:00.000Z',
