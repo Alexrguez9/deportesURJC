@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
+import { useInstalacionesReservas } from "../../../context/InstalacioesReservasContext";
 
 
 const ConsultarPerfil = () => {
     const { user, logout, deleteUser } = useAuth();
+    const { reservas, deleteReserva } = useInstalacionesReservas();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
@@ -26,7 +28,14 @@ const ConsultarPerfil = () => {
     
     const handleDeleteAccount = async () => {
         if (user && user._id) {
+            console.log(reservas);
+            const userReservas = reservas.filter(reserva => reserva.userId === user._id);
+            for (const reservation of userReservas) {
+                await deleteReserva(reservation._id);
+            }
+
             await deleteUser(user._id);
+            console.log(reservas);
             navigate('/'); // redirecciona a home
         } else {
             console.error('usuario no loggeado o no tiene id');

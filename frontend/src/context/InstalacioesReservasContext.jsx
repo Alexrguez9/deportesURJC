@@ -34,10 +34,9 @@ export const InstalacionesReservasProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error('Error en el fetch de reservas');
             }
-            console.log('Reservas antes:', reservas);
             const data = await response.json();
             setReservas(data);
-            console.log('Reservas despues:', reservas);
+
         } catch (error) {
             console.error("Error al cargar instalaciones reservas:", error);
         }
