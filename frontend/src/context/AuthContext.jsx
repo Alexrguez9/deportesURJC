@@ -96,13 +96,14 @@ export const AuthProvider = ({ children }) => {
               body: JSON.stringify(updateData),
             });
       
-            if (!response.ok) {
-              throw new Error(`Error updating user: ${response.statusText}`);
+            if (response.ok) {
+                const updatedUser = await response.json();
+                console.log("updatedUser AuthContext", updatedUser);
+                setUser(updatedUser); // Update user state in context
+                return response;
+            } else {
+                throw new Error(`Error updating user: ${response.statusText}`);
             }
-      
-            const updatedUser = await response.json();
-            setUser(updatedUser); // Update user state in context
-            return response;
             
           } catch (error) {
             console.error('Error updating user:', error);
