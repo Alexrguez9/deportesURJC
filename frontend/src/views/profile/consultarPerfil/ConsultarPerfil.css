@@ -1,6 +1,5 @@
 .delete-button {
     color: var(--tertiary-color);
-    cursor: pointer;
     margin-left: 10px;
     background-color: transparent;
 }

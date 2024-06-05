@@ -34,8 +34,10 @@ export const InstalacionesReservasProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error('Error en el fetch de reservas');
             }
+            console.log('Reservas antes:', reservas);
             const data = await response.json();
             setReservas(data);
+            console.log('Reservas despues:', reservas);
         } catch (error) {
             console.error("Error al cargar instalaciones reservas:", error);
         }
@@ -61,8 +63,28 @@ export const InstalacionesReservasProvider = ({ children }) => {
         }
     };
 
+    const deleteReserva = async (reservaId) => {
+        try {
+          const response = await fetch(`http://localhost:3000/reservas/${reservaId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+      
+          if (!response.ok) {
+            throw new Error('Error al eliminar la reserva');
+          }
+      
+          await fetchReservas();
+      
+        } catch (error) {
+          console.error('Error al eliminar la reserva:', error);
+        }
+    };
+
     return (
-        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, fetchInstalaciones, fetchReservas, postReserva }}>
+        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, fetchInstalaciones, fetchReservas, postReserva, deleteReserva }}>
             {children}
         </InstalacionesReservasContext.Provider>
     );

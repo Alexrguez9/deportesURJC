@@ -7,6 +7,7 @@ import { useInstalacionesReservas } from '../../../context/InstalacioesReservasC
 
 const MisReservas = () => {
     const { user } = useAuth();
+    const { deleteReserva } = useInstalacionesReservas();
     const { reservas, instalaciones } = useInstalacionesReservas();
     const [filteredReservas, setFilteredReservas] = useState([]);
 
@@ -14,39 +15,47 @@ const MisReservas = () => {
     useEffect(() => {
         if (user) {
             setFilteredReservas(reservas.filter(reserva => reserva.userId === user._id));
-            console.log('Mis reservas:', reservas);
-            console.log('UserId:', user._id);
-            console.log('Mis reservas:', filteredReservas);
         }
+        console.log('Reservas:', reservas);
+        console.log('Mis reservas:', filteredReservas);
         
     }, [reservas]);
+
+    const handleRemoveReserva = (reservaId) => {
+        deleteReserva(reservaId);
+    };
 
     //TODO: mostrar nombre de instalacion, no id -> fetch instalaciones
     return (
         <div>
             <h1>Mis Reservas</h1>
             <div className='content-mis-reservas'>
-                {user ?
-                <table className="table-mis-reservas">
-                    <thead>
-                        <tr>
-                            <th>Instalación</th>
-                            <th>Fecha inicio</th>
-                            <th>Fecha fin</th>
-                            <th>Precio total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredReservas.map((reserva) => (
-                            <tr key={reserva._id}>
-                                <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId).nombre}</td>
-                                <td>{moment(reserva.fechaInicio).format('LLLL')}</td>
-                                <td>{moment(reserva.fechaFin).format('LLLL')}</td>
-                                <td>{reserva.precioTotal}</td>
+                {user ? ( 
+                    filteredReservas.length <= 0  ? ( 
+                        <p>No tienes reservas</p> 
+                    ) : (
+                    <table className="table-mis-reservas">
+                        <thead>
+                            <tr>
+                                <th>Instalación</th>
+                                <th>Fecha inicio</th>
+                                <th>Fecha fin</th>
+                                <th>Precio total</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredReservas.map((reserva) => (
+                                <tr key={reserva._id}>
+                                    <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
+                                    <td>{moment(reserva.fechaInicio).format('LLLL')}</td>
+                                    <td>{moment(reserva.fechaFin).format('LLLL')}</td>
+                                    <td>{reserva.precioTotal}</td>
+                                    <td><button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>Eliminar reserva</button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    ))
                 : <p>Inicia sesión para acceder a tus reservas</p>}
             </div>
         </div>
