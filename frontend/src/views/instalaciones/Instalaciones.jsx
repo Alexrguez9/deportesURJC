@@ -89,7 +89,7 @@ const Instalaciones = () => {
             return;
         }
         let endDate = new Date(startDate);
-        if (endDate.getHours() == 30) {
+        if (endDate.getMinutes() == 30) {
             endDate.setHours(endDate.getHours() + 1);
             endDate.setMinutes(0);
         } else if(endDate.getMinutes() == 0) {
