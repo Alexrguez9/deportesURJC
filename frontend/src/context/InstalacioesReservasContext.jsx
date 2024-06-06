@@ -13,6 +13,11 @@ export const InstalacionesReservasProvider = ({ children }) => {
         fetchReservas();
     }, []);
 
+    const getInstalacion = (id) => {
+        const instAux =  instalaciones.find((instalacion) => instalacion._id === id);
+        return instAux;
+    };
+
     const fetchInstalaciones = async () => {
         try {
             const response = await fetch('http://localhost:3000/instalaciones');
@@ -57,8 +62,10 @@ export const InstalacionesReservasProvider = ({ children }) => {
             }
             const data = await response.json();
             setReservas([...reservas, data]);
+            return response;
         } catch (error) {
             console.error("Error al postear reserva:", error);
+            return error;
         }
     };
 
@@ -83,7 +90,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
     };
 
     return (
-        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, fetchInstalaciones, fetchReservas, postReserva, deleteReserva }}>
+        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, fetchReservas, postReserva, deleteReserva }}>
             {children}
         </InstalacionesReservasContext.Provider>
     );
