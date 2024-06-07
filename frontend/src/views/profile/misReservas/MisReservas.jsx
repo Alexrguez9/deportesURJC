@@ -49,7 +49,7 @@ const MisReservas = () => {
                                     <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
                                     <td>{moment(reserva.fechaInicio).format('LLLL')}</td>
                                     <td>{moment(reserva.fechaFin).format('LLLL')}</td>
-                                    <td>{reserva.precioTotal}</td>
+                                    <td>{reserva.precioTotal} €</td>
                                     <td><button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>Eliminar reserva</button></td>
                                 </tr>
                             ))}

@@ -16,6 +16,7 @@ const Instalaciones = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    //TODO: optimizar las llamadas a getInstalacion (3 veces)
 
     useEffect(() => {
         fetchInstalaciones();
@@ -25,9 +26,9 @@ const Instalaciones = () => {
         if (!selectedInstalacion) {
             console.log('no hay instalacion seleccionada');
             return new Date();
+
         } else if (selectedInstalacion) {
             const inst = getInstalacion(selectedInstalacion);
-            console.log('inst: ', inst);
 
             const startTime = new Date(inst.horario.horarioInicio);
             const hours = startTime.getHours();
@@ -35,7 +36,6 @@ const Instalaciones = () => {
 
             const minTime = new Date();
             minTime.setHours(hours-2, minutes-30, 0); // ZONA HORARIA: UTC+2 (por eso restamos 2)
-            console.log('MinTime:', minTime);
        
             return minTime;
         } else {
@@ -49,6 +49,7 @@ const Instalaciones = () => {
     if (!selectedInstalacion) {
         console.log('no hay instalacion seleccionada');
         return new Date();
+
     } else if (selectedInstalacion) {
         const inst = getInstalacion(selectedInstalacion);
 
@@ -66,7 +67,6 @@ const Instalaciones = () => {
 
         const maxTime = new Date();
         maxTime.setHours(hours-2, minutes, 0); // ZONA HORARIA: UTC+2 (por eso restamos 2)
-        console.log('maxTime:', maxTime);
     
         return maxTime;
     } else {
@@ -96,13 +96,16 @@ const Instalaciones = () => {
             endDate.setMinutes(30);
         }
 
+        const inst = getInstalacion(selectedInstalacion);
+        console.log('inst precio:', inst.precioPorMediaHora);
+
         // TODO: ver que hacer con precioTotal
         const reserva = {
             userId: user._id,
             instalacionId: selectedInstalacion,
             fechaInicio: startDate,
             fechaFin: endDate,
-            precioTotal: 0
+            precioTotal: inst.precioPorMediaHora,
         };
 
         try {
