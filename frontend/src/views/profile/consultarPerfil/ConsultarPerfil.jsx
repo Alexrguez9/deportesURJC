@@ -28,14 +28,12 @@ const ConsultarPerfil = () => {
     
     const handleDeleteAccount = async () => {
         if (user && user._id) {
-            console.log(reservas);
             const userReservas = reservas.filter(reserva => reserva.userId === user._id);
             for (const reservation of userReservas) {
                 await deleteReserva(reservation._id);
             }
 
             await deleteUser(user._id);
-            console.log(reservas);
             navigate('/'); // redirecciona a home
         } else {
             console.error('usuario no loggeado o no tiene id');
@@ -60,7 +58,7 @@ const ConsultarPerfil = () => {
                             {user && (
                                 <div>
                                     <p>{user.name}, ¿quieres cerrar sesión?</p>
-                                    <button onClick={handleLogout}>Cerrar sesión</button>
+                                    <button onClick={handleLogout} className="cerrar-sesion-button">Cerrar sesión</button>
                                     <button onClick={handleOpenDeleteConfirmation} className="delete-button">Eliminar cuenta</button>
                                     
                                 </div>
