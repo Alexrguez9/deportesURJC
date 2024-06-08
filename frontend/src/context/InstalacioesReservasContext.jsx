@@ -89,8 +89,31 @@ export const InstalacionesReservasProvider = ({ children }) => {
         }
     };
 
+    const contarReservasPorFranjaHoraria = async (instalacionId, fechaInicio) => {
+        const hora = fechaInicio.getHours();
+        const minutos = fechaInicio.getMinutes();
+      
+        // Filtramos las reservas por instalación y fecha
+        const reservasFiltradas = reservas.filter(
+            (reserva) => {
+              const reservaDate = typeof reserva.fechaInicio === 'object' && reserva.fechaInicio instanceof Date ? reserva.fechaInicio : new Date(reserva.fechaInicio);
+        
+              return (
+                reserva.instalacionId === instalacionId &&
+                reservaDate.getDate() === fechaInicio.getDate() &&
+                reservaDate.getMonth() === fechaInicio.getMonth() &&
+                reservaDate.getFullYear() === fechaInicio.getFullYear() &&
+                reservaDate.getHours() === hora &&
+                reservaDate.getMinutes() === minutos
+              );
+            }
+        );
+      
+        return reservasFiltradas.length;
+    };
+
     return (
-        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, fetchReservas, postReserva, deleteReserva }}>
+        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, fetchReservas, postReserva, deleteReserva, contarReservasPorFranjaHoraria }}>
             {children}
         </InstalacionesReservasContext.Provider>
     );
