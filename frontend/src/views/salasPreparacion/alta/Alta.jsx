@@ -11,27 +11,30 @@ const Alta = () => {
     };
 
     const handleAlta = async () => {
+        console.log('Usuario alta: ', user);
         if(user) {
-            if (user.estado_alta.gimnasio && user.estado_alta.atletismo) {
+            if (user.alta.gimnasio.estado && user.alta.atletismo.estado) {
                 alert('Ya estás dado de alta en las dos instalaciones.');
                 return;
             }
         
-            const updateData = {};
+            const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
-                updateData.estado_alta = { gimnasio: true, atletismo: user.estado_alta.atletismo };
+                updatedUserData.alta.gimnasio = {estado: true, fechaInicio: null, fechaFin: null };
             } else if (filtroDeporte === 'Atletismo') {
-                updateData.estado_alta = { atletismo: true, gimnasio: user.estado_alta.gimnasio };
+                updatedUserData.alta.atletismo = {estado: true, fechaInicio: null, fechaFin: null };
             } else {
                 alert('Escoge Gimnasio o Atletismo por favor.');
                 return;
             }
-        
+            console.log('Mi updatedUserData al ppio', updatedUserData);
             try {
-                const response = await updateUser(user._id, updateData);
+                const response = await updateUser(user._id, updatedUserData );
                 
                 if (response.status === 200) {
                     alert('¡Alta completada con éxito!');
+                    console.log('Mi updateData', updatedUserData );
+                    console.log('Mi user', user);
                 } else {
                     console.error('Error al actualizar el usuario:', response.data.message);
                     alert('Error al dar de alta. Inténtalo de nuevo más tarde.');

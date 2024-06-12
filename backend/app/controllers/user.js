@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../models/User');
 //const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
 
@@ -23,8 +23,19 @@ exports.register = async (req, res) => {
             name,
             email,
             password,
-            estado_alta: false,
-            abono_renovado: false
+            alta: {
+                gimnasio: {
+                  estado: false, // Valor inicial para gimnasio: no dado de alta
+                  fechaInicio: null, // Fecha de inicio inicial: null
+                  fechaFin: null, // Fecha de fin inicial: null
+                },
+                atletismo: {
+                  estado: false, // Valor inicial para atletismo: no dado de alta
+                  fechaInicio: null, // Fecha de inicio inicial: null
+                  fechaFin: null, // Fecha de fin inicial: null
+                },
+            },
+            abono_renovado: false,
         });
 
         const savedUser = await newUser.save();
@@ -60,6 +71,7 @@ exports.login = async (req, res) => {
                 email: user.email,
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
+                alta: user.alta,
                 //token
         });
     } catch (error) {
@@ -89,13 +101,13 @@ exports.updateOne = async (req, res) => {
             // body.password = await bcrypt.hash(body.password, 10);
         }
 
-        const updatedUser = await User.updateOne({ _id: id }, { $set: body });
+        const updatedUser = await User.findOneAndUpdate({ _id: id }, { $set: body }, { new: true });
 
-        if (updatedUser.matchedCount === 0) {
-            res.status(404).json({ message: 'No se encontró el usuario para actualizar' });
-        } else {
-            res.json({ message: 'Usuario actualizado exitosamente', updatedUser });
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'No se encontró el usuario para actualizar' });
         }
+        res.json(updatedUser);
+        
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al actualizar datos', message: error.message });

@@ -13,6 +13,11 @@ export const InstalacionesReservasProvider = ({ children }) => {
         fetchReservas();
     }, []);
 
+    const getInstalacion = (id) => {
+        const instAux =  instalaciones.find((instalacion) => instalacion._id === id);
+        return instAux;
+    };
+
     const fetchInstalaciones = async () => {
         try {
             const response = await fetch('http://localhost:3000/instalaciones');
@@ -36,6 +41,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
             }
             const data = await response.json();
             setReservas(data);
+
         } catch (error) {
             console.error("Error al cargar instalaciones reservas:", error);
         }
@@ -56,13 +62,58 @@ export const InstalacionesReservasProvider = ({ children }) => {
             }
             const data = await response.json();
             setReservas([...reservas, data]);
+            return response;
         } catch (error) {
             console.error("Error al postear reserva:", error);
+            return error;
         }
     };
 
+    const deleteReserva = async (reservaId) => {
+        try {
+          const response = await fetch(`http://localhost:3000/reservas/${reservaId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+      
+          if (!response.ok) {
+            throw new Error('Error al eliminar la reserva');
+          }
+      
+          await fetchReservas();
+      
+        } catch (error) {
+          console.error('Error al eliminar la reserva:', error);
+        }
+    };
+
+    const contarReservasPorFranjaHoraria = async (instalacionId, fechaInicio) => {
+        const hora = fechaInicio.getHours();
+        const minutos = fechaInicio.getMinutes();
+      
+        // Filtramos las reservas por instalación y fecha
+        const reservasFiltradas = reservas.filter(
+            (reserva) => {
+              const reservaDate = typeof reserva.fechaInicio === 'object' && reserva.fechaInicio instanceof Date ? reserva.fechaInicio : new Date(reserva.fechaInicio);
+        
+              return (
+                reserva.instalacionId === instalacionId &&
+                reservaDate.getDate() === fechaInicio.getDate() &&
+                reservaDate.getMonth() === fechaInicio.getMonth() &&
+                reservaDate.getFullYear() === fechaInicio.getFullYear() &&
+                reservaDate.getHours() === hora &&
+                reservaDate.getMinutes() === minutos
+              );
+            }
+        );
+      
+        return reservasFiltradas.length;
+    };
+
     return (
-        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, fetchInstalaciones, fetchReservas, postReserva }}>
+        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, fetchReservas, postReserva, deleteReserva, contarReservasPorFranjaHoraria }}>
             {children}
         </InstalacionesReservasContext.Provider>
     );

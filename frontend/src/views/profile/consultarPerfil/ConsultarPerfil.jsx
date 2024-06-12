@@ -1,19 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
+import { useInstalacionesReservas } from "../../../context/InstalacioesReservasContext";
 
 
 const ConsultarPerfil = () => {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate()
+    const { user, logout, deleteUser } = useAuth();
+    const { reservas, deleteReserva } = useInstalacionesReservas();
+    const navigate = useNavigate();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
+
+    const handleOpenDeleteConfirmation = () => {
+        setShowDeleteConfirmation(true);
+    };
+        
+    const handleCloseDeleteConfirmation = () => {
+        setShowDeleteConfirmation(false);
+    };
     const handleLogout = () => {
         if (user) {
             logout();
             navigate('/'); // redirecciona a home
         }
     };
+    
+    const handleDeleteAccount = async () => {
+        if (user && user._id) {
+            const userReservas = reservas.filter(reserva => reserva.userId === user._id);
+            for (const reservation of userReservas) {
+                await deleteReserva(reservation._id);
+            }
+
+            await deleteUser(user._id);
+            navigate('/'); // redirecciona a home
+        } else {
+            console.error('usuario no loggeado o no tiene id');
+          }
+    }
 
     return (
         <>
@@ -29,15 +54,30 @@ const ConsultarPerfil = () => {
                                 <h2>Modificación de perfil</h2>
                                 <p>Próximamente...</p>
                             </section>
-                            <div><button onClick={handleLogout}>Cerrar sesión</button></div>
+                            <div></div>
                             {user && (
                                 <div>
-                                    <p>¿Quieres cerrar sesión {user.name}?</p>
+                                    <p>{user.name}, ¿quieres cerrar sesión?</p>
+                                    <button onClick={handleLogout} className="cerrar-sesion-button">Cerrar sesión</button>
+                                    <button onClick={handleOpenDeleteConfirmation} className="delete-button">Eliminar cuenta</button>
+                                    
                                 </div>
                             )}
                         </div>
                     </div>
                 </div>
+                {showDeleteConfirmation && (
+                    <div className="delete-confirmation-popup">
+                        <div className="delete-confirmation-content">
+                            <h2>Confirmar eliminación de cuenta</h2>
+                            <p>¿Estás seguro de que quieres eliminar tu cuenta de forma permanente?</p>
+                            <div className="confirmation-buttons">
+                            <button onClick={handleDeleteAccount} className="delete-button">Eliminar definitivamente</button>
+                            <button onClick={handleCloseDeleteConfirmation}>Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+            )}
         </>
     );
 };
