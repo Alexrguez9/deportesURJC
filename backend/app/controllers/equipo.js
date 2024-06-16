@@ -1,5 +1,5 @@
 //controller-equipo.js
-const model = require('../models/equipo');
+const model = require('../models/Equipo');
 
 // obtener data de users
 exports.getData = async (req, res) => {
