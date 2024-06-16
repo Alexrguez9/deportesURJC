@@ -1,0 +1,38 @@
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes: 
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    entrypoint: ["mongod", "--replSet", "rs0"]
+
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "3000:3000"
+    volumes:
+      -  mongo-data:/data/db
+    depends_on:
+      - mongo
+    env_file:
+      - ./backend/.env
+    command: sh -c "env && npm start"
+    restart: always
+    
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8080:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data: 
+    driver: local
