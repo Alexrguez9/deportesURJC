@@ -25,7 +25,6 @@ const reservasSchema = new mongoose.Schema({
     required: true
   }
 });
-
 // Middleware para calcular el precio total antes de guardar
 reservasSchema.pre('save', async function(next) {
   const reserva = this;
