@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (userData, navigate) => {
         try {
             // Llamamos al backend para iniciar sesión
-            const response = await fetch('http://localhost:3000/users/login', {
+            const response = await fetch('http://localhost:4000/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
         try {
             //TODO: ver si hay que revisar si existe previamente el usuario
             // Llamamos al backend para iniciar sesión
-            const response = await fetch('http://localhost:3000/users/register', {
+            const response = await fetch('http://localhost:4000/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-FROM node:18-alpine AS build 
+FROM node:20.14.0-alpine AS build 
 
 RUN npm install -g nodemon
 
@@ -11,6 +11,6 @@ RUN apk add --no-cache mongodb-tools
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["npm", "start"]

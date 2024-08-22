@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const MONGO_URI =  process.env.MONGO_URI;
 
 module.exports = async () => {
-    console.log('process:', process.env.MONGO_URI);
+    console.log('MONGO_URI:', process.env.MONGO_URI);
     try{
         await mongoose.connect(MONGO_URI);
         console.log('Conectado a la base de datos con URI:', MONGO_URI);
