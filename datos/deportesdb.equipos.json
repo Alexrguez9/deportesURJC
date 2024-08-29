@@ -1,0 +1,109 @@
+[{
+  "_id": {
+    "$oid": "662f804d5882be2bf96dcda5"
+  },
+  "name": "Bicho Pelao FC",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 1,
+    "partidos_perdidos": 0
+  }
+},
+{
+  "_id": {
+    "$oid": "662f85fb5882be2bf96dcdab"
+  },
+  "name": "Vilcheneta F.C",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 0,
+    "partidos_perdidos": 1
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "663205630d510e0161021f72"
+  },
+  "name": "Fruteros F.C",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 0,
+    "partidos_perdidos": 1
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "663205710d510e0161021f73"
+  },
+  "name": "Pikito F.C",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 1,
+    "partidos_perdidos": 0
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6632057d0d510e0161021f74"
+  },
+  "name": "CSKA la ropa",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 0,
+    "partidos_perdidos": 1
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "663205a80d510e0161021f75"
+  },
+  "name": "Nanofut Champagne F.C",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 1,
+    "partidos_perdidos": 0
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "663205ee0d510e0161021f76"
+  },
+  "name": "Real Suciedad",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 1,
+    "partidos_perdidos": 0
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6632060a0d510e0161021f77"
+  },
+  "name": "Calvo de Cabify FC",
+  "sport": "Fútbol-7",
+  "results": {
+    "partidos_ganados": 0,
+    "partidos_perdidos": 1
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:17:00.421Z"
+  }
+}]

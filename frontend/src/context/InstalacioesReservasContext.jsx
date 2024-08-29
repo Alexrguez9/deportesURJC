@@ -20,7 +20,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
 
     const fetchInstalaciones = async () => {
         try {
-            const response = await fetch('http://localhost:3000/instalaciones');
+            const response = await fetch('http://localhost:4000/instalaciones');
             if (!response.ok) {
                 throw new Error('Error en el fetch de instalaciones');
                 
@@ -35,7 +35,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
 
     const fetchReservas = async () => {
         try {
-            const response = await fetch('http://localhost:3000/reservas');
+            const response = await fetch('http://localhost:4000/reservas');
             if (!response.ok) {
                 throw new Error('Error en el fetch de reservas');
             }

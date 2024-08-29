@@ -24,7 +24,7 @@ const Home = () => {
                     <Link to="/salas-preparacion/alta">
                         <Card className="home-card" description={"Alta de usuarios - Salas de preparación física"} />
                     </Link>
-                    <Link >
+                    <Link to="/salas-preparacion/pago-abono">
                         <Card className="home-card" description={"Pago mensual Abono Gimnasio"} />
                     </Link>
                     <Link to="/salas-preparacion/reservas-preparacion">

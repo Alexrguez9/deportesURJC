@@ -1,0 +1,21 @@
+
+# ignorar todos los directorios generados
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+
+# Archivos de configuración local
+.env
+.idea/
+.vscode/
+*.local
+
+# Archivos de registro
+logs/*.log
+*.log
+
+# Archivos de depuración
+npm-debug.log*
+

@@ -4,9 +4,9 @@ const initDB = require('./config/db');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: '*', credentials: true }));
 
 // Configurar express para parsear JSON
 app.use(express.json({ limit: '50mb' }));
@@ -18,9 +18,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Cambia a true en producción si usas HTTPS
+        secure: false, // Cambiar a true en producción cuando use HTTPS: process.env.NODE_ENV === 'production'
         httpOnly: true,
-        maxAge: 60 * 60 * 1000 // Tiempo de vida de la cookie en milisegundos (aquí, 1 horas)
+        maxAge: 60 * 60 * 1000 // Tiempo de vida de la cookie en milisegundos (aquí, 1 hora)
     }
 }));
 

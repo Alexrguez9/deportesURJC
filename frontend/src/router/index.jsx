@@ -16,6 +16,7 @@ import MisReservas from '../views/profile/misReservas/MisReservas';
 import ConsultarPerfil from '../views/profile/consultarPerfil/ConsultarPerfil';
 import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
+import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
 
 export const router = createBrowserRouter([
     {
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
                     { path: '', element: <ContentSalasPreparacion /> },
                     { path: 'alta', element: <Alta /> },
                     { path: 'reservas-preparacion', element: <ReservasPreparacion /> },
+                    { path: 'pago-abono', element: <PagoAbono /> },
                 ]
             },
             { 

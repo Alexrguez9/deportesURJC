@@ -26,7 +26,6 @@ const reservasSchema = new mongoose.Schema({
   }
 });
 
-/* TODO: puede servir para calcular el precio total de la reserva CUANDO tengamos un carrito.
 // Middleware para calcular el precio total antes de guardar
 reservasSchema.pre('save', async function(next) {
   const reserva = this;

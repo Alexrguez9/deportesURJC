@@ -1,22 +1,16 @@
 // db.js
+require('dotenv').config();
 const mongoose = require('mongoose');
 
-// ERROR: poniendo mongodb://localhost:27017/deportesdb -> crashea
-const DB_URI = `mongodb://127.0.0.1:27017/deportesdb`;
+// ERROR: poniendo mongodb://localhost:27017/deportesdb -> crashea en local
+const uri = process.env.mongo_atlas_uri;
 
-module.exports = () => {
-    const connect = () => {
-        mongoose.connect(
-            DB_URI,
-            {
-                useNewUrlParser: true,
-                useUnifiedTopology: true
-            }
-        ).then(() => {
-            console.log('Conectado a la base de datos');
-        }).catch(err => {
-            console.error('Error conectando a la base de datos', err);
-        });
-    };
-    connect();
+module.exports = async () => {
+    try{
+        await mongoose.connect(uri);
+        console.log('Conectado a la base de datos');
+    } catch (error) {
+        console.error('Error conectando a la base de datos', error);
+    }
+
 };

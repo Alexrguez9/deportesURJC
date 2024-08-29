@@ -1,0 +1,140 @@
+[{
+  "_id": {
+    "$oid": "662f783af2f4e0b504171d0b"
+  },
+  "name": "javi",
+  "email": "javi@gmail.com",
+  "createdAt": {
+    "$date": "2024-04-29T10:36:42.844Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T10:36:42.844Z"
+  },
+  "estado_alta": {
+    "gimansio": false,
+    "atletismo": false
+  },
+  "abono_renovado": {
+    "fecha_inicio": {
+      "$date": "2024-05-01T00:00:00.000Z"
+    },
+    "fecha_fin": {
+      "$date": "2024-05-31T23:59:59.000Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "662f8c1807fe058406a64e6e"
+  },
+  "name": "pepe",
+  "email": "pepe@gmail.com",
+  "createdAt": {
+    "$date": "2024-04-29T12:01:28.094Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:01:28.094Z"
+  },
+  "estado_alta": {
+    "gimnasio": false,
+    "atletismo": false
+  },
+  "abono_renovado": {
+    "fecha_inicio": {
+      "$date": "2024-05-01T00:00:00.000Z"
+    },
+    "fecha_fin": {
+      "$date": "2024-05-31T23:59:59.000Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "662f8c2607fe058406a64e70"
+  },
+  "name": "rodrigo",
+  "email": "rodri@gmail.com",
+  "createdAt": {
+    "$date": "2024-04-29T12:01:42.245Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-29T12:02:13.302Z"
+  },
+  "estado_alta": {
+    "gimnasio": false,
+    "atletismo": "false"
+  },
+  "abono_renovado": {
+    "fecha_inicio": {
+      "$date": "2024-05-01T00:00:00.000Z"
+    },
+    "fecha_fin": {
+      "$date": "2024-05-31T23:59:59.000Z"
+    }
+  },
+  "password": 12121212
+},
+{
+  "_id": {
+    "$oid": "664f261b6333fa5bff9ae5c7"
+  },
+  "name": "ale",
+  "email": "alexrguez9@gmail.com",
+  "password": 12345678,
+  "createdAt": {
+    "$date": "2024-04-29T10:36:42.844Z"
+  },
+  "updatedAt": {
+    "$date": "2024-06-05T16:16:00.177Z"
+  },
+  "abono_renovado": {
+    "fecha_inicio": {
+      "$date": "2024-05-01T00:00:00.000Z"
+    },
+    "fecha_fin": {
+      "$date": "2024-05-31T23:59:59.000Z"
+    }
+  },
+  "alta": {
+    "gimnasio": {
+      "estado": true,
+      "fechaFin": {
+        "$date": "2024-05-29T10:36:42.844Z"
+      },
+      "fechaInicio": {
+        "$date": "2024-04-29T10:36:42.844Z"
+      }
+    },
+    "atletismo": {
+      "estado": true,
+      "fechaInicio": null,
+      "fechaFin": null
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66617d05c90c866e07b29abd"
+  },
+  "name": "prueba",
+  "email": "prueba@gmail.com",
+  "password": "12345678",
+  "alta": {
+    "gimnasio": {
+      "estado": false,
+      "fechaInicio": null,
+      "fechaFin": null
+    },
+    "atletismo": {
+      "estado": false,
+      "fechaInicio": null,
+      "fechaFin": null
+    }
+  },
+  "createdAt": {
+    "$date": "2024-06-06T09:10:29.804Z"
+  },
+  "updatedAt": {
+    "$date": "2024-06-06T09:10:29.804Z"
+  }
+}]
