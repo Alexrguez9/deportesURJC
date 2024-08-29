@@ -8,10 +8,9 @@ cd .\frontend\
 npm run dev
  ### Terminal 2
 cd .\backend\
-npm start
+npm run dev
 
 
 ## Deploy in docker
  ### Terminal 1
-docker-compose build
-docker-compose up -d
+docker-compose up --build

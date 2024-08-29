@@ -2,42 +2,25 @@
 services:
   mongo:
     image: mongo:latest
-    container_name: mongo
-    volumes: 
-      - mongo-data:/data/db
+    container_name: mongo-db
     ports:
       - "27017:27017"
 
   backend:
     build: ./backend
-    container_name: backend
+    container_name: express
     ports:
       - "4000:4000"
     depends_on:
       - mongo
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-  #     volumes:
-  # - ./backend:/app
-  # - ./backend/node_modules:/app/node_modules
-
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/deportesdb
 
   frontend:
     build: ./frontend
-    container_name: frontend
+    container_name: react
     ports:
-      - "5173:5173"
+      - "8080:8080"
     stdin_open: true
     tty: true
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
 
-volumes:
-  mongo-data:
-  node_modules:

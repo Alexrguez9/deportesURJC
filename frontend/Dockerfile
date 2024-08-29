@@ -11,7 +11,7 @@ RUN npm install
 # empaquetamos el código de producción
 RUN npm run build
 
-EXPOSE 5173
+EXPOSE 8080
 
 CMD ["npm", "run", "dev"]
 

@@ -3,15 +3,13 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 // ERROR: poniendo mongodb://localhost:27017/deportesdb -> crashea en local
-const MONGO_URI =  process.env.MONGO_URI;
+const uri = process.env.mongo_atlas_uri;
 
 module.exports = async () => {
-    console.log('MONGO_URI:', process.env.MONGO_URI);
     try{
-        await mongoose.connect(MONGO_URI);
-        console.log('Conectado a la base de datos con URI:', MONGO_URI);
+        await mongoose.connect(uri);
+        console.log('Conectado a la base de datos');
     } catch (error) {
-        console.error('ERROR URI:', MONGO_URI);
         console.error('Error conectando a la base de datos', error);
     }
 
