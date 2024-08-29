@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import './Login.css';
 import { useAuth } from "../../../context/AuthContext";
 import { useForm } from "react-hook-form";
@@ -50,8 +50,13 @@ const Login = () => {
                 email: data.loginEmail,
                 password: data.loginPassword
             };
-            await login(userData, navigate);
-
+            const resLogin = await login(userData, navigate);
+            if (!resLogin.ok) {
+                setErrorLogin("login", {
+                    type: "manual",
+                    message: "Email o contraseña incorrectos"
+                });
+            }
             
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -192,7 +197,7 @@ const Login = () => {
                                                 required: "Por favor, introduce tu email",
                                             })}
                                         />
-                                        {errorsLogin.loginEmail && <span>{errorsLogin.loginEmail.message}</span>}
+                                        {errorsLogin.loginEmail && <span className="error-message">{errorsLogin.loginEmail.message}</span>}
                                     </label>
                                 </div>
                                 <div className="input-container">
@@ -204,12 +209,12 @@ const Login = () => {
                                                 required: "Por favor, introduce tu contraseña",
                                             })}
                                         />
-                                        {errorsLogin.loginPassword && <span>{errorsLogin.loginPassword.message}</span>}
+                                        {errorsLogin.loginPassword && <span className="error-message">{errorsLogin.loginPassword.message}</span>}
                                     </label>
                                 </div>
                             </div>
-                            <div><button type="submit">Iniciar sesión</button></div>
-                            {errorsLogin.login && <span>{errorsLogin.login.message}</span>}
+                            <div className="login-button"><button type="submit">Iniciar sesión</button></div>
+                            {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
                         </form>
                     </div>
                 </div>

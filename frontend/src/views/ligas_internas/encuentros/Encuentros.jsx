@@ -41,7 +41,7 @@ const Encuentros = () => {
                     <option value="Todos">Todos</option>
                     <option value="Fútbol-7">Fútbol-7</option>
                     <option value="Fútbol-sala">Fútbol-sala</option>
-                    <option value="Baloncesto">Baloncesto</option>
+                    <option value="Básket 3x3">Básket 3x3</option>
                     <option value="Voleibol">Voleibol</option>
                 </select>
                 <table>

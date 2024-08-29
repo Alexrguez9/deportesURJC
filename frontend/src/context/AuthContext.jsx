@@ -96,13 +96,14 @@ export const AuthProvider = ({ children }) => {
               body: JSON.stringify(updateData),
             });
       
-            if (!response.ok) {
-              throw new Error(`Error updating user: ${response.statusText}`);
+            if (response.ok) {
+                const updatedUser = await response.json();
+                console.log("updatedUser AuthContext", updatedUser);
+                setUser(updatedUser); // Update user state in context
+                return response;
+            } else {
+                throw new Error(`Error updating user: ${response.statusText}`);
             }
-      
-            const updatedUser = await response.json();
-            setUser(updatedUser); // Update user state in context
-            return response;
             
           } catch (error) {
             console.error('Error updating user:', error);
@@ -110,11 +111,35 @@ export const AuthProvider = ({ children }) => {
           }
     }
 
+    const deleteUser = async (userId) => {
+        try {
+          const response = await fetch(`http://localhost:3000/users/${userId}`, {
+            method: 'DELETE',
+            credentials: 'include' // Include credentials for authorization
+          });
+          console.log('DeleteUser auth', user);
+          if (response.ok) {
+            setUser(null); // Set user state to null in context
+            setIsAuthenticated(false); // Set authentication state to false
+          } else {
+            console.error('Error deleting user:', response.statusText);
+            // Handle deletion errors as needed (e.g., display error message)
+          }
+          return response;
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          throw error;
+        }
+      };
+      
+
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser }}>
         {children}
         </AuthContext.Provider>
     );
 };
+
+
 
 export const useAuth = () => useContext(AuthContext);

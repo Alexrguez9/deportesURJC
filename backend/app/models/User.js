@@ -17,15 +17,35 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    estado_alta: {
+    alta: {
       gimnasio: {
-        type: Boolean,
-        default: false  // Falso hasta que el usuario se de de alta
+        estado: {
+          type: Boolean,
+          default: false  // Falso hasta que el usuario se de de alta
+        },
+        fechaInicio: {
+          type: Date,
+          required: false  // Opcional o hacer obligatorio
+        },
+        fechaFin: {
+          type: Date,
+          required: false  // Opcional o hacer obligatorio
+        }
       },
       atletismo: {
-        type: Boolean,
-        default: false  // Falso hasta que el usuario se de de alta
-      }
+        estado: {
+          type: Boolean,
+          default: false  // Falso hasta que el usuario se de de alta
+        },
+        fechaInicio: {
+          type: Date,
+          required: false  // Opcional o hacer obligatorio
+        },
+        fechaFin: {
+          type: Date,
+          required: false  // Opcional o hacer obligatorio
+        }
+      },
      
     },
     abono_renovado: {

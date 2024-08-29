@@ -38,7 +38,7 @@ const ReservasPreparacion = () => {
             <p>Bienvenido a la página de Reservas de salas de preparación física URJC Deportes.</p>
       
             {user ? (
-            user.estado_alta ? (
+            user.alta.gimnasio || user.alta.atletismo ? (
                 <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
                     <option value="">Escoge una opción</option>
