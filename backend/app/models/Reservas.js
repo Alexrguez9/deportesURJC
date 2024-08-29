@@ -40,7 +40,7 @@ reservasSchema.pre('save', async function(next) {
   
   next();
 });
-*/
+
 
 const Reservas = mongoose.model('reservas', reservasSchema);
 module.exports = Reservas;
