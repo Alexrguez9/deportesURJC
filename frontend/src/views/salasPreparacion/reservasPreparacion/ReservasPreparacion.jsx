@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./ReservasPreparacion.css";
 import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
+import BackButton from '../../../components/backButton/BackButton';
 
 const ReservasPreparacion = () => {
     const [reservas, setReservas] = useState([]);
@@ -33,10 +34,13 @@ const ReservasPreparacion = () => {
     // (también nos sirve para la view de reservas de instalaciones deportivas)
 
     return (
-        <div id="reservas-preparacion-content">
+        <div id="component-content">
+            <div className="back-button-div">
+                <BackButton />
+            </div>
             <h1>Reservas de sala de preparación física</h1>
             <p>Bienvenido a la página de Reservas de salas de preparación física URJC Deportes.</p>
-      
+            
             {user ? (
             user.alta.gimnasio || user.alta.atletismo ? (
                 <section>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
 import './Alta.css';
+import BackButton from "../../../components/backButton/BackButton";
 
 const Alta = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('');
@@ -49,7 +50,10 @@ const Alta = () => {
     // TODO: hacer simulación de pasarela de pago
 
     return (
-        <div id="alta-content">
+        <div id="component-content">
+            <div className="back-button-div">
+                <BackButton />
+            </div>
             <h1>Alta de sala de preparación física</h1>
             <p>Bienvenido a la página de Alta de salas de preparación física URJC Deportes.</p>
             <section>

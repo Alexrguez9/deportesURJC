@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './PagoAbono.css';
+import BackButton from '../../../components/backButton/BackButton';
 
 const PagoAbono = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('');
@@ -53,7 +54,10 @@ const PagoAbono = () => {
     // TODO: hacer simulación de pasarela de pago
 
     return (
-        <div id="alta-content">
+        <div id="component-content">
+                <div className="back-button-div">
+                    <BackButton />
+                </div>
             <h1>Pago Abono</h1>
             <p>Bienvenido a la página de pago del abono de atletismo o gimnasio de la URJC.
                 <br />Aquí podrás abonar por 30 días más tu abono de atletismo o gimnasio.
