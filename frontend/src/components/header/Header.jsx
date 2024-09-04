@@ -22,7 +22,7 @@ const Header = () => {
                     <Link className="navbar-link" to="/ligas-internas">Ligas Internas</Link>
                     <Link className="navbar-link" to="/salas-preparacion">Salas y gimnasio</Link>
                     <Link className="navbar-link" to="/instalaciones">Instalaciones</Link>
-                    <a className="navbar-link" href="#">Recargar monedero</a>
+                    <Link className="navbar-link" to="/monedero">Recargar monedero</Link>
                 </div>
                 {user ?
                     <div>

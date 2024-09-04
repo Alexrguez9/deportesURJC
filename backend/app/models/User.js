@@ -57,7 +57,11 @@ const UserSchema = new mongoose.Schema(
         type: Date,
         required: false  // Opcional o hacer obligatorio
       }
-    }
+    },
+    saldo: {
+      type: Number,
+      default: 0
+    },
   },
   {
     versionKey: false,

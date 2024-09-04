@@ -17,6 +17,7 @@ import ConsultarPerfil from '../views/profile/consultarPerfil/ConsultarPerfil';
 import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
 import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
+import RecargaMonedero from '../views/monedero/RecargaMonedero';
 
 export const router = createBrowserRouter([
     {
@@ -56,7 +57,11 @@ export const router = createBrowserRouter([
                 { path: 'consultar-perfil', element: <ConsultarPerfil /> },
                 { path: 'login', element: <Login /> },
             ]
-        },
+            },
+            { 
+                path: 'monedero', 
+                element: <RecargaMonedero />,
+            },
         ]
     },
 ]);
