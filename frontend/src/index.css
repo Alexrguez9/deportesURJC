@@ -126,3 +126,19 @@ button.navbar-button {
 .card {
   padding: 2em;
 }
+
+#component-content{
+  position: relative;
+  text-align: center;
+  display: inline-grid;
+  justify-content: center;
+  justify-items: center;
+  margin-bottom: 2rem;
+}
+
+.back-button-div {
+  position: fixed;
+  top: 70px;
+  left: 10px;
+  z-index: 1000;
+}
