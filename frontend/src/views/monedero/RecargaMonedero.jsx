@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from '../../context/AuthContext';
 import "./RecargaMonedero.css";
+import Spinner from "../../components/spinner/Spinner";
 
 const RecargaMonedero = () => {
     const { user, updateUser } = useAuth();
     const [importe, setImporte] = useState("");
-
-    useEffect(() => {
-        // Aquí puedes hacer una petición a la API para recargar el monedero
-        console.log('Monedero, user: ', user);
-    }, [importe]);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setImporte(e.target.value);
@@ -18,30 +15,39 @@ const RecargaMonedero = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (importe > 0) {
-            // Actualiza el saldo del usuario
+            setLoading(true);
+
             try {
-                const updatedUserData  = { ...user };
+                // Actualiza el saldo del usuario
+                const updatedUserData = { ...user };
                 updatedUserData.saldo = user.saldo + Number(importe);
-                const response = await updateUser(user._id, updatedUserData );
-                
-                if (response.status === 200) {
-                    alert(`¡Saldo de ${importe}€ añadido!`);
-                    console.log('Mi updateData', updatedUserData );
-                    console.log('Mi user', user);
-                } else {
-                    console.error('Error al recargar el monedero:', response.data.message);
-                    alert('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
-                }
+                const response = await updateUser(user._id, updatedUserData);
+
+
+                setTimeout(() => {
+                    setLoading(false);
+
+                    if (response.status === 200) {
+                        alert(`¡Saldo de ${importe}€ añadido!`);
+                        console.log('Mi updateData', updatedUserData);
+                        console.log('Mi user', user);
+                    } else {
+                        console.error('Error al recargar el monedero:', response.data.message);
+                        alert('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
+                    }
+
+                    // Envía los datos de la compra al correo del usuario
+                    sendEmail(user, importe);
+                    
+                    // Reinicia el campo de importe
+                    setImporte("");
+                }, 1000); // Simulamos 1 segundo de espera
+
             } catch (error) {
+                setLoading(false);
                 console.error('Error al dar de alta:', error);
-                alert('Error al dar de alta2. Inténtalo de nuevo.');
+                alert('Error al dar de alta. Inténtalo de nuevo.');
             }
-
-            // Envía los datos de la compra al correo del usuario
-            await sendEmail(user, importe);
-
-            // Reinicia el campo de importe
-            setImporte("");
         } else {
             alert("Por favor, introduce un importe válido.");
         }
@@ -57,7 +63,8 @@ const RecargaMonedero = () => {
                 body: JSON.stringify({
                     to: user.correo,
                     subject: "Recarga de monedero - URJC Deportes",
-                    body: `Hola ${user.nombre},\n\nHas recargado tu monedero con un importe de €${importe}. Tu nuevo saldo es de €${user.saldo + Number(importe)}.\n\nGracias por utilizar nuestro servicio.\n\nURJC Deportes`
+                    body: `Hola ${user.nombre},\n\nHas recargado tu monedero con un importe de €${importe}. 
+                    Tu nuevo saldo es de €${user.saldo + Number(importe)}.\n\nGracias por utilizar nuestro servicio.\n\nURJC Deportes`
                 })
             });
 
@@ -77,7 +84,7 @@ const RecargaMonedero = () => {
             <h1>Recarga de monedero</h1>
             <p>Bienvenido a la página de recarga de monedero de URJC Deportes.</p>
 
-            {user && (
+            {user && !loading && (
                 <>
                 <section>
                     <label htmlFor="importe">Introduce el importe a recargar:</label>
@@ -99,6 +106,7 @@ const RecargaMonedero = () => {
                 </section>
                 </>
             )}
+            {loading && <Spinner />}
         </div>
     );
 };
