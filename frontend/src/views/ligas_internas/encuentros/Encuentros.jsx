@@ -9,7 +9,7 @@ const Encuentros = () => {
     useEffect(() => {
         const fetchResultados = async () => {
             try {
-                const response = await fetch('http://localhost:3000/resultados');
+                const response = await fetch('http://localhost:4000/resultados');
                 if (!response.ok) {
                     throw new Error('Error en el fetch de resultados');
                 }

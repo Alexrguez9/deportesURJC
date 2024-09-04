@@ -8,7 +8,7 @@ const Clasificaciones = () => {
     useEffect(() => {
         const fetchEquipos = async () => {
             try {
-                const response = await fetch('http://localhost:3000/equipos');
+                const response = await fetch('http://localhost:4000/equipos');
                 if (!response.ok) {
                     throw new Error('Error en el fetch de equipos');
                 }

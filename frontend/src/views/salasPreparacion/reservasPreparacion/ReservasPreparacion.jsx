@@ -11,7 +11,7 @@ const ReservasPreparacion = () => {
     useEffect(() => {
         const fetchreservas = async () => {
             try {
-                const response = await fetch('http://localhost:3000/reservas');
+                const response = await fetch('http://localhost:4000/reservas');
                 if (!response.ok) {
                     throw new Error('Error en el fetch de reservas');
                 }
