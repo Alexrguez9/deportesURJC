@@ -49,7 +49,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
 
     const postReserva = async (reserva) => {
         try {
-            const response = await fetch('http://localhost:3000/reservas', {
+            const response = await fetch('http://localhost:4000/reservas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -71,7 +71,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
 
     const deleteReserva = async (reservaId) => {
         try {
-          const response = await fetch(`http://localhost:3000/reservas/${reservaId}`, {
+          const response = await fetch(`http://localhost:4000/reservas/${reservaId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',

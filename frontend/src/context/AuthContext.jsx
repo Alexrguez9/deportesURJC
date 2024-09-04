@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             // Llamamos al backend para cerrar sesión
-            const response = await fetch('http://localhost:3000/users/logout', {
+            const response = await fetch('http://localhost:4000/users/logout', {
                 method: 'POST',
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateUser = async (userId, updateData) => {
         try {
-            const response = await fetch(`http://localhost:3000/users/${userId}`, {
+            const response = await fetch(`http://localhost:4000/users/${userId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
 
     const deleteUser = async (userId) => {
         try {
-          const response = await fetch(`http://localhost:3000/users/${userId}`, {
+          const response = await fetch(`http://localhost:4000/users/${userId}`, {
             method: 'DELETE',
             credentials: 'include' // Include credentials for authorization
           });
