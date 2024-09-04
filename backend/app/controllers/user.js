@@ -36,6 +36,7 @@ exports.register = async (req, res) => {
                 },
             },
             abono_renovado: false,
+            saldo: 0
         });
 
         const savedUser = await newUser.save();
@@ -72,6 +73,7 @@ exports.login = async (req, res) => {
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
                 alta: user.alta,
+                saldo: user.saldo,
                 //token
         });
     } catch (error) {
