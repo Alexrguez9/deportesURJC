@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import './Clasificaciones.css';
+import BackButton from '../../../components/backButton/BackButton';
 
 const Clasificaciones = () => {
     const [equipos, setEquipos] = useState([]);
@@ -31,9 +32,16 @@ const Clasificaciones = () => {
     });
 
     return (
-        <div id="clasificaciones-content">
-            <h1>Clasificaciones Ligas Internas</h1>
-            <p>Consulta las clasificaciones de las ligas internas de la URJC</p>
+        <div id="component-content">
+            <div className="back-button-div">
+                <BackButton />
+            </div>
+            
+            <div className="view-header">
+                
+                <h1>Clasificaciones Ligas Internas</h1>
+                <p>Consulta las clasificaciones de las ligas internas de la URJC</p>
+            </div>
 
             <select value={filtroDeporte} onChange={handleDeporteChange}>
                 <option value="Todos">Todos</option>

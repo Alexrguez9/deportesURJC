@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Encuentros.css";
+import BackButton from "../../../components/backButton/BackButton";
 
 const Encuentros = () => {
 
@@ -31,11 +32,15 @@ const Encuentros = () => {
     });
 
     return (
-        <div id="encuentros-content">
-            <h1>Encuentros</h1>
-            <p>
-                Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
-            </p>
+        <div id="component-content">
+            <div className="view-header">
+                <BackButton />
+                <h1>Encuentros</h1>
+                <p>
+                    Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
+                </p>
+            </div>
+            
             <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
                     <option value="Todos">Todos</option>

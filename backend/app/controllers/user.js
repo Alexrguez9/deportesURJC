@@ -1,5 +1,5 @@
 const User = require('../models/User');
-//const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
 
 // Obtener data de users
@@ -17,12 +17,12 @@ exports.getData = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        // const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
             name,
             email,
-            password,
+            password: hashedPassword,
             alta: {
                 gimnasio: {
                   estado: false, // Valor inicial para gimnasio: no dado de alta
@@ -36,6 +36,7 @@ exports.register = async (req, res) => {
                 },
             },
             abono_renovado: false,
+            saldo: 0
         });
 
         const savedUser = await newUser.save();
@@ -56,14 +57,13 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
-        // const isMatch = await bcrypt.compare(password, user.password);
-        const isMatch = password === user.password;
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
-        //const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+        // TODO: const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
 
         res.json({
                 _id: user._id,
@@ -72,6 +72,7 @@ exports.login = async (req, res) => {
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
                 alta: user.alta,
+                saldo: user.saldo,
                 //token
         });
     } catch (error) {
@@ -98,7 +99,7 @@ exports.updateOne = async (req, res) => {
         const body = req.body;
 
         if (body.password) {
-            // body.password = await bcrypt.hash(body.password, 10);
+            body.password = await bcrypt.hash(body.password, 10);
         }
 
         const updatedUser = await User.findOneAndUpdate({ _id: id }, { $set: body }, { new: true });
