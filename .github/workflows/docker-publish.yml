@@ -26,12 +26,12 @@ jobs:
 
       - name: Build and tag frontend image
         run: |
-          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
+          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }} ./frontend
           docker tag deportesurjc-frontend alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
           docker push alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
 
       - name: Build and push Docker image backend
         run: |
-          docker build -t alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
+          docker build -t alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }} ./backend
           docker tag deportesurjc-backend alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
           docker push alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
