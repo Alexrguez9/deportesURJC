@@ -16,8 +16,7 @@ jobs:
         run: |
           docker login -u alexrguez9 -p ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Get branch or tag name
-        id: get_branch
+      - name: Build and push Docker image frontend
         run: |
           # Esto toma el nombre de la rama o etiqueta desde GITHUB_REF
           ref=${GITHUB_REF#refs/*/}
