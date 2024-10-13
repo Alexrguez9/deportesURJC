@@ -16,14 +16,20 @@ jobs:
         run: |
           docker login -u alexrguez9 -p ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and push Docker image frontend
+      - name: Get branch name
+        id: get_branch
         run: |
-          docker build -t alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }} .
-          docker tag deportesurjc-frontend alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }}
-          docker push alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }}
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | sed 's/\//-/g')
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Build and push Docker image backend
+      - name: Build and tag frontend image
         run: |
-          docker build -t alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }} .
+          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_NAME }} ./path-to-frontend
+          docker tag deportesurjc-frontend alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }}
+          docker push alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_NAME }}
+
+      - name: Build and tag backend image
+        run: |
+          docker build -t alexrguez9/deportes_urjc:backend-${{ env.BRANCH_NAME }} ./path-to-backend
           docker tag deportesurjc-backend alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }}
-          docker push alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }}
+          docker push alexrguez9/deportes_urjc:backend-${{ env.BRANCH_NAME }}
