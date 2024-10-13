@@ -18,20 +18,12 @@ jobs:
 
       - name: Build and push Docker image frontend
         run: |
-          # Esto toma el nombre de la rama o etiqueta desde GITHUB_REF
-          ref=${GITHUB_REF#refs/*/}
-          # Reemplazar '/' por '-'
-          sanitized_ref=$(echo "$ref" | sed 's/\//-/g')
-          echo "BRANCH_OR_TAG_NAME=$sanitized_ref" >> $GITHUB_ENV
-
-      - name: Build and tag frontend image
-        run: |
-          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
-          docker tag deportesurjc-frontend alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
-          docker push alexrguez9/deportes_urjc:frontend-${{ env.BRANCH_OR_TAG_NAME }}
+          docker build -t alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }} .
+          docker tag deportesurjc-frontend alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }}
+          docker push alexrguez9/deportes_urjc:frontend-${{ github.ref.replace('/', '-') }}
 
       - name: Build and push Docker image backend
         run: |
-          docker build -t alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
-          docker tag deportesurjc-backend alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
-          docker push alexrguez9/deportes_urjc:backend-${{ env.BRANCH_OR_TAG_NAME }}
+          docker build -t alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }} .
+          docker tag deportesurjc-backend alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }}
+          docker push alexrguez9/deportes_urjc:backend-${{ github.ref.replace('/', '-') }}
