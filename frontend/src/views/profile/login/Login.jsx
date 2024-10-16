@@ -43,12 +43,12 @@ const Login = () => {
 
     const onSubmitLogin = handleSubmitLogin(async (data) => {
         clearErrorsLogin(); // Limpia los errores antes de intentar un nuevo inicio de sesión
-        console.log("Intentando iniciar sesión");
-
+        const updatedData = handleAdmin(data);
         try {
             const userData = {
-                email: data.loginEmail,
-                password: data.loginPassword
+                email: updatedData.loginEmail,
+                password: updatedData.loginPassword,
+                role: updatedData.role
             };
             const resLogin = await login(userData, navigate);
             if (!resLogin.ok) {

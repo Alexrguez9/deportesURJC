@@ -16,7 +16,7 @@ exports.getData = async (req, res) => {
 // Registrar un nuevo usuario
 exports.register = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
@@ -36,7 +36,8 @@ exports.register = async (req, res) => {
                 },
             },
             abono_renovado: false,
-            saldo: 0
+            saldo: 0,
+            role,
         });
 
         const savedUser = await newUser.save();
@@ -50,9 +51,9 @@ exports.register = async (req, res) => {
 // Iniciar sesión
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role } = req.body;
         const user = await User.findOne({ email });
-
+        
         if (!user) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
@@ -73,6 +74,7 @@ exports.login = async (req, res) => {
                 abono_renovado: user.abono_renovado,
                 alta: user.alta,
                 saldo: user.saldo,
+                role: user.role,
                 //token
         });
     } catch (error) {
