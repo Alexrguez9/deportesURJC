@@ -1,0 +1,18 @@
+FROM node:20.14.0-alpine AS build 
+
+# Crear el directorio de la app en el contenedor
+WORKDIR /app
+
+COPY package*.json .
+RUN npm install
+
+COPY . .
+# empaquetamos el código de producción
+RUN npm run build:prod
+
+# Etapa de producción
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"] 
+
