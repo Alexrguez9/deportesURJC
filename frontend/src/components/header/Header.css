@@ -67,6 +67,7 @@ header {
     display: inline-block;
 }
 
+/* TODO: ver que pasa que se duplica esto, aunque lo borre, sigue apareciendo */
 .dropdown-menu {
     display: none; /* Oculto por defecto */
     position: absolute;
@@ -93,18 +94,4 @@ header {
 
 .dropdown-link:hover {
     background-color: #f1f1f1;
-}
-
-.logout-button{
-    background-color: var(--white-color);
-    color: var(--primary-color);
-    padding: 0;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-}
-
-.logout-button:hover {
-    color: #f44336;
 }
