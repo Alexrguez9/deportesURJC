@@ -13,6 +13,20 @@ exports.getData = async (req, res) => {
     }
 };
 
+// Obtener un usuario por su id
+exports.getOne = async (req, res) => {
+    try {
+        console.log('-----req.params', req.params);
+        const { id } = req.params;
+        console.log('---id:', id);
+        const user = await User.findById(id);
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los datos del usuario', message: error.message });
+    }
+};
+
 // Registrar un nuevo usuario
 exports.register = async (req, res) => {
     try {

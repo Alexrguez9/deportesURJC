@@ -131,10 +131,18 @@ export const AuthProvider = ({ children }) => {
           throw error;
         }
       };
+
+    const isAdmin = () => {
+        if (user) {
+            return user.role === 'admin';
+        } else {
+            return false;
+        }
+    };
       
 
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser, isAdmin }}>
         {children}
         </AuthContext.Provider>
     );
