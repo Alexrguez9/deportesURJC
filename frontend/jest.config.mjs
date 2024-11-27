@@ -1,7 +1,8 @@
-// jest.config.mjs
-import { defaults } from 'jest-config';
-
 export default {
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx}",
+    "!**/node_modules/**",
+  ],
   transform: {
     "^.+\\.jsx?$": "babel-jest"
   },
@@ -9,6 +10,9 @@ export default {
   setupFilesAfterEnv: ["<rootDir>/setupTests.js"],
   testMatch: ["<rootDir>/src/**/*.test.js"],
   moduleNameMapper: {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy", // Mapea archivos de estilo a módulos vacíos
-  }
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+  },
+  transformIgnorePatterns: [
+    "node_modules/(?!cheerio)" // Transforma módulos específicos
+  ],
 };
