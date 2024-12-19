@@ -15,7 +15,7 @@ const Encuentros = () => {
     const fetchResultados = async () => {
         try {
             const response = await fetch('http://localhost:4000/resultados');
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Error en el fetch de resultados');
             }
             const data = await response.json();
@@ -54,7 +54,7 @@ const Encuentros = () => {
             )}
             <div className="view-header">
                 <BackButton />
-                <h1>Encuentros</h1>
+                <h1 className="sub_section-title">Encuentros</h1>
                 <p>
                     Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
                 </p>
@@ -97,7 +97,7 @@ const Encuentros = () => {
                                 <td>{resultados.hora}</td>
                                 <td>{resultados.lugar}</td>
                                 <td>
-                                    {isAdmin() && <GoPencil onClick={() => openModal(resultados)} className="editPencil" />}
+                                    {isAdmin() && <GoPencil onClick={() => openModal(resultados)} className="editPencil" data-testid='edit-button' />}
                                 </td>
                             </tr>
                         ))}

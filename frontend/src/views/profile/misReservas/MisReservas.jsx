@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './MisReservas.css';
 import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
-import { useInstalacionesReservas } from '../../../context/InstalacioesReservasContext';
+import { useInstalacionesReservas } from '../../../context/InstalacionesReservasContext';
 
 
 const MisReservas = () => {

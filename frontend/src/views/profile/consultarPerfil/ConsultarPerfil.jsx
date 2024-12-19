@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import { useInstalacionesReservas } from "../../../context/InstalacioesReservasContext";
+import { useInstalacionesReservas } from "../../../context/InstalacionesReservasContext";
 
 
 const ConsultarPerfil = () => {

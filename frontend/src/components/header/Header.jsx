@@ -21,7 +21,7 @@ const Header = () => {
         <header>
             <nav className="navbar">
                 <div className='navbar-logo'>
-                    <Link to="">
+                    <Link to="/">
                     <img src={logoURJCDeportes} alt="Logo URJC Deportes" className="navbar-logo-img"/>
                     </Link>
                 </div>

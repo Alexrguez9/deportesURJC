@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useInstalacionesReservas } from '../../context/InstalacioesReservasContext';
+import { useInstalacionesReservas } from '../../context/InstalacionesReservasContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from '../../context/AuthContext';

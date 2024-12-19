@@ -5,7 +5,7 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router/index.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
-import { InstalacionesReservasProvider } from './context/InstalacioesReservasContext.jsx';
+import { InstalacionesReservasProvider } from './context/InstalacionesReservasContext.jsx';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
