@@ -13,7 +13,6 @@ import Alta from '../views/salasPreparacion/alta/Alta';
 import ReservasPreparacion from '../views/salasPreparacion/reservasPreparacion/ReservasPreparacion';
 import Instalaciones from '../views/instalaciones/Instalaciones';
 import MisReservas from '../views/profile/misReservas/MisReservas';
-import MisAbonos from '../views/profile/misAbonos/MisAbonos.jsx';
 import ConsultarPerfil from '../views/profile/consultarPerfil/ConsultarPerfil';
 import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
@@ -55,7 +54,6 @@ export const router = createBrowserRouter([
             children: [
                 { path: '', element: <ContentProfile /> },
                 { path: 'mis-reservas', element: <MisReservas /> },
-                { path: 'mis-abonos', element: <MisAbonos /> },
                 { path: 'consultar-perfil', element: <ConsultarPerfil /> },
                 { path: 'login', element: <Login /> },
             ]

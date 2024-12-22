@@ -1,21 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logoURJCDeportes from '../../assets/logo_urjc_deportes.jpg';
 
 import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-    
-    const handleLogout = () => {
-        if (user) {
-            logout();
-            navigate('/'); // redirecciona a home
-        }
-    };
+    const { user } = useAuth();
+
 
     return (
         <header>
@@ -32,26 +24,18 @@ const Header = () => {
                     <Link className="navbar-link" to="/instalaciones">Instalaciones</Link>
                     <Link className="navbar-link" to="/monedero">Recargar monedero</Link>
                 </div>
-                {user ? (
-                   <div className="user-dropdown">
-                        <button className="navbar-button">
-                            {user.name}
-                        </button>
-                        <div className="dropdown-menu">
-                                <Link to="profile" className="dropdown-link">Mi cuenta</Link>
-                                <Link to="profile/mis-reservas" className="dropdown-link">Mis reservas</Link>
-                                <Link to="profile/mis-abonos" className="dropdown-link">Mis abonos</Link>
-                                <Link to="profile/settings" className="dropdown-link">Configuración</Link>
-                                <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
-                        </div>
-                    </div>
-                ) : (
+                {user ?
                     <div>
-                        <Link to="profile/login">
-                        <button className="navbar-button">Iniciar sesión</button>
+                        <Link to="profile">
+                        <button className="navbar-button">Mi cuenta</button>
                         </Link>
                     </div>
-                )}
+                : <div>
+                    <Link to="profile/login">
+                    <button className="navbar-button">Iniciar sesión</button>
+                    </Link>
+                </div>
+                }
             </nav>
         </header>
     )
