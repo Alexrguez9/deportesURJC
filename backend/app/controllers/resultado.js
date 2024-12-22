@@ -7,6 +7,20 @@ exports.getData = async (req, res) => {
     res.json(resultadoData);
 }
 
+// Obtener un resultado por su id
+exports.getOne = async (req, res) => {
+    try {
+        console.log('-----req.params', req.params);
+        const { id } = req.params;
+        console.log('---id:', id);
+        const resultado = await model.findById(id);
+        res.json(resultado);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los datos del usuario', message: error.message });
+    }
+};
+
 // insertar data en Resultados
 exports.insertData = async (req, res) => {
     try {

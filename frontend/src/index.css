@@ -142,3 +142,8 @@ button.navbar-button {
   left: 10px;
   z-index: 1000;
 }
+
+.centered-div {
+  display: grid;
+  align-items: center;
+}
