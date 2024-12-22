@@ -1,14 +1,33 @@
 name: Build and Push Docker Image
 
+
 on:
   push:
     branches:
       - main
+  pull_request:  # Ejecuta el workflow cuando se abra o actualice un PR
   workflow_dispatch:  # Permite ejecución manual del workflow
 
-
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
   build-and-push:
+    needs: test  # Asegura que el job de tests pase antes de ejecutar este
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
