@@ -7,6 +7,9 @@ const path = 'resultados'
 // Ruta GET resultados
 router.get(`/${path}`, controller.getData);
 
+// Ruta GET result by id
+router.get(`/${path}/:id`, controller.getOne);
+
 // Ruta POST resultado
 router.post(`/${path}`, controller.insertData);
 
