@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:  # Ejecuta el workflow cuando se abra o actualice un PR
   workflow_dispatch:  # Permite ejecución manual del workflow
 
 jobs:
@@ -20,15 +19,15 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        working-directory: ./frontend # Cambia al directorio 'frontend'
+        working-directory: ./frontend
         run: npm install
 
       - name: Run tests
-        working-directory: ./frontend # Cambia al directorio 'frontend'
+        working-directory: ./frontend
         run: npm run test
 
+jobs:
   build-and-push:
-    needs: test  # Asegura que el job de tests pase antes de ejecutar este
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

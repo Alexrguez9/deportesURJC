@@ -40,6 +40,7 @@ const Header = () => {
                         <div className="dropdown-menu">
                                 <Link to="profile" className="dropdown-link">Mi cuenta</Link>
                                 <Link to="profile/mis-reservas" className="dropdown-link">Mis reservas</Link>
+                                <Link to="profile/mis-abonos" className="dropdown-link">Mis abonos</Link>
                                 <Link to="profile/settings" className="dropdown-link">Configuración</Link>
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
                         </div>
