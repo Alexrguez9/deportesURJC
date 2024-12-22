@@ -6,10 +6,11 @@ import BackButton from '../../../components/backButton/BackButton';
 import Spinner from '../../../components/spinner/Spinner';
 
 const PagoAbono = () => {
-    const [filtroDeporte, setFiltroDeporte] = useState('');
+    const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
     const { user, updateUser } = useAuth();
     const navigate = useNavigate()
     const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const calculateNewDate = () => {
@@ -26,6 +27,10 @@ const PagoAbono = () => {
         return [null, null];
     };
     
+    useEffect(() => {
+        setErrorMessage('');
+        setSuccessMessage('');
+    }, [filtroDeporte]);
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
@@ -36,20 +41,30 @@ const PagoAbono = () => {
         setLoading(true);
         if(user) {
             if (!user?.alta?.gimnasio?.estado && !user?.alta?.atletismo?.estado) {
-                alert('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
+                errorMessage('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
                 return;
             }
             
             const [fechaInicio, fechaFin] = calculateNewDate();
             if (!fechaInicio || !fechaFin) {
-                alert('No se pudo calcular la fecha de renovación. Por favor verifica los datos.');
+                errorMessage('No se pudo calcular la fecha de renovación. Por favor verifica los datos.');
                 return;
             }
 
             const updateData = {...user};
             if (filtroDeporte === 'Gimnasio') {
+                if (!user?.alta?.gimnasio?.estado) {
+                    setErrorMessage(['No estás dado de alta en el gimnasio.']);
+                    setLoading(false);
+                    return;
+                }
                 updateData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else if (filtroDeporte === 'Atletismo') {
+                if (!user?.alta?.atletismo?.estado) {
+                    setErrorMessage(['No estás dado de alta en el gimnasio.']);
+                    setLoading(false);
+                    return;
+                }
                 updateData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else {
                 alert('Escoge Gimnasio o Atletismo por favor.');
@@ -92,7 +107,6 @@ const PagoAbono = () => {
                 (user?.alta?.gimnasio?.estado || user?.alta?.atletismo?.estado) ? (
                 <section>
                     <select value={filtroDeporte} onChange={handleDeporteChange}>
-                    <option value="">Escoge una opción</option>
                     <option value="Gimnasio">Gimnasio</option>
                     <option value="Atletismo">Atletismo</option>
                     </select>
@@ -107,6 +121,7 @@ const PagoAbono = () => {
                     </div>
                     {loading && <Spinner />}
                     {successMessage && <p className="success-message">{successMessage}</p>}
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
                 </section>
                 ) : (
                 <div>
