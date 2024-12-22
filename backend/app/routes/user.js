@@ -7,9 +7,6 @@ const path = 'users'
 // Ruta GET users
 router.get('/users', controller.getData);
 
-// Ruta GET user by id
-router.get('/users/:id', controller.getOne);
-
 // Ruta POST register
 router.post('/users/register', controller.register);
 

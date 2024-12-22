@@ -106,7 +106,6 @@ const RecargaMonedero = () => {
                 </section>
                 </>
             )}
-            {!user && <p>No se ha podido cargar el usuario.</p>}
             {loading && <Spinner />}
         </div>
     );
