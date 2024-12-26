@@ -64,6 +64,8 @@ const MisAbonos = () => {
                             ) : (
                                 <p>Abono inactivo</p>
                             )}
+                            {user && successMessage && <p className="success-message">{successMessage}</p>}
+                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                         </div>
 
                         <div className="card">
@@ -80,6 +82,8 @@ const MisAbonos = () => {
                             ) : (
                                 <p>Abono inactivo</p>
                             )}
+                            {user && successMessage && <p className="success-message">{successMessage}</p>}
+                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                         </div>
                     </Fragment>
                 ): <p>Debes iniciar sesión para acceder a tus abonos</p>}

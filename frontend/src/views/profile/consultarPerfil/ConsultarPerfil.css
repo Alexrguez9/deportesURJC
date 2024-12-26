@@ -76,3 +76,7 @@
 .cerrar-sesion-button:hover{
   background-color: #3a3a3a;
 }
+
+.profile-info > p {
+  margin: 0.5rem;
+}
