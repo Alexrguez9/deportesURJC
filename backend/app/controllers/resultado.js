@@ -24,7 +24,32 @@ exports.getOne = async (req, res) => {
 // insertar data en Resultados
 exports.insertData = async (req, res) => {
     try {
-        const newResultado = new model(req.body);
+        const { equipo_local_id, equipo_visitante_id, goles_local, goles_visitante } = req.body;
+
+        // Verificar si ya existen equipos con los mismos IDs
+        const existingEquipoLocal = await model.findOne({ equipo_local_id });
+        const existingEquipoVisitante = await model.findOne({ equipo_visitante_id });
+
+        if (existingEquipoLocal || existingEquipoVisitante) {
+            return res.status(400).json({
+                error: 'Ya existe un equipo con este ID',
+                equipo_local_id: existingEquipoLocal ? 'Duplicado' : 'Disponible',
+                equipo_visitante_id: existingEquipoVisitante ? 'Duplicado' : 'Disponible'
+            });
+        }
+
+        const formattedBody = {
+            ...req.body,
+            goles_local: parseInt(goles_local, 10),
+            goles_visitante: parseInt(goles_visitante, 10),
+        };
+        console.log('---formattedBody:', formattedBody);
+
+        // Si no existen, crear el nuevo resultado
+        const newResultado = new model(formattedBody);
+        console.log('---req.body:', formattedBody);
+        console.log('---newResultado:', newResultado);
+
         const savedResultado = await newResultado.save();
         res.status(201).json(savedResultado);
     } catch (error) {
@@ -32,6 +57,7 @@ exports.insertData = async (req, res) => {
         res.status(500).json({ error: 'Error al insertar datos', message: error.message });
     }
 };
+
 
 // editar un Resultado
 exports.updateOne = async (req, res) => {

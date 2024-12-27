@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logoURJCDeportes from '../../assets/logo_urjc_deportes.jpg';
-
 import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, isAdmin } = useAuth();
     const navigate = useNavigate();
     
     const handleLogout = () => {
@@ -42,6 +41,7 @@ const Header = () => {
                                 <Link to="profile/mis-reservas" className="dropdown-link">Mis reservas</Link>
                                 <Link to="profile/mis-abonos" className="dropdown-link">Mis abonos</Link>
                                 <Link to="profile/settings" className="dropdown-link">Configuración</Link>
+                                {isAdmin && <Link to="/adminPanel" className="dropdown-link">Panel Admin</Link> }
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
                         </div>
                     </div>

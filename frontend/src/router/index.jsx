@@ -19,6 +19,7 @@ import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
 import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
 import RecargaMonedero from '../views/monedero/RecargaMonedero';
+import AdminPanel from '../views/admin/portada/AdminPanel';
 
 export const router = createBrowserRouter([
     {
@@ -63,6 +64,10 @@ export const router = createBrowserRouter([
             { 
                 path: 'monedero', 
                 element: <RecargaMonedero />,
+            },
+            { 
+                path: 'adminPanel', 
+                element: <AdminPanel />,
             },
         ]
     },

@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "bson": "^6.10.1",
     "dotenv": "^16.4.5",
     "moment": "^2.30.1",
     "react": "18.3.1",

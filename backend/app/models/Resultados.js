@@ -7,7 +7,19 @@ const ResultadosSchema = new mongoose.Schema(
         type: String,
         required: true
     },
+    jornada: {
+        type: String,
+        required: true
+    },
     fecha: {
+        type: String,
+        required: true
+    },
+    hora: {
+        type: String,
+        required: true
+    },
+    lugar: {
         type: String,
         required: true
     },
@@ -28,11 +40,11 @@ const ResultadosSchema = new mongoose.Schema(
         required: true
     },
     goles_local: {
-        type: String,
+        type: Number,
         required: true
     },
     goles_visitante: {
-        type: String,
+        type: Number,
         required: true
     },
     resultado: {
