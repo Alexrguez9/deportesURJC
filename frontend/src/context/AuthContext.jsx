@@ -139,10 +139,17 @@ export const AuthProvider = ({ children }) => {
             return false;
         }
     };
-      
+
+    const isStudent = () => {
+        if (user) {
+            return user.email.includes('@alumnos.urjc.es');
+        } else {
+            return false;
+        }
+    }
 
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser, isAdmin }}>
+        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser, isAdmin, isStudent }}>
         {children}
         </AuthContext.Provider>
     );
