@@ -147,3 +147,17 @@ button.navbar-button {
   display: grid;
   align-items: center;
 }
+
+.success-message{
+  color: #5cb85c;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;;
+}
+
+.text-error {
+  color: red;
+}
+.text-success {
+  color: green;
+}

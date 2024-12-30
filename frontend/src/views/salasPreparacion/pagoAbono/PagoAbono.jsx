@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import PaymentForm from "../../../components/paymentSimulation/PaymentSimulation";
 import './PagoAbono.css';
+import { studentsPricesMessage, externalPrice } from './CONSTANTS';
 import BackButton from '../../../components/backButton/BackButton';
 import Spinner from '../../../components/spinner/Spinner';
 
 const PagoAbono = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
-    const { user, updateUser } = useAuth();
+    const { user, updateUser, isStudent } = useAuth();
     const navigate = useNavigate()
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState([]);
@@ -37,7 +39,8 @@ const PagoAbono = () => {
     };
 
     const handlePago = async () => {
-        // TODO: hacer simulación de pasarela de pago
+        setErrorMessage('');
+        setSuccessMessage('');
         setLoading(true);
         if(user) {
             if (!user?.alta?.gimnasio?.estado && !user?.alta?.atletismo?.estado) {
@@ -61,7 +64,7 @@ const PagoAbono = () => {
                 updateData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else if (filtroDeporte === 'Atletismo') {
                 if (!user?.alta?.atletismo?.estado) {
-                    setErrorMessage(['No estás dado de alta en el gimnasio.']);
+                    setErrorMessage(['No estás dado de alta en el atletismo.']);
                     setLoading(false);
                     return;
                 }
@@ -77,7 +80,6 @@ const PagoAbono = () => {
                     setLoading(false);
                     if (response.status === 200) {
                         setSuccessMessage('Pago completado con éxito!');
-                        // TODO: hacer simulación de pago
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
                         alert('Error al dar de alta. Inténtalo de nuevo más tarde.');
@@ -85,7 +87,7 @@ const PagoAbono = () => {
                 });
             } catch (error) {
                 console.error('Error al dar de alta:', error);
-                alert('Error al dar de alta2. Inténtalo de nuevo.');
+                alert('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
             }
         }
     };
@@ -101,7 +103,8 @@ const PagoAbono = () => {
                 </div>
             <h1>Pago Abono</h1>
             <p>Bienvenido a la página de pago del abono de atletismo o gimnasio de la URJC.
-                <br />Aquí podrás abonar por 30 días más tu abono de atletismo o gimnasio.
+                <br />Aquí podrás abonar <b>por 30 días</b> tu abono de atletismo o gimnasio.
+                <br />Coste del abono: <b> {isStudent() ? studentsPricesMessage : externalPrice + '€'} </b>
             </p>
             {user ? (
                 (user?.alta?.gimnasio?.estado || user?.alta?.atletismo?.estado) ? (
@@ -112,12 +115,15 @@ const PagoAbono = () => {
                     </select>
                     
                     <div className="centered-div button-alta">
-                    {user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
-                        <button onClick={handlePago}>Renovar</button>
-                        ) : (
-                            <button onClick={handlePago}>Pagar</button>
-                        )
-                    }
+                    {!isStudent() && !successMessage && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
+                    {isStudent() && (
+                        user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
+                            <button onClick={handlePago}>Renovar</button>
+                            ) : (
+                                <button onClick={handlePago}>Pagar</button>
+                            )
+                    
+                    )}
                     </div>
                     {loading && <Spinner />}
                     {successMessage && <p className="success-message">{successMessage}</p>}

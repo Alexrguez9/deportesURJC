@@ -1,0 +1,27 @@
+.payment-container {
+    max-width: 400px;
+    margin: 1rem auto;
+    background-color: darkgrey;
+    padding: 1rem;
+}
+
+.payment-input {
+    padding: 8px;
+    font-size: 16px;
+}
+
+.payment-button {
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.payment-button:hover {
+    background-color: #45a049;
+}
+
+.price-info{
+    text-align: left;
+}
