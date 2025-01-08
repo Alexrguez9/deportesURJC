@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PaymentForm from "../../../components/paymentSimulation/PaymentSimulation";
+import { sendEmail } from '../../../utils/mails';
 import './PagoAbono.css';
 import { studentsPricesMessage, externalPrice } from './CONSTANTS';
 import BackButton from '../../../components/backButton/BackButton';
@@ -73,13 +74,13 @@ const PagoAbono = () => {
                 alert('Escoge Gimnasio o Atletismo por favor.');
                 return;
             }
-        
             try {
                 const response = await updateUser(user._id, updateData);
                 setTimeout(() => {
                     setLoading(false);
                     if (response.status === 200) {
                         setSuccessMessage('Pago completado con éxito!');
+                        sendEmail(user.email, 'DeportesURJC - Confirmación de Pago de abono', `Tu pago del Abono de ${filtroDeporte} ha sido completado con éxito.`);
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
                         alert('Error al dar de alta. Inténtalo de nuevo más tarde.');
@@ -115,7 +116,7 @@ const PagoAbono = () => {
                     </select>
                     
                     <div className="centered-div button-alta">
-                    {!isStudent() && !successMessage && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
+                    {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
                     {isStudent() && (
                         user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
                             <button onClick={handlePago}>Renovar</button>
