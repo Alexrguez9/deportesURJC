@@ -80,7 +80,13 @@ const PagoAbono = () => {
                     setLoading(false);
                     if (response.status === 200) {
                         setSuccessMessage('Pago completado con éxito!');
-                        sendEmail(user.email, 'DeportesURJC - Confirmación de Pago de abono', `Tu pago del Abono de ${filtroDeporte} ha sido completado con éxito.`);
+                        sendEmail(
+                            user.email,
+                            'DeportesURJC - Confirmación de Pago de abono',
+                            `Hola ${user.name},\n\n` +
+                            `Tu pago del Abono de ${filtroDeporte} ha sido completado con éxito.\n¡Nos vemos pronto!\n\n` +
+                            `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                        );
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
                         alert('Error al dar de alta. Inténtalo de nuevo más tarde.');

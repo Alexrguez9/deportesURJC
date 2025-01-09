@@ -41,8 +41,9 @@ const RecargaMonedero = () => {
                     sendEmail(
                         user.email, 
                         "Deportes URJC - Recarga de monedero con éxito",
-                        `Hola ${user.nombre},\n\nHas recargado tu monedero con un importe de €${importe}. 
-                        Tu nuevo saldo es de €${user.saldo + Number(importe)}.\n\nGracias por utilizar nuestro servicio.\n\nURJC Deportes`
+                        `Hola ${user.name},\n\n` +
+                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.saldo - Number(importe)}.\n\n` +
+                        `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                     );
                     
                     // Reinicia el campo de importe
