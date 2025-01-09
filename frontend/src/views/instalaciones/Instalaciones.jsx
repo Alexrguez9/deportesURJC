@@ -4,6 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from '../../context/AuthContext';
 import './Instalaciones.css';
+import { sendEmail } from '../../utils/mails';
 
 
 const Instalaciones = () => {
@@ -127,6 +128,13 @@ const Instalaciones = () => {
             //setPrecioTotal(response.data.precioTotal);
             //alert(`Reserva realizada con éxito. Precio total: ${response.data.precioTotal}€`);
             if (response.ok) {
+                sendEmail(
+                    user.email,
+                    'DeportesURJC - Confirmación de reserva',
+                    `Hola ${user.name},\n\n` +
+                    `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
+                    `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                );
                 setSuccessMessage('Reserva realizada con éxito.');
             } else {
                 setErrorMessage('Hubo un problema al realizar la reserva. Inténtalo de nuevo.');
@@ -142,7 +150,7 @@ const Instalaciones = () => {
     return (
         <div>
             <h1>Instalaciones</h1>
-            <p>Selecciona una instalación y una fecha para reservar.</p>
+            <p>Selecciona una instalación y una fecha para reservar. <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.</p>
             {user ?
                 <form onSubmit={handleReservation} className='form-reservar'>
                     <div>

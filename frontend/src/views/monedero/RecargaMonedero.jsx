@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from '../../context/AuthContext';
 import "./RecargaMonedero.css";
 import Spinner from "../../components/spinner/Spinner";
+import { sendEmail } from '../../utils/mails';
 
 const RecargaMonedero = () => {
     const { user, updateUser } = useAuth();
@@ -37,7 +38,13 @@ const RecargaMonedero = () => {
                     }
 
                     // Envía los datos de la compra al correo del usuario
-                    sendEmail(user, importe);
+                    sendEmail(
+                        user.email, 
+                        "Deportes URJC - Recarga de monedero con éxito",
+                        `Hola ${user.name},\n\n` +
+                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.saldo - Number(importe)}.\n\n` +
+                        `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                    );
                     
                     // Reinicia el campo de importe
                     setImporte("");
@@ -52,32 +59,6 @@ const RecargaMonedero = () => {
             alert("Por favor, introduce un importe válido.");
         }
     };
-
-    const sendEmail = async (user, importe) => {
-        try {
-            const response = await fetch("https://api.example.com/send-email", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    to: user.correo,
-                    subject: "Recarga de monedero - URJC Deportes",
-                    body: `Hola ${user.nombre},\n\nHas recargado tu monedero con un importe de €${importe}. 
-                    Tu nuevo saldo es de €${user.saldo + Number(importe)}.\n\nGracias por utilizar nuestro servicio.\n\nURJC Deportes`
-                })
-            });
-
-            if (response.ok) {
-                alert("Datos de la compra enviados a tu correo.");
-            } else {
-                console.error("Error al enviar el correo");
-            }
-        } catch (error) {
-            console.error("Error en el envío del correo:", error);
-        }
-    };
-
 
     return (
         <div id="recarga-monedero-content">
