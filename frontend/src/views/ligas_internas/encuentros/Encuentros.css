@@ -8,7 +8,7 @@
     box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
 }
 
-.newResult {
+.iconPlus {
     background-color: #6cbedf;
     cursor: pointer;
     color: white;
