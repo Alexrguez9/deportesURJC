@@ -8,7 +8,6 @@ import AdminModalTeams from "../../../../components/adminModal/adminModalTeams/A
 import { useTeamsAndResults } from "../../../../context/TeamsAndResultsContext";
 
 const AdminTeams = () => {
-    console.log('---AdminTeams---');
     const { user, isAdmin } = useAuth();
     const { teams, fetchTeams, deleteTeam } = useTeamsAndResults();
     const [filtroDeporte, setFiltroDeporte] = useState('Todos');
@@ -28,16 +27,15 @@ const AdminTeams = () => {
         return filtroDeporte === 'Todos' || teams.sport === filtroDeporte;
     });
 
-    const openModal = async (resultado) => {
-        console.log('---openModal resultado:', resultado);
-        if (!resultado) {
+    const openModal = async (team) => {
+        if (!team) {
             setPopupData({
                 sport: '',
                 name: '',
                 results: {
-                    partidos_ganados: '',
-                    partidos_perdidos: '',
-                    partidos_empatados: ''
+                    partidos_ganados: 0,
+                    partidos_perdidos: 0,
+                    partidos_empatados: 0,
                 },
             });
             console.log('---openModal popupData:', popupData);
@@ -47,7 +45,7 @@ const AdminTeams = () => {
             setIsModalOpen(true);
             return;
         }
-        const newPopupData = await { ...resultado };
+        const newPopupData = await { ...team };
         setPopupData(newPopupData);
         setIsModalOpen(true);
     }
@@ -95,12 +93,12 @@ const AdminTeams = () => {
                             </thead>
                             <tbody>
                                 {fileteredTeams.map((teams) => (
-                                    <tr key={teams._id}>
-                                        <td>{teams.sport}</td>
-                                        <td>{teams.name}</td>
-                                        <td>{teams.results.partidos_ganados}</td>
-                                        <td>{teams.results.partidos_perdidos}</td>
-                                        <td>{teams.results.partidos_empatados}</td>
+                                    <tr key={teams?._id}>
+                                        <td>{teams?.sport}</td>
+                                        <td>{teams?.name}</td>
+                                        <td>{teams?.results?.partidos_ganados}</td>
+                                        <td>{teams?.results?.partidos_perdidos}</td>
+                                        <td>{teams?.results?.partidos_empatados}</td>
                                         <td>
                                             <GoPencil onClick={() => openModal(teams)} className="editPencil" />
                                             <MdOutlineDelete onClick={() => deleteTeam(teams._id)} className="deleteTrash" />
