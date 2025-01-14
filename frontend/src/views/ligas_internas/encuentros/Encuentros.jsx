@@ -4,7 +4,7 @@ import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { useAuth } from "../../../context/AuthContext";
 import BackButton from "../../../components/backButton/BackButton";
-import AdminModal from "../../../components/adminModal/AdminModal";
+import ResultsAdminModal from "../../../components/adminModal/adminModalResults/AdminModalResults";
 
 const Encuentros = () => {
     const { user, isAdmin } = useAuth();
@@ -38,6 +38,7 @@ const Encuentros = () => {
     const resultadosFiltrados = resultados.filter((resultados) => {
         return filtroDeporte === 'Todos' || resultados.sport === filtroDeporte;
     });
+    console.log('---resultadosFiltrados---', resultadosFiltrados);
 
     const openModal = async (resultado) => {
         console.log('---openModal resultado:', resultado);
@@ -92,11 +93,11 @@ const Encuentros = () => {
     return (
         <div id="component-content">
             {isModalOpen &&(
-                <AdminModal closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewResult={isNewResult}  />
+                <ResultsAdminModal closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewResult={isNewResult}  />
             )}
             <div className="top-buttons-content">
                 <BackButton />
-                {user && isAdmin && <GoPlus onClick={() => openModal()} className="newResult" size='1.5em'/>}
+                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em'/>}
             </div>
             <h1>Encuentros</h1>
             <p>

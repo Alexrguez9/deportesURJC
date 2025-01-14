@@ -20,6 +20,8 @@ import Login from '../views/profile/login/Login';
 import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
 import RecargaMonedero from '../views/monedero/RecargaMonedero';
 import AdminPanel from '../views/admin/portada/AdminPanel';
+import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
+import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
 
 export const router = createBrowserRouter([
     {
@@ -51,23 +53,28 @@ export const router = createBrowserRouter([
                 path: 'instalaciones', 
                 element: <Instalaciones />,
             },
-            { path: 'profile',
-            element: <Profile />,
-            children: [
-                { path: '', element: <ContentProfile /> },
-                { path: 'mis-reservas', element: <MisReservas /> },
-                { path: 'mis-abonos', element: <MisAbonos /> },
-                { path: 'consultar-perfil', element: <ConsultarPerfil /> },
-                { path: 'login', element: <Login /> },
-            ]
+            { 
+                path: 'profile',
+                element: <Profile />,
+                children: [
+                    { path: '', element: <ContentProfile /> },
+                    { path: 'mis-reservas', element: <MisReservas /> },
+                    { path: 'mis-abonos', element: <MisAbonos /> },
+                    { path: 'consultar-perfil', element: <ConsultarPerfil /> },
+                    { path: 'login', element: <Login /> },
+                ]
             },
             { 
                 path: 'monedero', 
                 element: <RecargaMonedero />,
             },
             { 
-                path: 'adminPanel', 
+                path: 'admin-panel', 
                 element: <AdminPanel />,
+                children: [
+                    { path: '', element: <ContentAdminPanel /> },
+                    { path: 'admin-equipos', element: <AdminTeams /> },
+                ]
             },
         ]
     },

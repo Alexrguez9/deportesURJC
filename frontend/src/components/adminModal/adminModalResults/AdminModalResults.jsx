@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { ObjectId } from "bson";
-import { useAuth } from "../../context/AuthContext";
-import "./AdminModal.css";
+import { useAuth } from "../../../context/AuthContext";
+import "./AdminModalResults.css";
 import { set, useForm } from "react-hook-form";
 
-const AdminModal = ({ closeModal, popupData, isNewResult }) => {
+const ResultsAdminModal = ({ closeModal, popupData, isNewResult }) => {
     const { user } = useAuth();
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -16,7 +16,6 @@ const AdminModal = ({ closeModal, popupData, isNewResult }) => {
         formState: { errors: errorsEncuentros },
     } = useForm();
 
-     // Set initial values for form fields based on popupData
      const initialValues = {
         sport: popupData?.sport || "",
         equipo_local: popupData?.equipo_local || "",
@@ -241,4 +240,4 @@ const AdminModal = ({ closeModal, popupData, isNewResult }) => {
       </div>
     );
 };
-export default AdminModal;
+export default ResultsAdminModal;
