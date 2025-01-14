@@ -54,7 +54,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
     return (
         <div id="admin-modal">
             <IoMdClose id="close-menu" onClick={closeModal} style={{ color: 'black' }} />
-            <h2>Administrar equipos</h2>
+            {isNewTeam ? <h2>Añadir equipo</h2> : <h2>Editar equipo</h2>}
             {!successMessage && (
                 <form onSubmit={onSubmit}>
                     <div className="inputs">
