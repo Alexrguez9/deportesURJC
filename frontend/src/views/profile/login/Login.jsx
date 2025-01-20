@@ -110,6 +110,41 @@ const Login = () => {
                 consultar y modificar tu perfil.
             </p>
             <div className="profile-content">
+            <div id="profile-card">
+                    <div className="profile-card-content">
+                        <h3>Iniciar sesión</h3>
+                        <form onSubmit={onSubmitLogin}>
+                            <div className="inputs">
+                                <div className="input-container">
+                                    <label>
+                                        Email:
+                                        <input
+                                            type="email"
+                                            {...registerLogin("loginEmail", {
+                                                required: "Por favor, introduce tu email",
+                                            })}
+                                        />
+                                        {errorsLogin.loginEmail && <span className="error-message">{errorsLogin.loginEmail.message}</span>}
+                                    </label>
+                                </div>
+                                <div className="input-container">
+                                    <label>
+                                        Contraseña:
+                                        <input
+                                            type="password"
+                                            {...registerLogin("loginPassword", {
+                                                required: "Por favor, introduce tu contraseña",
+                                            })}
+                                        />
+                                        {errorsLogin.loginPassword && <span className="error-message">{errorsLogin.loginPassword.message}</span>}
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="login-button"><button type="submit">Iniciar sesión</button></div>
+                            {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
+                        </form>
+                    </div>
+                </div>
                 <div id="profile-card">
                     <div className="profile-card-content">
                         <section>
@@ -181,41 +216,6 @@ const Login = () => {
                                 <div><button>Registrarse</button></div>
                             </form>
                         </section>
-                    </div>
-                </div>
-                <div id="profile-card">
-                    <div className="profile-card-content">
-                        <h3>Iniciar sesión</h3>
-                        <form onSubmit={onSubmitLogin}>
-                            <div className="inputs">
-                                <div className="input-container">
-                                    <label>
-                                        Email:
-                                        <input
-                                            type="email"
-                                            {...registerLogin("loginEmail", {
-                                                required: "Por favor, introduce tu email",
-                                            })}
-                                        />
-                                        {errorsLogin.loginEmail && <span className="error-message">{errorsLogin.loginEmail.message}</span>}
-                                    </label>
-                                </div>
-                                <div className="input-container">
-                                    <label>
-                                        Contraseña:
-                                        <input
-                                            type="password"
-                                            {...registerLogin("loginPassword", {
-                                                required: "Por favor, introduce tu contraseña",
-                                            })}
-                                        />
-                                        {errorsLogin.loginPassword && <span className="error-message">{errorsLogin.loginPassword.message}</span>}
-                                    </label>
-                                </div>
-                            </div>
-                            <div className="login-button"><button type="submit">Iniciar sesión</button></div>
-                            {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
-                        </form>
                     </div>
                 </div>
             </div>
