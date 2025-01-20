@@ -6,6 +6,7 @@ import { useAuth } from "../../../../context/AuthContext";
 import BackButton from "../../../../components/backButton/BackButton";
 import AdminModalTeams from "../../../../components/adminModal/adminModalTeams/AdminModalTeams";
 import { useTeamsAndResults } from "../../../../context/TeamsAndResultsContext";
+import AccessDenied from "../../../../components/accessDenied/AccessDenied";
 
 const AdminTeams = () => {
     const { user, isAdmin } = useAuth();
@@ -38,10 +39,8 @@ const AdminTeams = () => {
                     partidos_empatados: 0,
                 },
             });
-            console.log('---openModal popupData:', popupData);
             const newResult = true; // Variable temporal
             setIsNewResult(newResult);
-            console.log('---openModal isNewTeam:', newResult);
             setIsModalOpen(true);
             return;
         }
@@ -57,7 +56,7 @@ const AdminTeams = () => {
 
     return (
         <div id="component-content">
-            {isAdmin() && (
+            {isAdmin() ? (
                 <React.Fragment>
                     {isModalOpen &&(
                         <AdminModalTeams closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewTeam={isNewTeam}  />
@@ -109,6 +108,8 @@ const AdminTeams = () => {
                         </table>
                     </section>
                 </React.Fragment>
+            ): (
+                <AccessDenied />
             )}
         </div>
     );
