@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import "./Encuentros.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -38,10 +38,8 @@ const Encuentros = () => {
     const resultadosFiltrados = resultados.filter((resultados) => {
         return filtroDeporte === 'Todos' || resultados.sport === filtroDeporte;
     });
-    console.log('---resultadosFiltrados---', resultadosFiltrados);
 
     const openModal = async (resultado) => {
-        console.log('---openModal resultado:', resultado);
         if (!resultado) {
             setPopupData({
                 sport: '',
@@ -55,10 +53,8 @@ const Encuentros = () => {
                 hora: '',
                 lugar: ''
             });
-            console.log('---openModal popupData:', popupData);
             const newResult = true; // Variable temporal
             setIsNewResult(newResult);
-            console.log('---openModal isNewResult:', newResult);
             setIsModalOpen(true);
             return;
         }
@@ -100,9 +96,15 @@ const Encuentros = () => {
                 {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em'/>}
             </div>
             <h1>Encuentros</h1>
-            <p>
-                Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.
-            </p>
+            {!isAdmin() ? (
+                <p>Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.</p>
+            ) : (
+                <Fragment>
+                    <p>Aquí puedes administrar los Encuentros de la Liga Interna de URJC Deportes.</p>
+                    <p>Si quieres añadir un encuentro, la idea es escoger de los equipos que hay actualmente.
+                    <br/>Si necesitas crear un nuevo equipo lo puedes hacer desde el adminPanel.</p>
+                </Fragment>
+            )}
             <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
                     <option value="Todos">Todos</option>
@@ -111,42 +113,45 @@ const Encuentros = () => {
                     <option value="Básket 3x3">Básket 3x3</option>
                     <option value="Voleibol">Voleibol</option>
                 </select>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Deporte</th>
-                            <th>Jornada</th>
-                            <th>Equipo local</th>
-                            <th>Goles local</th>
-                            <th></th>
-                            <th>Goles visitante</th>
-                            <th>Equipo visitante</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Lugar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {resultadosFiltrados.map((resultados) => (
-                            <tr key={resultados._id}>
-                                <td>{resultados.sport}</td>
-                                <td>{resultados.jornada}</td>
-                                <td>{resultados.equipo_local}</td>
-                                <td>{resultados.goles_local}</td>
-                                <td>-</td>
-                                <td>{resultados.goles_visitante}</td>
-                                <td>{resultados.equipo_visitante}</td>
-                                <td>{resultados.fecha}</td>
-                                <td>{resultados.hora}</td>
-                                <td>{resultados.lugar}</td>
-                                <td>
-                                    {isAdmin() && <GoPencil onClick={() => openModal(resultados)} className="editPencil" />}
-                                    {isAdmin() && <MdOutlineDelete onClick={() => deleteResult(resultados._id)} className="deleteTrash" />}
-                                </td>
+                { resultadosFiltrados.length === 0 ? 
+                    <p>No hay resultados de {filtroDeporte} para mostrar</p> :
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Deporte</th>
+                                <th>Jornada</th>
+                                <th>Equipo local</th>
+                                <th>Goles local</th>
+                                <th></th>
+                                <th>Goles visitante</th>
+                                <th>Equipo visitante</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Lugar</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {resultadosFiltrados.map((resultados) => (
+                                <tr key={resultados._id}>
+                                    <td>{resultados.sport}</td>
+                                    <td>{resultados.jornada}</td>
+                                    <td>{resultados.equipo_local}</td>
+                                    <td>{resultados.goles_local}</td>
+                                    <td>-</td>
+                                    <td>{resultados.goles_visitante}</td>
+                                    <td>{resultados.equipo_visitante}</td>
+                                    <td>{resultados.fecha}</td>
+                                    <td>{resultados.hora}</td>
+                                    <td>{resultados.lugar}</td>
+                                    <td>
+                                        {isAdmin() && <GoPencil onClick={() => openModal(resultados)} className="editPencil" />}
+                                        {isAdmin() && <MdOutlineDelete onClick={() => deleteResult(resultados._id)} className="deleteTrash" />}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                }
             </section>
         </div>
     );

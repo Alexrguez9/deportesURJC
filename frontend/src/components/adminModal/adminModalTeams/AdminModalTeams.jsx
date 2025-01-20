@@ -14,7 +14,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
     const {
         register,
         handleSubmit: handleSubmitResults,
-        formState: { errors: errorResults },
+        formState: { errors: errorTeams },
     } = useForm();
 
     // Obtener lista de deportes únicos
@@ -60,7 +60,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                     <div className="inputs">
                         <div className="input-container">
                             <label>
-                                Deporte:
+                                Deporte:&nbsp;
                                 <select
                                     {...register("sport", { required: "Por favor, selecciona un deporte" })}
                                     defaultValue={initialValues.sport}
@@ -72,8 +72,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                         </option>
                                     ))}
                                 </select>
-                                {errorResults.sport && (
-                                    <span className="error-message">{errorResults.sport.message}</span>
+                                {errorTeams.sport && (
+                                    <span className="error-message">{errorTeams.sport.message}</span>
                                 )}
                             </label>
                         </div>
@@ -85,8 +85,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                     {...register("name", { required: "Por favor, introduce el nombre del equipo" })}
                                     defaultValue={initialValues.name}
                                 />
-                                {errorResults.name && (
-                                    <span className="error-message">{errorResults.name.message}</span>
+                                {errorTeams.name && (
+                                    <span className="error-message">{errorTeams.name.message}</span>
                                 )}
                             </label>
                         </div>
@@ -101,8 +101,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                     })}
                                     defaultValue={initialValues.partidos_ganados}
                                 />
-                                {errorResults.partidos_ganados && (
-                                    <span className="error-message">{errorResults.partidos_ganados.message}</span>
+                                {errorTeams.partidos_ganados && (
+                                    <span className="error-message">{errorTeams.partidos_ganados.message}</span>
                                 )}
                             </label>
                         </div>
@@ -117,8 +117,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                     })}
                                     defaultValue={initialValues.partidos_perdidos}
                                 />
-                                {errorResults.partidos_perdidos && (
-                                    <span className="error-message">{errorResults.partidos_perdidos.message}</span>
+                                {errorTeams.partidos_perdidos && (
+                                    <span className="error-message">{errorTeams.partidos_perdidos.message}</span>
                                 )}
                             </label>
                         </div>
@@ -133,8 +133,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                     })}
                                     defaultValue={initialValues.partidos_empatados}
                                 />
-                                {errorResults.partidos_empatados && (
-                                    <span className="error-message">{errorResults.partidos_empatados.message}</span>
+                                {errorTeams.partidos_empatados && (
+                                    <span className="error-message">{errorTeams.partidos_empatados.message}</span>
                                 )}
                             </label>
                         </div>

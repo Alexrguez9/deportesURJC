@@ -14,7 +14,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
     const fetchTeams = async () => {
         try {
             const response = await fetch('http://localhost:4000/equipos');
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al cargar los equipos');
             }
             const data = await response.json();
@@ -27,7 +27,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
     const fetchResults = async () => {
         try {
             const response = await fetch('http://localhost:4000/encuentros');
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al cargar los encuentros');
             }
             const data = await response.json();
@@ -46,7 +46,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 },
                 body: JSON.stringify(newTeam),
             });
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error en el fetch del equipo');
             }
             const data = await response.json();
@@ -55,6 +55,36 @@ export const TeamsAndResultsProvider = ({ children }) => {
         } catch (error) {
             console.error("Error al añadir nuevo equipo:", error);
             return error;
+        }
+    };
+    
+    const addResult = async (newData) => {
+        try {
+            const formattedData = {
+                ...newData,
+                jornada: Number(newData.jornada),
+                goles_local: Number(newData.goles_local),
+                goles_visitante: Number(newData.goles_visitante),
+                fecha: new Date(newData.fecha).toISOString(), // Asegura que sea formato ISO
+            };
+
+            const response = await fetch('http://localhost:4000/resultados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formattedData),
+            });
+
+            if (response?.ok) {
+                await response.json();
+                return response;
+            } else {
+                throw new Error(`Error adding result: ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error('Error adding result:', error);
+            throw error;
         }
     };
 
@@ -68,7 +98,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 body: JSON.stringify(updateData),
             });
 
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al actualizar el equipo');
             }
 
@@ -80,22 +110,30 @@ export const TeamsAndResultsProvider = ({ children }) => {
         }
     };
 
-    const updateResult = async (encuentroId, updateData) => {
+    const updateResult = async (resultId, updateData) => {
         try {
-            const response = await fetch(`http://localhost:4000/encuentros/${encuentroId}`, {
+            const formattedData = {
+                ...updateData,
+                jornada: Number(updateData.jornada),
+                goles_local: Number(updateData.goles_local),
+                goles_visitante: Number(updateData.goles_visitante),
+                fecha: new Date(updateData.fecha).toISOString(), // Asegura que sea formato ISO
+            };
+
+            const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(updateData),
+                body: JSON.stringify(formattedData),
             });
-
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al actualizar el encuentro');
             }
 
             const updatedEncuentro = await response.json();
-            setResults((prev) => prev.map((e) => (e._id === encuentroId ? updatedEncuentro : e)));
+            setResults((prev) => prev.map((e) => (e._id === resultId ? updatedEncuentro : e)));
+            return response;
         } catch (error) {
             console.error("Error al actualizar encuentro:", error);
         }
@@ -110,7 +148,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 },
             });
 
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al borrar el equipo');
             }
 
@@ -129,7 +167,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 },
             });
 
-            if (!response.ok) {
+            if (!response?.ok) {
                 throw new Error('Error al borrar el encuentro');
             }
 
@@ -146,6 +184,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             fetchTeams, 
             fetchResults,
             addTeam,
+            addResult,
             updateTeam, 
             updateResult,
             deleteTeam,

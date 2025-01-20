@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import "./ContentAdminPanel.css";
 import BackButton from "../../components/backButton/BackButton";
+import AccessDenied from "../accessDenied/AccessDenied";
 
 
 const ContentAdminPanel = () => {
@@ -23,12 +24,7 @@ const ContentAdminPanel = () => {
                     </div>
                 </div>
             ): (
-                <div className="view-header">
-                    <h1>Acceso denegado</h1>
-                    <p>
-                        No tienes permisos para acceder a esta página.
-                    </p>
-                </div>
+                <AccessDenied />
             )}
         </Fragment>
     );
