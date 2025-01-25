@@ -7,7 +7,7 @@ import { sendEmail } from '../../utils/mails';
 const RecargaMonedero = () => {
     const { user, updateUser } = useAuth();
     const [importe, setImporte] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setImporte(e.target.value);
@@ -16,7 +16,7 @@ const RecargaMonedero = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (importe > 0) {
-            setLoading(true);
+            setIsLoading(true);
 
             try {
                 // Actualiza el saldo del usuario
@@ -26,7 +26,7 @@ const RecargaMonedero = () => {
 
 
                 setTimeout(() => {
-                    setLoading(false);
+                    setIsLoading(false);
 
                     if (response.status === 200) {
                         alert(`¡Saldo de ${importe}€ añadido!`);
@@ -51,7 +51,7 @@ const RecargaMonedero = () => {
                 }, 1000); // Simulamos 1 segundo de espera
 
             } catch (error) {
-                setLoading(false);
+                setIsLoading(false);
                 console.error('Error al dar de alta:', error);
                 alert('Error al dar de alta. Inténtalo de nuevo.');
             }
@@ -65,7 +65,7 @@ const RecargaMonedero = () => {
             <h1>Recarga de monedero</h1>
             <p>Bienvenido a la página de recarga de monedero de URJC Deportes.</p>
 
-            {user && !loading && (
+            {user && !isLoading && (
                 <>
                 <section>
                     <label htmlFor="importe">Introduce el importe a recargar:</label>
@@ -88,7 +88,7 @@ const RecargaMonedero = () => {
                 </>
             )}
             {!user && <p>No se ha podido cargar el usuario.</p>}
-            {loading && <Spinner />}
+            {isLoading && <Spinner />}
         </div>
     );
 };

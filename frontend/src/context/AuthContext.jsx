@@ -40,8 +40,6 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData, navigate) => {
         try {
-            //TODO: ver si hay que revisar si existe previamente el usuario
-            // Llamamos al backend para iniciar sesión
             const response = await fetch('http://localhost:4000/users/register', {
                 method: 'POST',
                 headers: {
@@ -56,9 +54,11 @@ export const AuthProvider = ({ children }) => {
                 setUser(registeredUser);
                 setIsAuthenticated(true);
                 navigate("/");
+                return response;
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
                 // mostrar un mensaje de error al usuario
+                return response;
             }
         } catch (error) {
             console.error("Error2 al registrarse:", error);
