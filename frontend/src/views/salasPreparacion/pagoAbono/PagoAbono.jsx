@@ -14,7 +14,7 @@ const PagoAbono = () => {
     const navigate = useNavigate()
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const calculateNewDate = () => {
         if (user) {
@@ -42,7 +42,7 @@ const PagoAbono = () => {
     const handlePago = async () => {
         setErrorMessage('');
         setSuccessMessage('');
-        setLoading(true);
+        setIsLoading(true);
         if(user) {
             if (!user?.alta?.gimnasio?.estado && !user?.alta?.atletismo?.estado) {
                 errorMessage('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
@@ -59,14 +59,14 @@ const PagoAbono = () => {
             if (filtroDeporte === 'Gimnasio') {
                 if (!user?.alta?.gimnasio?.estado) {
                     setErrorMessage(['No estás dado de alta en el gimnasio.']);
-                    setLoading(false);
+                    setIsLoading(false);
                     return;
                 }
                 updateData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else if (filtroDeporte === 'Atletismo') {
                 if (!user?.alta?.atletismo?.estado) {
                     setErrorMessage(['No estás dado de alta en el atletismo.']);
-                    setLoading(false);
+                    setIsLoading(false);
                     return;
                 }
                 updateData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
@@ -77,7 +77,7 @@ const PagoAbono = () => {
             try {
                 const response = await updateUser(user._id, updateData);
                 setTimeout(() => {
-                    setLoading(false);
+                    setIsLoading(false);
                     if (response.status === 200) {
                         setSuccessMessage('Pago completado con éxito!');
                         sendEmail(
@@ -132,7 +132,7 @@ const PagoAbono = () => {
                     
                     )}
                     </div>
-                    {loading && <Spinner />}
+                    {isLoading && <Spinner />}
                     {successMessage && <p className="success-message">{successMessage}</p>}
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
                 </section>

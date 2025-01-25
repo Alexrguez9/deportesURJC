@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './Login.css';
 import { useAuth } from "../../../context/AuthContext";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../../components/spinner/Spinner";
 
 const Login = () => {
     const { user, login, logout, register } = useAuth();
     let navigate = useNavigate();
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
+    const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
     const {
         register: registerRegister,
@@ -23,27 +26,60 @@ const Login = () => {
         handleSubmit: handleSubmitLogin,
         setError: setErrorLogin,
         clearErrors: clearErrorsLogin,
+        watch,
         formState: { errors: errorsLogin },
     } = useForm();
 
     const onSubmitRegister = handleSubmitRegister(async (data) => {
-        if (!user) {
-            const updatedData = handleAdmin(data);
-            try {
-                await register(updatedData, navigate);
-                navigate("/profile");
-            } catch (error) {
-                console.error("Error al registrarse:", error);
+        clearErrorsRegister(); // Clear previous errors
+        setIsRegisterLoading(true);
+        try{ 
+            if (!user) {
+                const updatedData = handleAdmin(data);
+                const resRegister = await register(updatedData, navigate);
+                if (resRegister.ok) {
+                    navigate("/profile");
+                    resetRegister();
+                } else if ( resRegister.status === 500 ) {
+                    setErrorRegister("register", {
+                        type: "manual",
+                        message: "Email ya en uso"
+                    });
+                } else if ( !resRegister.ok ) {
+                    setErrorRegister("register", {
+                        type: "manual",
+                        message: "Se ha producido un error. Por favor, inténtalo de nuevo."
+                    });
+                }
+            } else {
+                logout();
             }
-            resetRegister();
-        } else {
-            logout();
+        } catch (error) {
+            console.error("Error al registrarse:", error);
+        } finally {
+            setIsRegisterLoading(false);
         }
     });
 
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+            if (name && errorsLogin.login) {
+                clearErrorsLogin("login");
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, clearErrorsLogin, errorsLogin]);
+    
     const onSubmitLogin = handleSubmitLogin(async (data) => {
-        clearErrorsLogin(); // Limpia los errores antes de intentar un nuevo inicio de sesión
-        const updatedData = handleAdmin(data);
+        clearErrorsLogin(); // Clear previous errors
+        setIsLoginLoading(true);
+
+        const dataWatch = {
+            loginEmail: watch("loginEmail"),
+            loginPassword: watch("loginPassword"),
+        };
+
+        const updatedData = handleAdmin(dataWatch);
         try {
             const userData = {
                 email: updatedData.loginEmail,
@@ -51,19 +87,26 @@ const Login = () => {
                 role: updatedData.role
             };
             const resLogin = await login(userData, navigate);
-            if (!resLogin.ok) {
+
+            if ( resLogin.status === 401 ) {
                 setErrorLogin("login", {
                     type: "manual",
                     message: "Email o contraseña incorrectos"
                 });
+            } else if ( !resLogin.ok ) {
+                setErrorLogin("login", {
+                    type: "manual",
+                    message: "Se ha producido un error. Por favor, inténtalo de nuevo."
+                });
             }
-            
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
             setErrorLogin("login", {
                 type: "manual",
                 message: error.message
             });
+        } finally {
+            setIsLoginLoading(false);
         }
     });
 
@@ -98,7 +141,7 @@ const Login = () => {
         }
 
         if (password === repeatPassword) {
-            clearErrorsRegister();
+            clearErrorsRegister(["password"]);
         }
     };
 
@@ -140,7 +183,9 @@ const Login = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="login-button"><button type="submit">Iniciar sesión</button></div>
+                            <div className="login-button">
+                                {!isLoginLoading ? <button type="submit">Iniciar sesión</button> : <Spinner />}
+                            </div>
                             {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
                         </form>
                     </div>
@@ -165,7 +210,7 @@ const Login = () => {
                                                     maxLength: 40,
                                                 })}
                                             />
-                                            {errorsRegister.name && <span>{errorsRegister.name.message}</span>}
+                                            {errorsRegister.name && <span className="error-message">{errorsRegister.name.message}</span>}
                                         </label>
                                     </div>
                                     <div className="input-container">
@@ -178,7 +223,7 @@ const Login = () => {
                                                 })}
                                                 onBlur={handleEmailValidationRegister}
                                             />
-                                            {errorsRegister.email && <span>{errorsRegister.email.message}</span>}
+                                            {errorsRegister.email && <span className="error-message">{errorsRegister.email.message}</span>}
                                         </label>
                                     </div>
                                     <div className="input-container">
@@ -195,7 +240,7 @@ const Login = () => {
                                                 })}
                                                 onBlur={handlePasswordValidationRegister}
                                             />
-                                            {errorsRegister.password && <span>{errorsRegister.password.message}</span>}
+                                            {errorsRegister.password && <span className="error-message">{errorsRegister.password.message}</span>}
                                         </label>
                                     </div>
                                     <div className="input-container">
@@ -209,11 +254,14 @@ const Login = () => {
                                                 })}
                                                 onBlur={handlePasswordValidationRegister}
                                             />
-                                            {errorsRegister.repeatPassword && <span>{errorsRegister.repeatPassword.message}</span>}
+                                            {errorsRegister.repeatPassword && <span className="error-message">{errorsRegister.repeatPassword.message}</span>}
                                         </label>
                                     </div>
                                 </div>
-                                <div><button>Registrarse</button></div>
+                                <div>
+                                    {!isRegisterLoading ? <button type="submit">Registrarse</button> : <Spinner />}
+                                </div>
+                                {errorsRegister.register && <span className="error-message">{errorsRegister.register.message}</span>}
                             </form>
                         </section>
                     </div>
