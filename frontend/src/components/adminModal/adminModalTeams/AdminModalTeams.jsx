@@ -139,8 +139,8 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                             </label>
                         </div>
                     </div>
-                    <div className="login-button">
-                        <button type="submit">Guardar cambios</button>
+                    <div>
+                        <button type="submit" className="button-light">Guardar cambios</button>
                     </div>
                 </form>
             )}

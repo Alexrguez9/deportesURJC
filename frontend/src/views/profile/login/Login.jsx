@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "../../../components/spinner/Spinner";
 
 const Login = () => {
-    const { user, login, logout, register } = useAuth();
+    const { user, login, logout, addUser, handleAdmin } = useAuth();
     let navigate = useNavigate();
     const [isLoginLoading, setIsLoginLoading] = useState(false);
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
@@ -36,7 +36,7 @@ const Login = () => {
         try{ 
             if (!user) {
                 const updatedData = handleAdmin(data);
-                const resRegister = await register(updatedData, navigate);
+                const resRegister = await addUser(updatedData, navigate);
                 if (resRegister.ok) {
                     navigate("/profile");
                     resetRegister();
@@ -75,15 +75,15 @@ const Login = () => {
         setIsLoginLoading(true);
 
         const dataWatch = {
-            loginEmail: watch("loginEmail"),
-            loginPassword: watch("loginPassword"),
+            email: watch("loginEmail"),
+            password: watch("loginPassword"),
         };
 
         const updatedData = handleAdmin(dataWatch);
         try {
             const userData = {
-                email: updatedData.loginEmail,
-                password: updatedData.loginPassword,
+                email: updatedData.email,
+                password: updatedData.password,
                 role: updatedData.role
             };
             const resLogin = await login(userData, navigate);
@@ -109,12 +109,6 @@ const Login = () => {
             setIsLoginLoading(false);
         }
     });
-
-    const handleAdmin = (data) => {
-        const email = watchRegister("email");
-        const role = email.includes("@admin") ? "admin" : "user";
-        return { ...data, role };
-    };
 
     const handleEmailValidationRegister = () => {
         const email = watchRegister("email");
@@ -183,8 +177,8 @@ const Login = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="login-button">
-                                {!isLoginLoading ? <button type="submit">Iniciar sesión</button> : <Spinner />}
+                            <div>
+                                {!isLoginLoading ? <button type="submit" className="login-button">Iniciar sesión</button> : <Spinner />}
                             </div>
                             {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
                         </form>

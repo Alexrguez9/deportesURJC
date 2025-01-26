@@ -82,15 +82,61 @@ ul, ol {
 }
 
 button {
+  color: var(--primary-color);
+  background-color: var(--tertiary-color);
   border-radius: 20px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+
+.button-light {
+  color: var(--secondary-color);
+  background-color: var(--tertiary-color);
+  border-radius: 20px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+.button-light:hover {
+  color: var(--primary-color);
+  background-color: #ccc;
+}
+
+.logout-button {
+  color: var(--primary-color);
+  background-color: var(--tertiary-color);
+  border-radius: 20px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.logout-button:hover {
+  color: var(--white-color);
+  background-color: var(--primary-color)
+}
+
+.delete-profile-button {
+  color: var(--white-color);
+  background-color: transparent;
+}
+
+.delete-profile-button:hover {
+  color: var(--primary-color);
+
 }
 
 button.navbar-button {

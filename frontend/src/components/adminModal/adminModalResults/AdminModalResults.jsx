@@ -234,7 +234,7 @@ const ResultsAdminModal = ({ closeModal, popupData, isNewResult }) => {
                             </label>
                         </div>
                     </div>
-                    <div className="login-button"><button type="submit">Guardar cambios</button></div>
+                    <div><button type="submit" className="button-light">Guardar cambios</button></div>
                     {errorResults.login && <span className="error-message">{errorResults.login.message}</span>}
                 </form>
             )}

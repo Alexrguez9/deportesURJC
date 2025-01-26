@@ -8,6 +8,7 @@
     transform: translate(-50%, -50%);
     max-height: 80vh; /* Ajusta la altura máxima según tus necesidades */
     overflow-y: auto;
+    z-index: 1;
 }
 
 

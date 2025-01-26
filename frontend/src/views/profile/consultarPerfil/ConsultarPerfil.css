@@ -1,7 +1,8 @@
 .delete-button {
-  color: var(--tertiary-color);
+  color: var(--primary-color);
+  background-color: var(--tertiary-color);
   margin-left: 10px;
-  background-color: transparent;
+  background-color: var(--tertiary-color);
 }
 
 .delete-button:hover{
@@ -71,10 +72,6 @@
 
 .confirmation-buttons button:not(.delete-button):hover {
   background-color: #d9d9d9;
-}
-
-.cerrar-sesion-button:hover{
-  background-color: #3a3a3a;
 }
 
 .profile-info > p {

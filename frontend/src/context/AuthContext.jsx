@@ -8,6 +8,31 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const getAllUsers = async () => {
+        try {
+            const response = await fetch('http://localhost:4000/users', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Añade headers de autorización si son necesarios
+                },
+                credentials: 'include' // Incluir credenciales para autenticación del usuario
+            });
+    
+            if (response.ok) {
+                const users = await response.json();
+                return users;
+            } else {
+                console.error("Error al obtener la lista de usuarios:", response.status);
+                return null; // Manejar el error según sea necesario
+            }
+        } catch (error) {
+            console.error("Error en el fetch para obtener usuarios:", error);
+            throw error;
+        }
+    };
+    
+
     const login = async (userData, navigate) => {
         try {
             // Llamamos al backend para iniciar sesión
@@ -38,7 +63,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (userData, navigate) => {
+    const addUser = async (userData, navigate) => {
+        console.log('---userData', userData);
         try {
             const response = await fetch('http://localhost:4000/users/register', {
                 method: 'POST',
@@ -48,12 +74,22 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify(userData),
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
+            console.log('---Auth addUser response', response);
+            if (response.status === 409) {
+                // Caso de usuario duplicado
+                return response;
+            }
 
             if (response.ok) {
                 const registeredUser = await response.json();
-                setUser(registeredUser);
-                setIsAuthenticated(true);
-                navigate("/");
+                console.log('---registeredUser', registeredUser);
+                if (!user) {
+                    console.log('---not user before');
+                    setUser(registeredUser);
+                    setIsAuthenticated(true);
+                    navigate("/");
+                }
+                
                 return response;
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
@@ -98,8 +134,9 @@ export const AuthProvider = ({ children }) => {
       
             if (response.ok) {
                 const updatedUser = await response.json();
-                console.log("updatedUser AuthContext", updatedUser);
-                setUser(updatedUser); // Update user state in context
+                if (user._id === userId) {
+                    setUser(updatedUser); // Update user state in context
+                }
                 return response;
             } else {
                 throw new Error(`Error updating user: ${response.statusText}`);
@@ -119,8 +156,10 @@ export const AuthProvider = ({ children }) => {
           });
           console.log('DeleteUser auth', user);
           if (response.ok) {
-            setUser(null); // Set user state to null in context
-            setIsAuthenticated(false); // Set authentication state to false
+            if (user._id === userId) {
+              setUser(null); // Set user state to null in context
+              setIsAuthenticated(false); // Set authentication state to false
+            }
           } else {
             console.error('Error deleting user:', response.statusText);
             // Handle deletion errors as needed (e.g., display error message)
@@ -148,8 +187,20 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    /* 
+    Función inicial para asignar el rol del primer usuario. De esta manera ya tendremos un user admin de inicio, que pueda ir editando los roles de los demás usuarios.
+    Actualmente, solo se usa en la pantalla de registro de usuarios.
+    Modificar según las necesidades de la aplicación. 
+    */
+    const handleAdmin = (data) => {
+        console.log('---data', data);
+        const email = data.email;
+        const role = email.includes("@admin") ? "admin" : "user";
+        return { ...data, role };
+    };
+
     return (
-        <AuthContext.Provider value={{ user, setUser, login, logout, isAuthenticated, register, updateUser, deleteUser, isAdmin, isStudent }}>
+        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin }}>
         {children}
         </AuthContext.Provider>
     );
