@@ -49,7 +49,6 @@ export const AuthProvider = ({ children }) => {
                 const loggedInUser = await response.json();
                 setUser(loggedInUser);
                 setIsAuthenticated(true);
-                console.log("Usuario logueado:", loggedInUser);
                 navigate("/");
                 return response;
             } else {
@@ -64,7 +63,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const addUser = async (userData, navigate) => {
-        console.log('---userData', userData);
         try {
             const response = await fetch('http://localhost:4000/users/register', {
                 method: 'POST',
@@ -74,7 +72,6 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify(userData),
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
-            console.log('---Auth addUser response', response);
             if (response.status === 409) {
                 // Caso de usuario duplicado
                 return response;
@@ -82,9 +79,7 @@ export const AuthProvider = ({ children }) => {
 
             if (response.ok) {
                 const registeredUser = await response.json();
-                console.log('---registeredUser', registeredUser);
                 if (!user) {
-                    console.log('---not user before');
                     setUser(registeredUser);
                     setIsAuthenticated(true);
                     navigate("/");
@@ -154,7 +149,6 @@ export const AuthProvider = ({ children }) => {
             method: 'DELETE',
             credentials: 'include' // Include credentials for authorization
           });
-          console.log('DeleteUser auth', user);
           if (response.ok) {
             if (user._id === userId) {
               setUser(null); // Set user state to null in context
@@ -193,7 +187,6 @@ export const AuthProvider = ({ children }) => {
     Modificar según las necesidades de la aplicación. 
     */
     const handleAdmin = (data) => {
-        console.log('---data', data);
         const email = data.email;
         const role = email.includes("@admin") ? "admin" : "user";
         return { ...data, role };

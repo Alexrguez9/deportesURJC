@@ -23,6 +23,7 @@ import AdminPanel from '../views/admin/portada/AdminPanel';
 import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
 import AdminUsers from '../views/admin/portada/Users/AdminUsers';
 import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
+import UserDetail from '../views/admin/portada/Users/UserDetail';
 
 export const router = createBrowserRouter([
     {
@@ -75,9 +76,13 @@ export const router = createBrowserRouter([
                 children: [
                     { path: '', element: <ContentAdminPanel /> },
                     { path: 'admin-equipos', element: <AdminTeams /> },
-                    { path: 'admin-usuarios', element: <AdminUsers /> },
+                    { 
+                        path: 'admin-usuarios', 
+                        element: <AdminUsers />,
+                    },
                 ]
             },
+            { path: 'admin-panel/admin-usuarios/:id', element: <UserDetail /> },
         ]
     },
 ]);

@@ -35,7 +35,6 @@ const Alta = () => {
     
 
     const handleAlta = async () => {
-        console.log('Usuario alta: ', user);
         if(user) {
             if (user.alta.gimnasio.estado && user.alta.atletismo.estado) {
                 setErrorMessage('Ya estás dado de alta en las dos instalaciones.');
@@ -51,7 +50,6 @@ const Alta = () => {
                 setErrorMessage('Escoge una opción válida por favor.');
                 return;
             }
-            console.log('Mi updatedUserData al ppio', updatedUserData);
             try {
                 const response = await updateUser(user._id, updatedUserData );
                 
@@ -83,7 +81,7 @@ const Alta = () => {
                     <option value="Atletismo">Atletismo</option>
                 </select>
                 <div className="button-alta">
-                    {user ? <button onClick={handleAlta}>Darme de alta</button>: <p>Debes iniciar sesión para poder darte de alta</p>}
+                    {user ? <button onClick={handleAlta} className="button-light">Darme de alta</button>: <p>Debes iniciar sesión para poder darte de alta</p>}
                 </div>
                 {user && successMessage && <p className="success-message">{successMessage}</p>}
                 {user && errorMessage && <p className="error-message">{errorMessage}</p>}

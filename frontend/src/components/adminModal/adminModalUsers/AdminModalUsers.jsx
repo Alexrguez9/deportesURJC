@@ -46,9 +46,7 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
             if (isNewUser) {
                 const updatedData = handleAdmin(data);
                 const res = await addUser(updatedData);
-                console.log("--- adminModalUsers res", res);
                 if (res.status === 409) {
-                    console.log("---res", res);
                     setErrorMessage('El correo ya está registrado. Por favor, usa uno diferente.');
                     return;
                 }

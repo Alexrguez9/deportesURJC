@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
 import "./AdminUsers.css";
+import { Outlet } from "react-router-dom";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
+import { IoEyeOutline } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../context/AuthContext";
 import AdminModalUsers from "../../../../components/adminModal/adminModalUsers/AdminModalUsers";
 import BackButton from "../../../../components/backButton/BackButton";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
+import Spinner from "../../../../components/spinner/Spinner";
 
 const AdminUsers = () => {
     const { user, isAdmin, getAllUsers, deleteUser } = useAuth();
+    const navigate = useNavigate();
     const [users, setUsers] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [popupData, setPopupData] = useState(null);
     const [isNewUser, setIsNewUser] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const[isLoading, setIsLoading] = useState(false);
 
     const fetchUsers = async () => {
         try {
+            setIsLoading(true);
             const userList = await getAllUsers();
             setUsers(userList || []);
+            setIsLoading(false);
         } catch (error) {
             console.error("Error al obtener la lista de usuarios:", error);
         }
@@ -66,6 +72,7 @@ const AdminUsers = () => {
 
     return (
         <div id="component-content">
+            { isLoading && <Spinner />}
             {isAdmin() ? (
                 <React.Fragment>
                      {isModalOpen &&(
@@ -81,10 +88,6 @@ const AdminUsers = () => {
                     <p>
                         Aquí puedes administrar los usuarios registrados en la web.
                     </p>
-                    <p>
-                        Recuerda que si creas un nuevo usuario y quieres que sea admin, debe cumplir la condición de que el email sea @admin
-                    <br />
-                    </p>
                     <section>
                         <table>
                             <thead>
@@ -92,6 +95,8 @@ const AdminUsers = () => {
                                     <th>Nombre</th>
                                     <th>Email</th>
                                     <th>Rol</th>
+                                    <th>Alta GYM</th>
+                                    <th>Alta Atletismo</th>
                                     <th>Saldo</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -102,20 +107,28 @@ const AdminUsers = () => {
                                         <td>{user?.name}</td>
                                         <td>{user?.email}</td>
                                         <td>{user?.role}</td>
+                                        <td>{user?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
+                                        <td>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
                                         <td>{user?.saldo} €</td>
                                         <td>
                                             <GoPencil onClick={() => openModal(user)} className="editPencil" />
                                             <MdOutlineDelete onClick={() => handleDeleteUser(user._id)} className="deleteTrash" />
+                                            <IoEyeOutline
+                                                onClick={() => navigate(`/admin-panel/admin-usuarios/${user._id}`)} // Navega a la vista de detalle
+                                                className="infoEye"
+                                            />
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </section>
+
                 </React.Fragment>
             ) : (
                 <AccessDenied />
             )}
+            
         </div>
     );
 };
