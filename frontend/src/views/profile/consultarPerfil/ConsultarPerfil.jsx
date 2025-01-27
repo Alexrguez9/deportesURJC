@@ -105,8 +105,8 @@ const ConsultarPerfil = () => {
                         <div></div>
                         {user && (
                             <div>
-                                <button onClick={handleLogout} className="cerrar-sesion-button">Cerrar sesión</button>
-                                <button onClick={handleOpenDeleteConfirmation} className="delete-button">Eliminar cuenta</button>
+                                <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+                                <button onClick={handleOpenDeleteConfirmation} className="delete-profile-button">Eliminar cuenta</button>
                             </div>
                         )}
                     </div>

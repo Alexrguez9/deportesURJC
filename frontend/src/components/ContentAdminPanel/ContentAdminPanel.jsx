@@ -19,8 +19,12 @@ const ContentAdminPanel = () => {
                         <p>
                             Bienvenido a la portada de administrador de la Liga Interna de URJC Deportes.
                         </p>
-                        <Link to="/ligas-internas/encuentros" className="dropdown-link">Editar partidos</Link>
-                        <Link to="/admin-panel/admin-equipos" className="dropdown-link">Editar equipos</Link>
+                        <div className="admin-buttons-div">
+                            <Link to="/ligas-internas/encuentros" className="button-light">Editar partidos</Link>
+                            <Link to="/admin-panel/admin-equipos" className="button-light">Editar equipos</Link>
+                            <Link to="/admin-panel/admin-usuarios" className="button-light">Editar usuarios</Link>
+                        </div>
+                        
                     </div>
                 </div>
             ): (

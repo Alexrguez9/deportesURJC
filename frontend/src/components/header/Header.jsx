@@ -1,4 +1,5 @@
 import React from 'react';
+import { IoMdArrowDropdown } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
@@ -34,7 +35,7 @@ const Header = () => {
                 {user ? (
                    <div className="user-dropdown">
                         <button className="navbar-button">
-                            {user.name}
+                            {user.name}<IoMdArrowDropdown />
                         </button>
                         <div className="dropdown-menu">
                                 <Link to="profile" className="dropdown-link">Mi cuenta</Link>
