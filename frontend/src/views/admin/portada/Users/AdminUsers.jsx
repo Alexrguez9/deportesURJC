@@ -115,7 +115,7 @@ const AdminUsers = () => {
                                             <MdOutlineDelete onClick={() => handleDeleteUser(user._id)} className="deleteTrash" />
                                             <IoEyeOutline
                                                 onClick={() => navigate(`/admin-panel/admin-usuarios/${user._id}`)} // Navega a la vista de detalle
-                                                className="infoEye"
+                                                className="infoButton"
                                             />
                                         </td>
                                     </tr>

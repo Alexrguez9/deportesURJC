@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './MisReservas.css';
 import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
-import { useInstalacionesReservas } from '../../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 
 
 const MisReservas = () => {
     const { user } = useAuth();
-    const { deleteReserva } = useInstalacionesReservas();
-    const { reservas, instalaciones } = useInstalacionesReservas();
+    const { reservas, instalaciones, deleteReserva } = useFacilitiesAndReservations();
     const [filteredReservas, setFilteredReservas] = useState([]);
 
     // metemos las filteredReservas en useEffect para esperar a que se haya cargado el user y las reservas

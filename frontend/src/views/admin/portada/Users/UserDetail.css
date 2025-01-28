@@ -18,7 +18,7 @@ span {
     font-size: 1rem;
 }
 
-.infoEye {
+.infoButton {
     cursor: pointer;
     color: white;
     background-color: #ccc;
@@ -28,7 +28,7 @@ span {
     margin: 0 5px;
 }
 
-.infoEye:hover{
+.infoButton:hover{
     background-color: #5e5d5d;
     transform: scale(1.1);
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);

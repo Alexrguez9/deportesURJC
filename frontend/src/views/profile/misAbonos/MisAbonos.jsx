@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import './MisAbonos.css';
 import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
-import { useInstalacionesReservas } from '../../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 
 
 const MisAbonos = () => {

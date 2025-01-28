@@ -29,6 +29,7 @@ const Encuentros = () => {
 
     useEffect(() => {
         fetchResultados();
+        console.log('---resultados: ', resultados);
    }, []);
    
     const handleDeporteChange = (event) => {

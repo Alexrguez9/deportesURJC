@@ -49,11 +49,11 @@ const UserSchema = new mongoose.Schema(
      
     },
     abono_renovado: {
-      fecha_inicio: {
+      fechaInicio: {
         type: Date,
         required: false  // Opcional o hacer obligatorio
       },
-      fecha_fin: {
+      fechaFin: {
         type: Date,
         required: false  // Opcional o hacer obligatorio
       }

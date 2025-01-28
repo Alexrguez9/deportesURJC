@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useInstalacionesReservas } from '../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from '../../context/AuthContext';
@@ -9,8 +9,8 @@ import { sendEmail } from '../../utils/mails';
 
 const Instalaciones = () => {
     const { user } = useAuth();
-    const { instalaciones, fetchInstalaciones, postReserva, getInstalacion, contarReservasPorFranjaHoraria  } = useInstalacionesReservas();
-
+    const { instalaciones, getAllReservations, postReserva, getInstalacion, contarReservasPorFranjaHoraria  } = useFacilitiesAndReservations();
+    const [reservations, setReservations] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [selectedInstalacionId, setSelectedInstalacionId] = useState('');
     const [precioTotal, setPrecioTotal] = useState(0);
@@ -20,9 +20,12 @@ const Instalaciones = () => {
 
     //TODO: optimizar las llamadas a getInstalacion (3 veces: en obtenerInstalacionCompleta, getMinTime y getMaxTime)
 
-    useEffect(() => {
-        fetchInstalaciones();
-    }, []);
+        useEffect(() => {
+            (async () => {
+                const reservasList = await getAllReservations();
+                setReservations(reservasList || []);
+            })();
+       }, []);
 
 
     const obtenerInstalacionCompleta = async (id) => {
@@ -150,7 +153,11 @@ const Instalaciones = () => {
     return (
         <div>
             <h1>Instalaciones</h1>
-            <p>Selecciona una instalación y una fecha para reservar. <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.</p>
+            <p>Selecciona una instalación y una fecha para reservar.
+                <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.
+                <br />Las reservas son de media hora en media hora.
+                <br />Precio por media hora: {instalacionCompleta.precioPorMediaHora}€.
+            </p>
             {user ?
                 <form onSubmit={handleReservation} className='form-reservar'>
                     <div>

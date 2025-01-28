@@ -2,11 +2,11 @@ import React, { Fragment, useState } from "react";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
-import { useInstalacionesReservas } from "../../../context/InstalacioesReservasContext";
+import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ConsultarPerfil = () => {
     const { user, logout, deleteUser, updateUser } = useAuth();
-    const { reservas, deleteReserva } = useInstalacionesReservas();
+    const { reservas, deleteReserva } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [editMode, setEditMode] = useState(false);

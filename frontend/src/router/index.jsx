@@ -22,6 +22,7 @@ import RecargaMonedero from '../views/monedero/RecargaMonedero';
 import AdminPanel from '../views/admin/portada/AdminPanel';
 import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
 import AdminUsers from '../views/admin/portada/Users/AdminUsers';
+import AdminReservations from '../views/admin/portada/Reservation/AdminReservations.jsx';
 import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
 import UserDetail from '../views/admin/portada/Users/UserDetail';
 
@@ -76,10 +77,8 @@ export const router = createBrowserRouter([
                 children: [
                     { path: '', element: <ContentAdminPanel /> },
                     { path: 'admin-equipos', element: <AdminTeams /> },
-                    { 
-                        path: 'admin-usuarios', 
-                        element: <AdminUsers />,
-                    },
+                    { path: 'admin-usuarios', element: <AdminUsers />},
+                    { path: 'admin-reservas', element: <AdminReservations />},
                 ]
             },
             { path: 'admin-panel/admin-usuarios/:id', element: <UserDetail /> },
