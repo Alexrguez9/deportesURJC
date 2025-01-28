@@ -34,8 +34,8 @@ reservasSchema.pre('save', async function(next) {
   if (!instalacion) {
     throw new Error('Instalación no encontrada');
   }
-  
-  const duracion = (reserva.fecha_fin - reserva.fecha_inicio) / (30 * 60 * 1000); // Duración en medias horas
+  console.log('---reserva backend:', reserva);
+  const duracion = (reserva.fechaFin - reserva.fechaInicio) / (30 * 60 * 1000); // Duración en medias horas
   reserva.precioTotal = duracion * instalacion.precioPorMediaHora;
   
   next();

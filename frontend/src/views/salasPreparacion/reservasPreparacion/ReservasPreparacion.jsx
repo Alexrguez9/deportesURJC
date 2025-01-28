@@ -3,26 +3,19 @@ import "./ReservasPreparacion.css";
 import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import BackButton from '../../../components/backButton/BackButton';
+import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ReservasPreparacion = () => {
+    const { getAllReservas } = useFacilitiesAndReservations();
     const [reservas, setReservas] = useState([]);
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
     const { user } = useAuth();
 
     useEffect(() => {
-        const fetchreservas = async () => {
-            try {
-                const response = await fetch('http://localhost:4000/reservas');
-                if (!response.ok) {
-                    throw new Error('Error en el fetch de reservas');
-                }
-                const data = await response.json();
-                setReservas(data);
-            } catch (error) {
-                console.error("Error al cargar los datos:", error);
-            }
-        };
-        fetchreservas();
+        (async () => {
+            const reservasList = await getAllReservas();
+            setReservas(reservasList || []);
+        })();
    }, []);
    
     const handleDeporteChange = (event) => {

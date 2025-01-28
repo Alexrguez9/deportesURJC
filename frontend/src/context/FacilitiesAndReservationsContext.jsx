@@ -1,16 +1,16 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Crear el contexto
-const InstalacionesReservasContext = createContext();
+const FacilitiesAndReservationsContext = createContext();
 
 // Proveedor del contexto
-export const InstalacionesReservasProvider = ({ children }) => {
+export const FacilitiesAndReservationsProvider = ({ children }) => {
     const [instalaciones, setInstalaciones] = useState([]);
     const [reservas, setReservas] = useState([]);
 
     useEffect(() => {
         fetchInstalaciones();
-        fetchReservas();
+        getAllReservations();
     }, []);
 
     const getInstalacion = (id) => {
@@ -33,15 +33,19 @@ export const InstalacionesReservasProvider = ({ children }) => {
         }
     };
 
-    const fetchReservas = async () => {
+    const getAllReservations = async () => {
         try {
             const response = await fetch('http://localhost:4000/reservas');
             if (!response.ok) {
                 throw new Error('Error en el fetch de reservas');
             }
-            const data = await response.json();
-            setReservas(data);
-
+            if (response.ok) {
+                const users = await response.json();
+                return users;
+            } else {
+                console.error("Error al obtener la lista de reservas:", response.status);
+                return null; // Manejar el error según sea necesario
+            }
         } catch (error) {
             console.error("Error al cargar instalaciones reservas:", error);
         }
@@ -57,6 +61,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
                 body: JSON.stringify(reserva),
                 credentials: 'include'
             });
+            console.log('---reservation:', reserva);
             if (!response.ok) {
                 throw new Error('Error en el fetch de post reserva');
             }
@@ -69,7 +74,28 @@ export const InstalacionesReservasProvider = ({ children }) => {
         }
     };
 
-    const deleteReserva = async (reservaId) => {
+    const updateReservation = async (reservaId, reserva) => {
+        try {
+            const response = await fetch(`http://localhost:4000/reservas/${reservaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reserva),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al actualizar la reserva');
+            }
+
+            await getAllReservations();
+
+        } catch (error) {
+            console.error('Error al actualizar la reserva:', error);
+        }
+    };
+
+    const deleteReservation = async (reservaId) => {
         try {
           const response = await fetch(`http://localhost:4000/reservas/${reservaId}`, {
             method: 'DELETE',
@@ -82,7 +108,7 @@ export const InstalacionesReservasProvider = ({ children }) => {
             throw new Error('Error al eliminar la reserva');
           }
       
-          await fetchReservas();
+          await getAllReservations();
       
         } catch (error) {
           console.error('Error al eliminar la reserva:', error);
@@ -113,11 +139,11 @@ export const InstalacionesReservasProvider = ({ children }) => {
     };
 
     return (
-        <InstalacionesReservasContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, fetchReservas, postReserva, deleteReserva, contarReservasPorFranjaHoraria }}>
+        <FacilitiesAndReservationsContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, getAllReservations, postReserva, updateReservation, deleteReservation, contarReservasPorFranjaHoraria }}>
             {children}
-        </InstalacionesReservasContext.Provider>
+        </FacilitiesAndReservationsContext.Provider>
     );
 };
 
 // Custom hook para usar el contexto
-export const useInstalacionesReservas = () => useContext(InstalacionesReservasContext);
+export const useFacilitiesAndReservations = () => useContext(FacilitiesAndReservationsContext);

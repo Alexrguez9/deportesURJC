@@ -39,6 +39,9 @@ const UserDetail = () => {
             <h1>Detalles del Usuario</h1>
             <div className="user-info">
                 <div>
+                    <strong>ID:</strong> <span>{user._id}</span>
+                </div>
+                <div>
                     <strong>Nombre:</strong> <span>{user.name}</span>
                 </div>
                 <div>
