@@ -34,8 +34,6 @@ const AdminReservations = () => {
   useEffect(() => {
     if (isAdmin()) {
       fetchReservations();
-      console.log('---user: ', user);
-    console.log('--reservas: ', reservations);
     }
     
   }, []);

@@ -6,7 +6,7 @@ import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndRese
 
 const ConsultarPerfil = () => {
     const { user, logout, deleteUser, updateUser } = useAuth();
-    const { reservas, deleteReserva } = useFacilitiesAndReservations();
+    const { reservas, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [editMode, setEditMode] = useState(false);
@@ -34,7 +34,7 @@ const ConsultarPerfil = () => {
         if (user && user._id) {
             const userReservas = reservas.filter(reserva => reserva.userId === user._id);
             for (const reservation of userReservas) {
-                await deleteReserva(reservation._id);
+                await deleteReservation(reservation._id);
             }
 
             await deleteUser(user._id);

@@ -16,11 +16,11 @@ const instalacionSchema = new mongoose.Schema({
     },
     horario: {
       horarioInicio: {
-        type: String,
+        type: Date,
         required: true
       },
       horarioFin: {
-      type: String,
+      type: Date,
       required: true
       }
     },
