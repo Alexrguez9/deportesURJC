@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './MisReservas.css';
-import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 
@@ -49,10 +48,14 @@ const MisReservas = () => {
                             {filteredReservas.map((reserva) => (
                                 <tr key={reserva._id}>
                                     <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
-                                    <td>{moment(reserva.fechaInicio).format('LLLL')}</td>
-                                    <td>{moment(reserva.fechaFin).format('LLLL')}</td>
+                                    <td>{new Date(reserva.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
+                                    <td>{new Date(reserva.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
                                     <td>{reserva.precioTotal} €</td>
-                                    <td><button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>Eliminar reserva</button></td>
+                                    <td>
+                                        <button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>
+                                            Eliminar reserva
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

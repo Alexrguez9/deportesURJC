@@ -96,8 +96,8 @@ const AdminReservations = () => {
                         <tr key={reservation._id}>
                             <td>{reservation.userId}</td>
                             <td>{reservation.instalacionId}</td>
-                            <td>{new Date(reservation.fechaInicio).toLocaleString().slice(0, 16)}</td>
-                            <td>{new Date(reservation.fechaFin).toLocaleString()}</td>
+                            <td>{new Date(reservation.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
+                            <td>{new Date(reservation.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
                             <td>{reservation.precioTotal} €</td>
                             <td>
                             <GoPencil

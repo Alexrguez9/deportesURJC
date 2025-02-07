@@ -12,14 +12,14 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: popupData
       ? {
-          ...popupData,
-          horarioInicio: popupData.horario?.horarioInicio 
-            ? new Date(popupData.horario.horarioInicio).toISOString().slice(0, 16) 
-            : "",
-          horarioFin: popupData.horario?.horarioFin 
-            ? new Date(popupData.horario.horarioFin).toISOString().slice(0, 16) 
-            : "",
-        }
+        ...popupData,
+        horarioInicio: popupData.horario?.horarioInicio 
+          ? new Date(popupData.horario.horarioInicio).toISOString().slice(0, 16).replace("Z", "")
+          : "",
+        horarioFin: popupData.horario?.horarioFin 
+          ? new Date(popupData.horario.horarioFin).toISOString().slice(0, 16).replace("Z", "")
+          : "",
+      }
       : {
           nombre: "",
           descripcion: "",
@@ -44,8 +44,8 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
         ...data,
         isInternSport: data.isInternSport === "true", // Convertir a booleano
         horario: {
-          horarioInicio: new Date(data.horarioInicio), // Convertir a Date
-          horarioFin: new Date(data.horarioFin),
+          horarioInicio: new Date(data.horarioInicio + "Z"), // Convertir a Date, manteneniendo la zona horaria local
+          horarioFin: new Date(data.horarioFin + "Z"), // Convertir a Date, manteneniendo la zona horaria local
         },
       };
 
