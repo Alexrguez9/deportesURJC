@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import "./AdminModalFacilities.css";
@@ -10,16 +10,31 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: popupData || {
-      nombre: "",
-      descripcion: "",
-      capacidad: 0,
-      precioPorMediaHora: 0,
-      isInternSport: false,
-      horarioInicio: "",
-      horarioFin: "",
-    },
+    defaultValues: popupData
+      ? {
+          ...popupData,
+          horarioInicio: popupData.horario?.horarioInicio 
+            ? new Date(popupData.horario.horarioInicio).toISOString().slice(0, 16) 
+            : "",
+          horarioFin: popupData.horario?.horarioFin 
+            ? new Date(popupData.horario.horarioFin).toISOString().slice(0, 16) 
+            : "",
+        }
+      : {
+          nombre: "",
+          descripcion: "",
+          capacidad: 0,
+          precioPorMediaHora: 0,
+          isInternSport: false,
+          horarioInicio: "",
+          horarioFin: "",
+        },
   });
+  
+
+  useEffect(() => {
+    console.log('---popupData---', popupData);
+  }, []);
 
   const onSubmit = async (data) => {
     setErrorMessage("");
