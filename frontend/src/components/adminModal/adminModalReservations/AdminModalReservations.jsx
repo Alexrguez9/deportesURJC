@@ -12,10 +12,8 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
 
   const formatDateForInput = (date) => {
     if (!date) return "";
-    const formattedDate = new Date(date).toISOString().slice(0, 16); // Extrae hasta los minutos
-    return formattedDate;
+    return new Date(date).toISOString().slice(0, 16).replace("Z", ""); // Eliminar "Z" para evitar UTC
   };
-  
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: popupData
@@ -32,17 +30,24 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
           precioTotal: 0,
         },
   });
-  
 
   const onSubmit = async (data) => {
     setErrorMessage("");
     setSuccessMessage("");
+
     try {
+      const reservationData = {
+        ...data,
+        fechaInicio: new Date(data.fechaInicio + "Z"), // Agregar "Z" para conservar la zona horaria local
+        fechaFin: new Date(data.fechaFin + "Z"),
+      };
+
       if (popupData?._id) {
-        await updateReservation(popupData._id, data);
+        await updateReservation(popupData._id, reservationData);
       } else {
-        await addReservation(data);
+        await addReservation(reservationData);
       }
+
       setSuccessMessage("Reserva guardada correctamente");
       closeModal();
     } catch (error) {
