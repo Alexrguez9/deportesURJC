@@ -23,6 +23,7 @@ const ContentAdminPanel = () => {
                             <Link to="/admin-panel/admin-equipos" className="button-light">Editar equipos</Link>
                             <Link to="/admin-panel/admin-usuarios" className="button-light">Editar usuarios</Link>
                             <Link to="/admin-panel/admin-reservas" className="button-light">Editar reservas</Link>
+                            <Link to="/admin-panel/admin-instalaciones" className="button-light">Editar instalaciones</Link>
                         </div>
                         
                     </div>

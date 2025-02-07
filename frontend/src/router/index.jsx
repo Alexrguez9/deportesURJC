@@ -23,6 +23,7 @@ import AdminPanel from '../views/admin/portada/AdminPanel';
 import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
 import AdminUsers from '../views/admin/portada/Users/AdminUsers';
 import AdminReservations from '../views/admin/portada/Reservation/AdminReservations.jsx';
+import AdminFacilities from '../views/admin/portada/Facilities/AdminFacilities.jsx';
 import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
 import UserDetail from '../views/admin/portada/Users/UserDetail';
 
@@ -79,6 +80,7 @@ export const router = createBrowserRouter([
                     { path: 'admin-equipos', element: <AdminTeams /> },
                     { path: 'admin-usuarios', element: <AdminUsers />},
                     { path: 'admin-reservas', element: <AdminReservations />},
+                    { path: 'admin-instalaciones', element: <AdminFacilities />},
                 ]
             },
             { path: 'admin-panel/admin-usuarios/:id', element: <UserDetail /> },

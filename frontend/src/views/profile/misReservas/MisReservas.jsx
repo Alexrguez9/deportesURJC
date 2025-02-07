@@ -7,22 +7,25 @@ import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndRese
 
 const MisReservas = () => {
     const { user } = useAuth();
-    const { reservas, instalaciones, deleteReserva } = useFacilitiesAndReservations();
+    const { instalaciones, deleteReservation, getAllReservations } = useFacilitiesAndReservations();
     const [filteredReservas, setFilteredReservas] = useState([]);
 
-    // metemos las filteredReservas en useEffect para esperar a que se haya cargado el user y las reservas
-    useEffect(() => {
+    const fetchReservas = async () => {
+        const reservations = await getAllReservations();
         if (user) {
-            setFilteredReservas(reservas.filter(reserva => reserva.userId === user._id));
+            setFilteredReservas(reservations.filter(reserva => reserva.userId === user._id));
         }
-        console.log('Reservas:', reservas);
-        console.log('Mis reservas:', filteredReservas);
-        
-    }, [reservas]);
-
-    const handleRemoveReserva = (reservaId) => {
-        deleteReserva(reservaId);
     };
+
+    useEffect(() => {
+        fetchReservas();
+    }, []);
+
+    const handleRemoveReserva = async (reservaId) => {
+        await deleteReservation(reservaId);
+        fetchReservas();
+    };
+
 
     //TODO: mostrar nombre de instalacion, no id -> fetch instalaciones
     return (
@@ -31,7 +34,7 @@ const MisReservas = () => {
             <div className='content-mis-reservas'>
                 {user ? ( 
                     filteredReservas.length <= 0  ? ( 
-                        <p>No tienes reservas</p> 
+                        <p>No tienes reservations</p> 
                     ) : (
                     <table className="table-mis-reservas">
                         <thead>

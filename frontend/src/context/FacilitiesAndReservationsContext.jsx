@@ -9,25 +9,31 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     const [reservas, setReservas] = useState([]);
 
     useEffect(() => {
-        fetchInstalaciones();
+        getAllFacilities();
         getAllReservations();
     }, []);
 
-    const getInstalacion = (id) => {
-        const instAux =  instalaciones.find((instalacion) => instalacion._id === id);
+    const getInstalacion = async (id) => {
+        const instAux =  await instalaciones.find((instalacion) => instalacion._id === id);
         return instAux;
     };
 
-    const fetchInstalaciones = async () => {
+    const getAllFacilities = async () => {
         try {
             const response = await fetch('http://localhost:4000/instalaciones');
             if (!response.ok) {
                 throw new Error('Error en el fetch de instalaciones');
                 
             }
-            const data = await response.json();
-            
-            setInstalaciones(data);
+
+            if (response.ok) {
+                const facilities = await response.json();
+                setInstalaciones(facilities);
+                return facilities;
+            } else {
+                console.error("Error al obtener la lista de instalaciones:", response.status);
+                return null;
+            }
         } catch (error) {
             console.error("Error al cargar instalaciones instalaciones:", error);
         }
@@ -40,8 +46,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error en el fetch de reservas');
             }
             if (response.ok) {
-                const users = await response.json();
-                return users;
+                const reservas = await response.json();
+                setReservas(reservas);
+                return reservas;
             } else {
                 console.error("Error al obtener la lista de reservas:", response.status);
                 return null; // Manejar el error según sea necesario
@@ -51,7 +58,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     };
 
-    const postReserva = async (reserva) => {
+    const addReservation = async (reserva) => {
         try {
             const response = await fetch('http://localhost:4000/reservas', {
                 method: 'POST',
@@ -61,7 +68,6 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 body: JSON.stringify(reserva),
                 credentials: 'include'
             });
-            console.log('---reservation:', reserva);
             if (!response.ok) {
                 throw new Error('Error en el fetch de post reserva');
             }
@@ -71,6 +77,29 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         } catch (error) {
             console.error("Error al postear reserva:", error);
             return error;
+        }
+    };
+
+    const addFacility = async (facility) => {
+        try {
+            const response = await fetch('http://localhost:4000/instalaciones', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(facility),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al agregar la instalación');
+            }
+            
+            const newFacility = await response.json();
+            setInstalaciones([...instalaciones, newFacility]);
+            return newFacility;
+        } catch (error) {
+            console.error("Error al agregar instalación:", error);
+            return null;
         }
     };
 
@@ -87,11 +116,28 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             if (!response.ok) {
                 throw new Error('Error al actualizar la reserva');
             }
-
             await getAllReservations();
-
         } catch (error) {
             console.error('Error al actualizar la reserva:', error);
+        }
+    };
+
+    const updateFacility = async (instalacionId, instalacion) => {
+        try {
+            const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(instalacion),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al actualizar la instalación');
+            }
+            await getAllFacilities();
+        } catch (error) {
+            console.error('Error al actualizar la instalación:', error);
         }
     };
 
@@ -114,6 +160,26 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
           console.error('Error al eliminar la reserva:', error);
         }
     };
+
+    const deleteFacility = async (instalacionId) => {
+        try {
+          const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+      
+          if (!response.ok) {
+            throw new Error('Error al eliminar la instalación');
+          }
+      
+          await getAllFacilities();
+      
+        } catch (error) {
+          console.error('Error al eliminar la instalación:', error);
+        }
+    }
 
     const contarReservasPorFranjaHoraria = async (instalacionId, fechaInicio) => {
         const hora = fechaInicio.getHours();
@@ -139,7 +205,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     };
 
     return (
-        <FacilitiesAndReservationsContext.Provider value={{ instalaciones, reservas, getInstalacion, fetchInstalaciones, getAllReservations, postReserva, updateReservation, deleteReservation, contarReservasPorFranjaHoraria }}>
+        <FacilitiesAndReservationsContext.Provider value={{ instalaciones, reservas, getInstalacion, getAllFacilities, getAllReservations, addReservation, addFacility, updateReservation, updateFacility, deleteReservation, deleteFacility, contarReservasPorFranjaHoraria }}>
             {children}
         </FacilitiesAndReservationsContext.Provider>
     );
