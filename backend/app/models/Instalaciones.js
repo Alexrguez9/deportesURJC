@@ -6,17 +6,21 @@ const instalacionSchema = new mongoose.Schema({
       type: String,
       required: true
     },
+    isInternSport: {
+      type: String,
+      required: true
+    },
     descripcion: {
       type: String,
       required: true
     },
     horario: {
       horarioInicio: {
-        type: String,
+        type: Date,
         required: true
       },
       horarioFin: {
-      type: String,
+      type: Date,
       required: true
       }
     },

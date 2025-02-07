@@ -19,6 +19,13 @@ import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
 import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
 import RecargaMonedero from '../views/monedero/RecargaMonedero';
+import AdminPanel from '../views/admin/portada/AdminPanel';
+import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
+import AdminUsers from '../views/admin/portada/Users/AdminUsers';
+import AdminReservations from '../views/admin/portada/Reservation/AdminReservations.jsx';
+import AdminFacilities from '../views/admin/portada/Facilities/AdminFacilities.jsx';
+import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
+import UserDetail from '../views/admin/portada/Users/UserDetail';
 
 export const router = createBrowserRouter([
     {
@@ -50,20 +57,33 @@ export const router = createBrowserRouter([
                 path: 'instalaciones', 
                 element: <Instalaciones />,
             },
-            { path: 'profile',
-            element: <Profile />,
-            children: [
-                { path: '', element: <ContentProfile /> },
-                { path: 'mis-reservas', element: <MisReservas /> },
-                { path: 'mis-abonos', element: <MisAbonos /> },
-                { path: 'consultar-perfil', element: <ConsultarPerfil /> },
-                { path: 'login', element: <Login /> },
-            ]
+            { 
+                path: 'profile',
+                element: <Profile />,
+                children: [
+                    { path: '', element: <ContentProfile /> },
+                    { path: 'mis-reservas', element: <MisReservas /> },
+                    { path: 'mis-abonos', element: <MisAbonos /> },
+                    { path: 'consultar-perfil', element: <ConsultarPerfil /> },
+                    { path: 'login', element: <Login /> },
+                ]
             },
             { 
                 path: 'monedero', 
                 element: <RecargaMonedero />,
             },
+            { 
+                path: 'admin-panel', 
+                element: <AdminPanel />,
+                children: [
+                    { path: '', element: <ContentAdminPanel /> },
+                    { path: 'admin-equipos', element: <AdminTeams /> },
+                    { path: 'admin-usuarios', element: <AdminUsers />},
+                    { path: 'admin-reservas', element: <AdminReservations />},
+                    { path: 'admin-instalaciones', element: <AdminFacilities />},
+                ]
+            },
+            { path: 'admin-panel/admin-usuarios/:id', element: <UserDetail /> },
         ]
     },
 ]);

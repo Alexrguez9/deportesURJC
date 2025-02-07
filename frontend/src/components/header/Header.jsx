@@ -1,13 +1,13 @@
 import React from 'react';
+import { IoMdArrowDropdown } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 import logoURJCDeportes from '../../assets/logo_urjc_deportes.jpg';
-
 import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, isAdmin } = useAuth();
     const navigate = useNavigate();
     
     const handleLogout = () => {
@@ -35,13 +35,14 @@ const Header = () => {
                 {user ? (
                    <div className="user-dropdown">
                         <button className="navbar-button">
-                            {user.name}
+                            {user.name}<IoMdArrowDropdown />
                         </button>
                         <div className="dropdown-menu">
                                 <Link to="profile" className="dropdown-link">Mi cuenta</Link>
                                 <Link to="profile/mis-reservas" className="dropdown-link">Mis reservas</Link>
                                 <Link to="profile/mis-abonos" className="dropdown-link">Mis abonos</Link>
                                 <Link to="profile/settings" className="dropdown-link">Configuración</Link>
+                                {isAdmin() && <Link to="/admin-panel" className="dropdown-link">Panel Admin</Link> }
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
                         </div>
                     </div>

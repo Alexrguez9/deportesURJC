@@ -3,5 +3,11 @@
 }
 
 .login-button {
+  color: var(--secondary-color);
+  background-color: var(--white-color);
     margin-bottom: 1rem;
+}
+
+.login-button:hover {
+  background-color: var(--tertiary-color);
 }

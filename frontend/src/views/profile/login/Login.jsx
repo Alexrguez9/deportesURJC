@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './Login.css';
 import { useAuth } from "../../../context/AuthContext";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../../../components/spinner/Spinner";
 
 const Login = () => {
-    const { user, login, logout, register } = useAuth();
+    const { user, login, logout, addUser, handleAdmin } = useAuth();
     let navigate = useNavigate();
+    const [isLoginLoading, setIsLoginLoading] = useState(false);
+    const [isRegisterLoading, setIsRegisterLoading] = useState(false);
 
     const {
         register: registerRegister,
@@ -23,55 +26,89 @@ const Login = () => {
         handleSubmit: handleSubmitLogin,
         setError: setErrorLogin,
         clearErrors: clearErrorsLogin,
+        watch,
         formState: { errors: errorsLogin },
     } = useForm();
 
     const onSubmitRegister = handleSubmitRegister(async (data) => {
-        if (!user) {
-            const updatedData = handleAdmin(data);
-            try {
-                await register(updatedData, navigate);
-                navigate("/profile");
-            } catch (error) {
-                console.error("Error al registrarse:", error);
+        clearErrorsRegister(); // Clear previous errors
+        setIsRegisterLoading(true);
+        try{ 
+            if (!user) {
+                const updatedData = handleAdmin(data);
+                const resRegister = await addUser(updatedData, navigate);
+                if (resRegister.ok) {
+                    navigate("/profile");
+                    resetRegister();
+                } else if ( resRegister.status === 500 ) {
+                    setErrorRegister("register", {
+                        type: "manual",
+                        message: "Email ya en uso"
+                    });
+                } else if ( !resRegister.ok ) {
+                    setErrorRegister("register", {
+                        type: "manual",
+                        message: "Se ha producido un error. Por favor, inténtalo de nuevo."
+                    });
+                }
+            } else {
+                logout();
             }
-            resetRegister();
-        } else {
-            logout();
+        } catch (error) {
+            console.error("Error al registrarse:", error);
+        } finally {
+            setIsRegisterLoading(false);
         }
     });
 
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+            if (name && errorsLogin.login) {
+                clearErrorsLogin("login");
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, clearErrorsLogin, errorsLogin]);
+    
     const onSubmitLogin = handleSubmitLogin(async (data) => {
-        clearErrorsLogin(); // Limpia los errores antes de intentar un nuevo inicio de sesión
-        const updatedData = handleAdmin(data);
+        clearErrorsLogin(); // Clear previous errors
+        setIsLoginLoading(true);
+
+        const dataWatch = {
+            email: watch("loginEmail"),
+            password: watch("loginPassword"),
+        };
+
+        const updatedData = handleAdmin(dataWatch);
         try {
             const userData = {
-                email: updatedData.loginEmail,
-                password: updatedData.loginPassword,
+                email: updatedData.email,
+                password: updatedData.password,
                 role: updatedData.role
             };
             const resLogin = await login(userData, navigate);
-            if (!resLogin.ok) {
+
+            if ( resLogin.status === 401 ) {
                 setErrorLogin("login", {
                     type: "manual",
                     message: "Email o contraseña incorrectos"
                 });
+            } else if ( !resLogin.ok ) {
+                setErrorLogin("login", {
+                    type: "manual",
+                    message: "Se ha producido un error. Por favor, inténtalo de nuevo."
+                });
             }
-            
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
             setErrorLogin("login", {
                 type: "manual",
                 message: error.message
             });
+        } finally {
+            setIsLoginLoading(false);
         }
     });
-
-    const handleAdmin = (data) => {
-        const email = watchRegister("email");
-        const role = email.includes("@admin") ? "admin" : "user";
-        return { ...data, role };
-    };
 
     const handleEmailValidationRegister = () => {
         const email = watchRegister("email");
@@ -98,7 +135,7 @@ const Login = () => {
         }
 
         if (password === repeatPassword) {
-            clearErrorsRegister();
+            clearErrorsRegister(["password"]);
         }
     };
 
@@ -110,80 +147,7 @@ const Login = () => {
                 consultar y modificar tu perfil.
             </p>
             <div className="profile-content">
-                <div id="profile-card">
-                    <div className="profile-card-content">
-                        <section>
-                            <h3>Registrarse</h3>
-                            <form onSubmit={onSubmitRegister}>
-                                <div className="inputs">
-                                    <div className="input-container">
-                                        <label>
-                                            Nombre:
-                                            <input
-                                                type="text"
-                                                {...registerRegister("name", {
-                                                    required: "Por favor, introduce tu nombre",
-                                                    minLength: {
-                                                        value: 3,
-                                                        message: "El nombre debe tener al menos 3 caracteres"
-                                                    },
-                                                    maxLength: 40,
-                                                })}
-                                            />
-                                            {errorsRegister.name && <span>{errorsRegister.name.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Email:
-                                            <input
-                                                type="email"
-                                                {...registerRegister("email", {
-                                                    required: "Por favor, introduce tu email",
-                                                })}
-                                                onBlur={handleEmailValidationRegister}
-                                            />
-                                            {errorsRegister.email && <span>{errorsRegister.email.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Contraseña:
-                                            <input
-                                                type="password"
-                                                {...registerRegister("password", {
-                                                    required: true,
-                                                    minLength: {
-                                                        value: 8,
-                                                        message: "La contraseña debe tener al menos 8 caracteres"
-                                                    }
-                                                })}
-                                                onBlur={handlePasswordValidationRegister}
-                                            />
-                                            {errorsRegister.password && <span>{errorsRegister.password.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Repetir contraseña:
-                                            <input
-                                                type="password"
-                                                {...registerRegister("repeatPassword", {
-                                                    required: "Por favor, repite la contraseña",
-                                                    validate: (value) => value === watchRegister("password") || "Las contraseñas no coinciden",
-                                                })}
-                                                onBlur={handlePasswordValidationRegister}
-                                            />
-                                            {errorsRegister.repeatPassword && <span>{errorsRegister.repeatPassword.message}</span>}
-                                        </label>
-                                    </div>
-                                </div>
-                                <div><button>Registrarse</button></div>
-                            </form>
-                        </section>
-                    </div>
-                </div>
-                <div id="profile-card">
+            <div id="profile-card">
                     <div className="profile-card-content">
                         <h3>Iniciar sesión</h3>
                         <form onSubmit={onSubmitLogin}>
@@ -213,9 +177,87 @@ const Login = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className="login-button"><button type="submit">Iniciar sesión</button></div>
+                            <div>
+                                {!isLoginLoading ? <button type="submit" className="login-button">Iniciar sesión</button> : <Spinner />}
+                            </div>
                             {errorsLogin.login && <span className="error-message">{errorsLogin.login.message}</span>}
                         </form>
+                    </div>
+                </div>
+                <div id="profile-card">
+                    <div className="profile-card-content">
+                        <section>
+                            <h3>Registrarse</h3>
+                            <form onSubmit={onSubmitRegister}>
+                                <div className="inputs">
+                                    <div className="input-container">
+                                        <label>
+                                            Nombre:
+                                            <input
+                                                type="text"
+                                                {...registerRegister("name", {
+                                                    required: "Por favor, introduce tu nombre",
+                                                    minLength: {
+                                                        value: 3,
+                                                        message: "El nombre debe tener al menos 3 caracteres"
+                                                    },
+                                                    maxLength: 40,
+                                                })}
+                                            />
+                                            {errorsRegister.name && <span className="error-message">{errorsRegister.name.message}</span>}
+                                        </label>
+                                    </div>
+                                    <div className="input-container">
+                                        <label>
+                                            Email:
+                                            <input
+                                                type="email"
+                                                {...registerRegister("email", {
+                                                    required: "Por favor, introduce tu email",
+                                                })}
+                                                onBlur={handleEmailValidationRegister}
+                                            />
+                                            {errorsRegister.email && <span className="error-message">{errorsRegister.email.message}</span>}
+                                        </label>
+                                    </div>
+                                    <div className="input-container">
+                                        <label>
+                                            Contraseña:
+                                            <input
+                                                type="password"
+                                                {...registerRegister("password", {
+                                                    required: true,
+                                                    minLength: {
+                                                        value: 8,
+                                                        message: "La contraseña debe tener al menos 8 caracteres"
+                                                    }
+                                                })}
+                                                onBlur={handlePasswordValidationRegister}
+                                            />
+                                            {errorsRegister.password && <span className="error-message">{errorsRegister.password.message}</span>}
+                                        </label>
+                                    </div>
+                                    <div className="input-container">
+                                        <label>
+                                            Repetir contraseña:
+                                            <input
+                                                type="password"
+                                                {...registerRegister("repeatPassword", {
+                                                    required: "Por favor, repite la contraseña",
+                                                    validate: (value) => value === watchRegister("password") || "Las contraseñas no coinciden",
+                                                })}
+                                                onBlur={handlePasswordValidationRegister}
+                                            />
+                                            {errorsRegister.repeatPassword && <span className="error-message">{errorsRegister.repeatPassword.message}</span>}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    {!isRegisterLoading ? <button type="submit">Registrarse</button> : <Spinner />}
+                                </div>
+                                {errorsRegister.register && <span className="error-message">{errorsRegister.register.message}</span>}
+                            </form>
+                        </section>
                     </div>
                 </div>
             </div>

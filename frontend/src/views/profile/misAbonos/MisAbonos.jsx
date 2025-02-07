@@ -1,8 +1,7 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import './MisAbonos.css';
-import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
-import { useInstalacionesReservas } from '../../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 
 
 const MisAbonos = () => {
@@ -64,6 +63,8 @@ const MisAbonos = () => {
                             ) : (
                                 <p>Abono inactivo</p>
                             )}
+                            {user && successMessage && <p className="success-message">{successMessage}</p>}
+                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                         </div>
 
                         <div className="card">
@@ -80,6 +81,8 @@ const MisAbonos = () => {
                             ) : (
                                 <p>Abono inactivo</p>
                             )}
+                            {user && successMessage && <p className="success-message">{successMessage}</p>}
+                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                         </div>
                     </Fragment>
                 ): <p>Debes iniciar sesión para acceder a tus abonos</p>}

@@ -31,6 +31,14 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;
+
+        // Verificar si el correo ya está registrado
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            console.log('---existingUser:', existingUser);
+            return res.status(409).json({ error: 'El correo ya está registrado.' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = new User({
@@ -55,7 +63,7 @@ exports.register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser); // aquí, incluimos el _id
+        res.status(201).json(savedUser); // Incluimos el _id
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });

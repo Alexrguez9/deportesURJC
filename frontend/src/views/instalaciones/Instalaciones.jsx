@@ -1,66 +1,95 @@
 import React, { useState, useEffect } from 'react';
-import { useInstalacionesReservas } from '../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from '../../context/AuthContext';
 import './Instalaciones.css';
-
+import { sendEmail } from '../../utils/mails';
+import { useForm } from "react-hook-form";
 
 const Instalaciones = () => {
     const { user } = useAuth();
-    const { instalaciones, fetchInstalaciones, postReserva, getInstalacion, contarReservasPorFranjaHoraria  } = useInstalacionesReservas();
-
+    const { getAllFacilities, addReservation, getInstalacion, contarReservasPorFranjaHoraria  } = useFacilitiesAndReservations();
+    const [facilities, setFacilities] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [selectedInstalacionId, setSelectedInstalacionId] = useState('');
-    const [precioTotal, setPrecioTotal] = useState(0);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [instalacionCompleta, setInstalacionCompleta] = useState({});
+    const [minTime, setMinTime] = useState(new Date());
+    const [maxTime, setMaxTime] = useState(new Date());
+
+    const {
+            register,
+            handleSubmit: handleSubmitFacilities,
+            formState: { errors: errorFacilities },
+        } = useForm({
+            userId: user._id || '',
+            instalacionId: selectedInstalacionId || '',
+            fechaInicio: '',
+            fechaFin: '',
+            precioTotal: instalacionCompleta?.precioPorMediaHora || 0,
+        });
 
     //TODO: optimizar las llamadas a getInstalacion (3 veces: en obtenerInstalacionCompleta, getMinTime y getMaxTime)
 
-    useEffect(() => {
-        fetchInstalaciones();
-    }, []);
+   const fetchFacilities = async () => {
+        try {
+            const facilityList = await getAllFacilities();
+            setFacilities(facilityList || []);
+        } catch (error) {
+            console.error("Error al obtener las instalaciones:", error);
+        }
+   };
+ 
+   useEffect(() => {
+       fetchFacilities();
+       const fetchTimes = async () => {
+        if (selectedInstalacionId) {
+            const min = await getMinTime();
+            const max = await getMaxTime();
+            setMinTime(min);
+            setMaxTime(max);
+        }
+    };
+    fetchTimes();
+   }, [selectedInstalacionId]);
 
 
     const obtenerInstalacionCompleta = async (id) => {
         const inst = await getInstalacion(id);
-        setInstalacionCompleta(inst);
+        await setInstalacionCompleta(inst);
     }
 
-    const getMinTime = () => {
-        if (!selectedInstalacionId) {
-            console.log('no hay instalacion seleccionada');
+    const getMinTime = async () => {
+        if (!selectedInstalacionId) return new Date();
+    
+        const inst = await getInstalacion(selectedInstalacionId);
+        if (!inst || !inst.horario || !inst.horario.horarioInicio) {
+            console.error("Error: Instalación sin horario válido", inst);
             return new Date();
-
-        } else if (selectedInstalacionId) {
-            const inst = getInstalacion(selectedInstalacionId);
-
-            const startTime = new Date(inst.horario.horarioInicio);
-            const hours = startTime.getHours();
-            const minutes = startTime.getMinutes();
-
-            const minTime = new Date();
-            minTime.setHours(hours-2, minutes-30, 0); // ZONA HORARIA: UTC+2 (por eso restamos 2)
-       
-            return minTime;
-        } else {
-            // Handle case where selectedInstalacionId doesn't have a 'horario' property yet
-            console.log('no hay horario');
-            return new Date(); 
         }
+    
+        const startTime = new Date(inst.horario.horarioInicio);
+        if (isNaN(startTime.getTime())) {
+            console.error("Error: La fecha no es válida", startTime);
+            return new Date();
+        }
+    
+        startTime.setHours(startTime.getHours() - 2); // Ajuste UTC+2
+        return startTime;
     };
+    
       
-    const getMaxTime = () => {
+    const getMaxTime = async () => {
         if (!selectedInstalacionId) {
             console.log('no hay instalacion seleccionada');
             return new Date();
 
         } else if (selectedInstalacionId) {
-            const inst = getInstalacion(selectedInstalacionId);
+            const inst = await getInstalacion(selectedInstalacionId);
 
-            const startTime = new Date(inst.horario.horarioFin);
+            const startTime = new Date(inst?.horario?.horarioFin);
             let hours = startTime.getHours();
             let minutes = startTime.getMinutes();
 
@@ -83,9 +112,13 @@ const Instalaciones = () => {
         }
     };
 
-    const handleReservation = async (e) => {
-        e.preventDefault();
-        console.log(selectedInstalacionId);
+    const onSubmit = handleSubmitFacilities(async (data) => {
+        handleReservation(data);
+    });
+
+    const handleReservation = async (data) => {
+        // e.preventDefault();
+        await obtenerInstalacionCompleta(data.facilityId);
         if (!user) {
             alert("Debes iniciar sesión para reservar");
             return;
@@ -110,11 +143,10 @@ const Instalaciones = () => {
             instalacionId: selectedInstalacionId,
             fechaInicio: startDate,
             fechaFin: endDate,
-            precioTotal: instalacionCompleta.precioPorMediaHora,
+            precioTotal: instalacionCompleta?.precioPorMediaHora,
         };
 
         const numReservas = await contarReservasPorFranjaHoraria(selectedInstalacionId, startDate);
-        console.log('numReservas:', numReservas);
         if (numReservas >= instalacionCompleta.capacidad) {
             setSuccessMessage('');
             setErrorMessage('Actualmente ya hay ' + numReservas + ' reservas para esa hora. Por favor, selecciona otra hora.');
@@ -122,11 +154,17 @@ const Instalaciones = () => {
         }
 
         try {
-            const response = await postReserva(reserva);
-            console.log(response);
+            const response = await addReservation(reserva);
             //setPrecioTotal(response.data.precioTotal);
             //alert(`Reserva realizada con éxito. Precio total: ${response.data.precioTotal}€`);
             if (response.ok) {
+                sendEmail(
+                    user.email,
+                    'DeportesURJC - Confirmación de reserva',
+                    `Hola ${user.name},\n\n` +
+                    `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
+                    `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                );
                 setSuccessMessage('Reserva realizada con éxito.');
             } else {
                 setErrorMessage('Hubo un problema al realizar la reserva. Inténtalo de nuevo.');
@@ -142,27 +180,35 @@ const Instalaciones = () => {
     return (
         <div>
             <h1>Instalaciones</h1>
-            <p>Selecciona una instalación y una fecha para reservar.</p>
+            <p>Selecciona una instalación y una fecha para reservar.
+                <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.
+                <br />Las reservas son de media hora en media hora.
+            </p>
+                {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.precioPorMediaHora}€.</p>)}
+            
             {user ?
-                <form onSubmit={handleReservation} className='form-reservar'>
+                <form onSubmit={onSubmit} className='form-reservar'>
                     <div>
-                        <label>Instalación:</label>
-                        <select 
-                            value={selectedInstalacionId}
-                            onChange={(e) => {
-                                setSuccessMessage('');
-                                setSelectedInstalacionId(e.target.value);
-                                getMinTime(); // actualizamos la hora mínima y máxima cuando cambiamos de instalación
-                                obtenerInstalacionCompleta(e.target.value);
-                                setErrorMessage('');
-                            }}
-                        >
-                            {instalaciones.map(instalacion => (
-                                <option key={instalacion._id} value={instalacion._id}>
-                                    {instalacion.nombre}
-                                </option>
-                            ))}
-                        </select>
+                        <label>Instalación:
+                            <select
+                            {...register("facilityId", { required: "Por favor, selecciona un deporte" })}
+                                value={selectedInstalacionId}
+                                onChange={(e) => {
+                                    setSuccessMessage('');
+                                    setSelectedInstalacionId(e.target.value);
+                                    getMinTime(); // actualizamos la hora mínima y máxima cuando cambiamos de instalación
+                                    obtenerInstalacionCompleta(e.target.value);
+                                    setErrorMessage('');
+                                }}
+                            >
+                                {facilities.map(instalacion => (
+                                    <option key={instalacion._id} value={instalacion._id}>
+                                        {instalacion.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                        
                     </div>
                     {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.nombre}: {instalacionCompleta.capacidad}</p>}
                     {selectedInstalacionId ? (
@@ -182,8 +228,8 @@ const Instalaciones = () => {
                                     timeIntervals={30}
                                     timeCaption="time"
                                     dateFormat="d MMMM, yyyy - h:mm aa"
-                                    minTime={ getMinTime() }
-                                    maxTime={ getMaxTime() }
+                                    minTime={ minTime }
+                                    maxTime={ maxTime}
                                     minDate={new Date()}
                                 />
                             </div>

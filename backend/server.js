@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const initDB = require('./config/db');
 const cors = require('cors');
+const mailsRouters = require('./app/routes/mails');
 
 const app = express();
 const port = process.env.PORT;
@@ -51,6 +52,8 @@ app.use(reservasRouters);
 app.listen(port, () => {
     console.log(`La app está en línea en el puerto ${port}`);
 });
+
+app.use(mailsRouters);
 
 // Inicializar bbdd
 initDB();

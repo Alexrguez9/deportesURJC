@@ -10,9 +10,7 @@ exports.getData = async (req, res) => {
 // Obtener un resultado por su id
 exports.getOne = async (req, res) => {
     try {
-        console.log('-----req.params', req.params);
         const { id } = req.params;
-        console.log('---id:', id);
         const resultado = await model.findById(id);
         res.json(resultado);
     } catch (error) {
@@ -24,7 +22,32 @@ exports.getOne = async (req, res) => {
 // insertar data en Resultados
 exports.insertData = async (req, res) => {
     try {
-        const newResultado = new model(req.body);
+        const result = req.body;
+        const { equipo_local_id, equipo_visitante_id } = result;
+
+        // Verificar si ya existen equipos con los mismos IDs
+        const existingEquipoLocal = await model.findOne({ equipo_local_id });
+        const existingEquipoVisitante = await model.findOne({ equipo_visitante_id });
+
+        if (!existingEquipoLocal || !existingEquipoVisitante) {
+            return res.status(400).json({
+                error: 'No existe un equipo con este ID',
+                equipo_local_id: existingEquipoLocal ? 'Duplicado' : 'Disponible',
+                equipo_visitante_id: existingEquipoVisitante ? 'Duplicado' : 'Disponible'
+            });
+        }
+
+        const formattedBody = {
+            jornada: Number(result.jornada),
+            goles_local: Number(result.goles_local),
+            goles_visitante: Number(result.goles_visitante),
+            fecha: new Date(result.fecha),
+            ...result,
+        };
+
+        // Si no existen, crear el nuevo resultado
+        const newResultado = new model(formattedBody);
+
         const savedResultado = await newResultado.save();
         res.status(201).json(savedResultado);
     } catch (error) {
@@ -33,12 +56,21 @@ exports.insertData = async (req, res) => {
     }
 };
 
+
 // editar un Resultado
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const body = req.body;
-        const updatedResultado = await model.updateOne({ _id: id }, { $set: body });
+        const result = req.body;
+        const formattedBody = {
+            jornada: Number(result.jornada),
+            goles_local: Number(result.goles_local),
+            goles_visitante: Number(result.goles_visitante),
+            fecha: new Date(result.fecha),
+            ...result,
+        };
+        const updatedResultado = await model.updateOne({ _id: id }, { $set: result });
+        
 
         // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
         if (updatedResultado.matchedCount === 0) {

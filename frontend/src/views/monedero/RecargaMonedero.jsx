@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useAuth } from '../../context/AuthContext';
 import "./RecargaMonedero.css";
 import Spinner from "../../components/spinner/Spinner";
+import { sendEmail } from '../../utils/mails';
 
 const RecargaMonedero = () => {
     const { user, updateUser } = useAuth();
     const [importe, setImporte] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setImporte(e.target.value);
@@ -15,7 +16,7 @@ const RecargaMonedero = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (importe > 0) {
-            setLoading(true);
+            setIsLoading(true);
 
             try {
                 // Actualiza el saldo del usuario
@@ -25,7 +26,7 @@ const RecargaMonedero = () => {
 
 
                 setTimeout(() => {
-                    setLoading(false);
+                    setIsLoading(false);
 
                     if (response.status === 200) {
                         alert(`¡Saldo de ${importe}€ añadido!`);
@@ -37,14 +38,20 @@ const RecargaMonedero = () => {
                     }
 
                     // Envía los datos de la compra al correo del usuario
-                    sendEmail(user, importe);
+                    sendEmail(
+                        user.email, 
+                        "Deportes URJC - Recarga de monedero con éxito",
+                        `Hola ${user.name},\n\n` +
+                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.saldo - Number(importe)}.\n\n` +
+                        `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                    );
                     
                     // Reinicia el campo de importe
                     setImporte("");
                 }, 1000); // Simulamos 1 segundo de espera
 
             } catch (error) {
-                setLoading(false);
+                setIsLoading(false);
                 console.error('Error al dar de alta:', error);
                 alert('Error al dar de alta. Inténtalo de nuevo.');
             }
@@ -53,38 +60,12 @@ const RecargaMonedero = () => {
         }
     };
 
-    const sendEmail = async (user, importe) => {
-        try {
-            const response = await fetch("https://api.example.com/send-email", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    to: user.correo,
-                    subject: "Recarga de monedero - URJC Deportes",
-                    body: `Hola ${user.nombre},\n\nHas recargado tu monedero con un importe de €${importe}. 
-                    Tu nuevo saldo es de €${user.saldo + Number(importe)}.\n\nGracias por utilizar nuestro servicio.\n\nURJC Deportes`
-                })
-            });
-
-            if (response.ok) {
-                alert("Datos de la compra enviados a tu correo.");
-            } else {
-                console.error("Error al enviar el correo");
-            }
-        } catch (error) {
-            console.error("Error en el envío del correo:", error);
-        }
-    };
-
-
     return (
         <div id="recarga-monedero-content">
             <h1>Recarga de monedero</h1>
             <p>Bienvenido a la página de recarga de monedero de URJC Deportes.</p>
 
-            {user && !loading && (
+            {user && !isLoading && (
                 <>
                 <section>
                     <label htmlFor="importe">Introduce el importe a recargar:</label>
@@ -107,7 +88,7 @@ const RecargaMonedero = () => {
                 </>
             )}
             {!user && <p>No se ha podido cargar el usuario.</p>}
-            {loading && <Spinner />}
+            {isLoading && <Spinner />}
         </div>
     );
 };

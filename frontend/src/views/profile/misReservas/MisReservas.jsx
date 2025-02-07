@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import './MisReservas.css';
-import moment from 'moment';
 import { useAuth } from '../../../context/AuthContext';
-import { useInstalacionesReservas } from '../../../context/InstalacioesReservasContext';
+import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 
 
 const MisReservas = () => {
     const { user } = useAuth();
-    const { deleteReserva } = useInstalacionesReservas();
-    const { reservas, instalaciones } = useInstalacionesReservas();
+    const { instalaciones, deleteReservation, getAllReservations } = useFacilitiesAndReservations();
     const [filteredReservas, setFilteredReservas] = useState([]);
 
-    // metemos las filteredReservas en useEffect para esperar a que se haya cargado el user y las reservas
-    useEffect(() => {
+    const fetchReservas = async () => {
+        const reservations = await getAllReservations();
         if (user) {
-            setFilteredReservas(reservas.filter(reserva => reserva.userId === user._id));
+            setFilteredReservas(reservations.filter(reserva => reserva.userId === user._id));
         }
-        console.log('Reservas:', reservas);
-        console.log('Mis reservas:', filteredReservas);
-        
-    }, [reservas]);
-
-    const handleRemoveReserva = (reservaId) => {
-        deleteReserva(reservaId);
     };
+
+    useEffect(() => {
+        fetchReservas();
+    }, []);
+
+    const handleRemoveReserva = async (reservaId) => {
+        await deleteReservation(reservaId);
+        fetchReservas();
+    };
+
 
     //TODO: mostrar nombre de instalacion, no id -> fetch instalaciones
     return (
@@ -32,7 +33,7 @@ const MisReservas = () => {
             <div className='content-mis-reservas'>
                 {user ? ( 
                     filteredReservas.length <= 0  ? ( 
-                        <p>No tienes reservas</p> 
+                        <p>No tienes reservations</p> 
                     ) : (
                     <table className="table-mis-reservas">
                         <thead>
@@ -47,10 +48,14 @@ const MisReservas = () => {
                             {filteredReservas.map((reserva) => (
                                 <tr key={reserva._id}>
                                     <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
-                                    <td>{moment(reserva.fechaInicio).format('LLLL')}</td>
-                                    <td>{moment(reserva.fechaFin).format('LLLL')}</td>
+                                    <td>{new Date(reserva.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
+                                    <td>{new Date(reserva.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
                                     <td>{reserva.precioTotal} €</td>
-                                    <td><button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>Eliminar reserva</button></td>
+                                    <td>
+                                        <button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>
+                                            Eliminar reserva
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
