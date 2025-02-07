@@ -33,7 +33,6 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
   
 
   useEffect(() => {
-    console.log('---popupData---', popupData);
   }, []);
 
   const onSubmit = async (data) => {
