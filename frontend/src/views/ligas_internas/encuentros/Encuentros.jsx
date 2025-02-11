@@ -84,7 +84,7 @@ const Encuentros = () => {
             )}
             <div className="top-buttons-content">
                 <BackButton />
-                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em'/>}
+                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em' data-testid="add-button"/>}
             </div>
             <h1>Encuentros</h1>
             {!isAdmin() ? (
