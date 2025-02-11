@@ -9,15 +9,15 @@ const Clasificaciones = () => {
 
     useEffect(() => {
         fetchTeams();
-   }, []);
+    }, []);
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
     };
 
-    const equiposFiltrados = teams.filter((equipo) => {
-        return filtroDeporte === 'Todos' || equipo.sport === filtroDeporte;
-    });
+    const equiposFiltrados = teams
+        .filter((equipo) => filtroDeporte === 'Todos' || equipo.sport === filtroDeporte)
+        .sort((a, b) => b.points - a.points); // Sort by points in descending order
 
     return (
         <div id="component-content">
@@ -26,7 +26,6 @@ const Clasificaciones = () => {
             </div>
             
             <div className="view-header">
-                
                 <h1>Clasificaciones Ligas Internas</h1>
                 <p>Consulta las clasificaciones de las ligas internas de la URJC</p>
             </div>
