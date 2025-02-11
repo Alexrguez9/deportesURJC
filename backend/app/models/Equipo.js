@@ -12,18 +12,13 @@ const EquipoSchema = new mongoose.Schema(
       required: true
     },
     results: {
-      partidos_ganados: {
-        type: Number,
-        default: 0
-      },
-      partidos_empatados: {
-        type: Number,
-        default: 0
-      },
-      partidos_perdidos: {
-        type: Number,
-        default: 0
-      }
+      partidos_ganados: { type: Number, default: 0 },
+      partidos_empatados: { type: Number, default: 0 },
+      partidos_perdidos: { type: Number, default: 0 }
+    },
+    points: { 
+      type: Number,
+      default: 0 
     }
   },
   {

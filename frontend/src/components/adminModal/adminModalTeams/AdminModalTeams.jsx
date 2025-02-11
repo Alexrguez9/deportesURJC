@@ -27,22 +27,32 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         partidos_ganados: popupData?.results?.partidos_ganados || 0,
         partidos_perdidos: popupData?.results?.partidos_perdidos || 0,
         partidos_empatados: popupData?.results?.partidos_empatados || 0,
+        points: popupData?.points || 0,
     };
 
     const onSubmit = handleSubmitResults(async (data) => {
         setSuccessMessage('');
         setErrorMessage('');
 
+        const formattedData = {
+            ...data,
+            results: {
+                partidos_ganados: data.partidos_ganados,
+                partidos_perdidos: data.partidos_perdidos,
+                partidos_empatados: data.partidos_empatados,
+            },
+        };
+
         try {
             if (isNewTeam) {
-                const addTeamResponse = await addTeam(data);
+                const addTeamResponse = await addTeam(formattedData);
                 if (addTeamResponse.ok) {
                     setSuccessMessage('Equipo añadido correctamente');
                 } else {
                     setErrorMessage('Error añadiendo el equipo');
                 }
             } else {
-                await updateTeam(popupData._id, data);
+                await updateTeam(popupData._id, formattedData);
                 closeModal();
             }
         } catch (error) {
@@ -95,7 +105,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 Partidos ganados:
                                 <input
                                     type="number"
-                                    {...register("results.partidos_ganados", {
+                                    {...register("partidos_ganados", {
                                         required: "Por favor, introduce los partidos ganados",
                                         min: { value: 0, message: "El valor no puede ser negativo" },
                                     })}
@@ -111,7 +121,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 Partidos perdidos:
                                 <input
                                     type="number"
-                                    {...register("results.partidos_perdidos", {
+                                    {...register("partidos_perdidos", {
                                         required: "Por favor, introduce los partidos perdidos",
                                         min: { value: 0, message: "El valor no puede ser negativo" },
                                     })}
@@ -127,7 +137,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 Partidos empatados:
                                 <input
                                     type="number"
-                                    {...register("results.partidos_empatados", {
+                                    {...register("partidos_empatados", {
                                         required: "Por favor, introduce los partidos empatados",
                                         min: { value: 0, message: "El valor no puede ser negativo" },
                                     })}
@@ -135,6 +145,22 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 />
                                 {errorTeams.partidos_empatados && (
                                     <span className="error-message">{errorTeams.partidos_empatados.message}</span>
+                                )}
+                            </label>
+                        </div>
+                        <div className="input-container">
+                            <label>
+                                Puntos:
+                                <input
+                                    type="number"
+                                    {...register("points", {
+                                        required: "Por favor, introduce los puntos",
+                                        min: { value: 0, message: "El valor no puede ser negativo" },
+                                    })}
+                                    defaultValue={initialValues.points}
+                                />
+                                {errorTeams.points && (
+                                    <span className="error-message">{errorTeams.points.message}</span>
                                 )}
                             </label>
                         </div>

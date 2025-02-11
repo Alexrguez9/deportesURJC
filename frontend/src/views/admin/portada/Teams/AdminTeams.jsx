@@ -70,8 +70,9 @@ const AdminTeams = () => {
                         Aquí puedes administrar los Equipos de la Liga Interna de URJC Deportes.
                     </p>
                     <p>Si quieres añadir un equipo, la idea es añadirlo con 0 partidos ganados, 0 partidos perdidos y 0 partidos empatados.
-                    <br/>De esta manera, después podrás añadir los resultados de los partidos jugados.
+                    <br/>De esta manera, después podrás añadir los resultados de dicho equipo.
                     </p>
+                    <p>IMPORTANTE! Si editas los puntos, no se editará ningún resultado. Solo usar esta opciçon en caso urgente.</p>
                     <section>
                         <select value={filtroDeporte} onChange={handleDeporteChange}>
                             <option value="Todos">Todos</option>
@@ -85,9 +86,11 @@ const AdminTeams = () => {
                                 <tr>
                                     <th>Deporte</th>
                                     <th>Nombre del equipo</th>
-                                    <th>Partidos ganados</th>
-                                    <th>Partidos perdidos</th>
-                                    <th>Partidos empatados</th>
+                                    <th>Ganados</th>
+                                    <th>Perdidos</th>
+                                    <th>Empatados</th>
+                                    <th>Puntos</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,6 +101,7 @@ const AdminTeams = () => {
                                         <td>{teams?.results?.partidos_ganados}</td>
                                         <td>{teams?.results?.partidos_perdidos}</td>
                                         <td>{teams?.results?.partidos_empatados}</td>
+                                        <td>{teams?.points}</td>
                                         <td>
                                             <GoPencil onClick={() => openModal(teams)} className="editPencil" />
                                             <MdOutlineDelete onClick={() => deleteTeam(teams._id)} className="deleteTrash" />

@@ -19,6 +19,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             }
             const data = await response.json();
             setTeams(data);
+            return data;
         } catch (error) {
             console.error("Error al cargar equipos:", error);
         }
@@ -26,14 +27,15 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const fetchResults = async () => {
         try {
-            const response = await fetch('http://localhost:4000/encuentros');
+            const response = await fetch('http://localhost:4000/resultados');
             if (!response?.ok) {
-                throw new Error('Error al cargar los encuentros');
+                throw new Error('Error al cargar los resultados');
             }
             const data = await response.json();
             setResults(data);
+            return data;
         } catch (error) {
-            console.error("Error al cargar encuentros:", error);
+            console.error("Error al cargar resultados:", error);
         }
     };
 
@@ -128,14 +130,14 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 body: JSON.stringify(formattedData),
             });
             if (!response?.ok) {
-                throw new Error('Error al actualizar el encuentro');
+                throw new Error('Error al actualizar el resultado');
             }
 
-            const updatedEncuentro = await response.json();
-            setResults((prev) => prev.map((e) => (e._id === resultId ? updatedEncuentro : e)));
+            const updatedResult = await response.json();
+            await setResults((prev) => prev.map((e) => (e._id === resultId ? updatedResult : e)));
             return response;
         } catch (error) {
-            console.error("Error al actualizar encuentro:", error);
+            console.error("Error al actualizar resultado:", error);
         }
     };
 
@@ -158,9 +160,9 @@ export const TeamsAndResultsProvider = ({ children }) => {
         }
     };
 
-    const deleteResult = async (encuentroId) => {
+    const deleteResult = async (resultId) => {
         try {
-            const response = await fetch(`http://localhost:4000/encuentros/${encuentroId}`, {
+            const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -168,12 +170,12 @@ export const TeamsAndResultsProvider = ({ children }) => {
             });
 
             if (!response?.ok) {
-                throw new Error('Error al borrar el encuentro');
+                throw new Error('Error al borrar el resultado');
             }
 
-            setResults((prev) => prev.filter((e) => e._id !== encuentroId));
+            setResults((prev) => prev.filter((e) => e._id !== resultId));
         } catch (error) {
-            console.error("Error al borrar encuentro:", error);
+            console.error("Error al borrar resultado:", error);
         }
     };
 

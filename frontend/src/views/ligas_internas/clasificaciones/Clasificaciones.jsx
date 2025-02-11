@@ -1,35 +1,23 @@
 import React, { useState, useEffect } from "react";
 import './Clasificaciones.css';
 import BackButton from '../../../components/backButton/BackButton';
+import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 
 const Clasificaciones = () => {
-    const [equipos, setEquipos] = useState([]);
+    const { teams, fetchTeams } = useTeamsAndResults();
     const [filtroDeporte, setFiltroDeporte] = useState('Todos');
 
     useEffect(() => {
-        const fetchEquipos = async () => {
-            try {
-                const response = await fetch('http://localhost:4000/equipos');
-                if (!response.ok) {
-                    throw new Error('Error en el fetch de equipos');
-                }
-                const data = await response.json();
-                setEquipos(data);
-            } catch (error) {
-                console.error("Error al cargar los datos:", error);
-            }
-        };
-        fetchEquipos();
-   }, []);
-   console.log(equipos);
+        fetchTeams();
+    }, []);
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
     };
 
-    const equiposFiltrados = equipos.filter((equipo) => {
-        return filtroDeporte === 'Todos' || equipo.sport === filtroDeporte;
-    });
+    const equiposFiltrados = teams
+        .filter((equipo) => filtroDeporte === 'Todos' || equipo.sport === filtroDeporte)
+        .sort((a, b) => b.points - a.points); // Sort by points in descending order
 
     return (
         <div id="component-content">
@@ -38,7 +26,6 @@ const Clasificaciones = () => {
             </div>
             
             <div className="view-header">
-                
                 <h1>Clasificaciones Ligas Internas</h1>
                 <p>Consulta las clasificaciones de las ligas internas de la URJC</p>
             </div>
@@ -59,6 +46,7 @@ const Clasificaciones = () => {
                         <th>Ganados</th>
                         <th>Empatados</th>
                         <th>Perdidos</th>
+                        <th>Puntos</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +57,7 @@ const Clasificaciones = () => {
                             <td>{equipo.results.partidos_ganados}</td>
                             <td>{equipo.results.partidos_empatados}</td>
                             <td>{equipo.results.partidos_perdidos}</td>
+                            <td>{equipo.points}</td>
                         </tr>
                     ))}
                 </tbody>
