@@ -24,7 +24,7 @@ const Instalaciones = () => {
             handleSubmit: handleSubmitFacilities,
             formState: { errors: errorFacilities },
         } = useForm({
-            userId: user._id || '',
+            userId: user?._id || '',
             instalacionId: selectedInstalacionId || '',
             fechaInicio: '',
             fechaFin: '',
@@ -139,7 +139,7 @@ const Instalaciones = () => {
 
         // TODO: ver que hacer con precioTotal
         const reserva = {
-            userId: user._id,
+            userId: user?._id,
             instalacionId: selectedInstalacionId,
             fechaInicio: startDate,
             fechaFin: endDate,
@@ -202,7 +202,7 @@ const Instalaciones = () => {
                                 }}
                             >
                                 {facilities.map(instalacion => (
-                                    <option key={instalacion._id} value={instalacion._id}>
+                                    <option key={instalacion?._id} value={instalacion?._id}>
                                         {instalacion.nombre}
                                     </option>
                                 ))}
