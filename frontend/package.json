@@ -9,7 +9,8 @@
     "build:prod": "vite build --mode production",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "npx jest --coverage"
   },
   "dependencies": {
     "bson": "^6.10.1",

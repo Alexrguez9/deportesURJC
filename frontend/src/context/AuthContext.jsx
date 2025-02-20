@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userData),
-                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -147,16 +147,15 @@ export const AuthProvider = ({ children }) => {
         try {
           const response = await fetch(`http://localhost:4000/users/${userId}`, {
             method: 'DELETE',
-            credentials: 'include' // Include credentials for authorization
+            credentials: 'include'
           });
           if (response.ok) {
             if (user._id === userId) {
-              setUser(null); // Set user state to null in context
-              setIsAuthenticated(false); // Set authentication state to false
+              setUser(null);
+              setIsAuthenticated(false);
             }
           } else {
             console.error('Error deleting user:', response.statusText);
-            // Handle deletion errors as needed (e.g., display error message)
           }
           return response;
         } catch (error) {

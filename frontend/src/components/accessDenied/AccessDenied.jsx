@@ -1,3 +1,4 @@
+import React from 'react';
 import './AccessDenied.css'
 
 const AccessDenied = () => {
