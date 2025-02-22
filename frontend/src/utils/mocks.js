@@ -26,7 +26,6 @@ export const mockAuthContext = {
     setUser: jest.fn(),
 };
 
-
 export const mockFacilitiesAndReservationsContext = {
     instalaciones: [{ _id: '1', name: 'Gimnasio' }],
     reservas: [{ _id: '1', instalacionId: '1', fechaInicio: new Date() }],
