@@ -154,10 +154,12 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             throw new Error('Error al eliminar la reserva');
           }
       
-          await getAllReservations();
+          const res = await getAllReservations();
+          return res;
       
         } catch (error) {
           console.error('Error al eliminar la reserva:', error);
+          return error;
         }
     };
 

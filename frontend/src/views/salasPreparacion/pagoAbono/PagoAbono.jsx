@@ -19,11 +19,7 @@ const PagoAbono = () => {
     const calculateNewDate = () => {
         if (user) {
             const fechaInicio = new Date();
-            const fechaFin = new Date().getDate() + 30;
-
-            // <p>{user?.alta?.di.toLocaleString('es-ES', { month: 'long', year: 'numeric' })} / {fechaFin.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</p>
-            //     <p>{fechaInicio.toLocaleDateString('es-ES')} - {fechaFin.toLocaleDateString('es-ES')}</p>
-            //     <p><em>{fechaInicio.toLocaleDateString('es-ES', { weekday: 'long' })}</em></p>
+            const fechaFin = new Date().getDate() + 30; // Added 30 days
 
             return [fechaInicio, fechaFin];
         }
