@@ -67,7 +67,7 @@ const PagoAbono = () => {
                 }
                 updateData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else {
-                alert('Escoge Gimnasio o Atletismo por favor.');
+                setErrorMessage('Escoge Gimnasio o Atletismo por favor.');
                 return;
             }
             try {
@@ -85,12 +85,12 @@ const PagoAbono = () => {
                         );
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
-                        alert('Error al dar de alta. Inténtalo de nuevo más tarde.');
+                        setErrorMessage('Error al dar de alta. Inténtalo de nuevo más tarde.');
                     }
                 });
             } catch (error) {
                 console.error('Error al dar de alta:', error);
-                alert('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
+                setErrorMessage('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
             }
         }
     };
@@ -111,37 +111,35 @@ const PagoAbono = () => {
             </p>
             {user ? (
                 (user?.alta?.gimnasio?.estado || user?.alta?.atletismo?.estado) ? (
-                <section>
-                    <select value={filtroDeporte} onChange={handleDeporteChange}>
-                    <option value="Gimnasio">Gimnasio</option>
-                    <option value="Atletismo">Atletismo</option>
-                    </select>
-                    
-                    <div className="centered-div button-alta">
-                    {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
-                    {isStudent() && (
-                        user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
-                            <button onClick={handlePago}>Renovar</button>
-                            ) : (
-                                <button onClick={handlePago}>Pagar</button>
-                            )
-                    
-                    )}
-                    </div>
-                    {isLoading && <Spinner />}
-                    {successMessage && <p className="success-message">{successMessage}</p>}
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                </section>
+                    <section>
+                        <select value={filtroDeporte} onChange={handleDeporteChange}>
+                            <option value="Gimnasio">Gimnasio</option>
+                            <option value="Atletismo">Atletismo</option>
+                        </select>
+                        <div className="centered-div button-alta">
+                        {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
+                        {isStudent() && (
+                            user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
+                                <button onClick={handlePago}>Renovar gratis</button>
+                                ) : (
+                                    <button onClick={handlePago}>Obtener gratis</button>
+                                )
+                        )}
+                        </div>
+                        {isLoading && <Spinner />}
+                        {successMessage && <p className="success-message">{successMessage}</p>}
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                    </section>
                 ) : (
-                <div>
-                    <p className="text-error">
-                    No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).
-                    </p>
-                    <button onClick={handleAlta}>Alta de usuarios</button>
-                </div>
+                    <div>
+                        <p className="text-error">
+                        No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).
+                        </p>
+                        <button onClick={handleAlta}>Alta de usuarios</button>
+                    </div>
                 )
             ) : (
-                <p>Debes iniciar sesión para poder darte de alta</p>
+                <p>Debes iniciar sesión para poder pagar o renovar tu abono</p>
             )
             }
         </div>

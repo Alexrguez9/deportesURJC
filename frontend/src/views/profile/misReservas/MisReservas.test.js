@@ -24,7 +24,10 @@ describe("MisReservas Component", () => {
             { _id: 'res1', userId: '123', instalacionId: '1', fechaInicio: new Date('2024-07-15T10:00:00.000Z'), fechaFin: new Date('2024-07-15T11:00:00.000Z'), precioTotal: 15 },
             { _id: 'res2', userId: '123', instalacionId: '2', fechaInicio: new Date('2024-07-20T15:00:00.000Z'), fechaFin: new Date('2024-07-20T16:00:00.000Z'), precioTotal: 20 }
         ]);
-        mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue(true); // Default to successful delete
+        mockFacilitiesAndReservationsContext.deleteReservation = jest.fn().mockImplementation(async () => {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            return { status: 200 };
+        });
     });
 
     it("renders component with reservations table when user is logged in and has reservations", async () => {
