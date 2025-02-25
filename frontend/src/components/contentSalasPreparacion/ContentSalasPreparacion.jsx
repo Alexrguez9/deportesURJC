@@ -18,7 +18,7 @@ const ContentSalasPreparacion = () => {
                         <Card className="home-card" description={"Pago mensual Abono"} />
                     </Link>
                     <Link to="reservas-preparacion" >
-                        <Card className="clasificaciones-card"  description={"Reserva de espacio - Salas de preparación física"} />
+                        <Card className="clasificaciones-card" description={"Reserva de espacio - Salas de preparación física"} />
                     </Link>
                 </div>
             </section>

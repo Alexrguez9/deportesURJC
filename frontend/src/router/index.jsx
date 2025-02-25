@@ -6,7 +6,7 @@ import NotFound from '../views/notFound/NotFound';
 import Home from '../views/home/Home';
 import Clasificaciones from '../views/ligas_internas/clasificaciones/Clasificaciones';
 import Encuentros from '../views/ligas_internas/encuentros/Encuentros';
-import ContentLigasInternas from '../components/contentLigasInternas/ContentLigasInternas';
+import InternLeaguesContent from '../components/InternLeaguesContent/InternLeaguesContent';
 import SalasPreparacion from '../views/salasPreparacion/SalasPreparacion';
 import ContentSalasPreparacion from '../components/contentSalasPreparacion/ContentSalasPreparacion';
 import Alta from '../views/salasPreparacion/alta/Alta';
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
                 path: 'ligas-internas', 
                 element: <Ligas_internas />,
                 children: [
-                    { path: '', element: <ContentLigasInternas /> },
+                    { path: '', element: <InternLeaguesContent /> },
                     { path: 'encuentros', element: <Encuentros /> },
                     { path: 'clasificaciones', element: <Clasificaciones /> },
                 ]
