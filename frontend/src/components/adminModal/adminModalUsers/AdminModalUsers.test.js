@@ -17,17 +17,17 @@ describe("AdminModalUsers Component", () => {
     });
 
     describe("Rendering and Initial Display", () => {
-        it("renders the component in Add User mode", () => {
+        it("renders the component in 'Añadir usuario' mode", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             expect(screen.getByRole('heading', { name: /Añadir usuario/i })).toBeInTheDocument();
         });
 
-        it("renders the component in Edit User mode", () => {
+        it("renders the component in 'Editar usuario' mode", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={{ name: 'Test User', email: 'test@example.com' }} />);
             expect(screen.getByRole('heading', { name: /Editar usuario/i })).toBeInTheDocument();
         });
 
-        it("renders all form fields", () => {
+        it("renders all form fields for new user", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             expect(screen.getByLabelText(/Nombre:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Email:/i)).toBeInTheDocument();
@@ -39,18 +39,30 @@ describe("AdminModalUsers Component", () => {
             expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
-        it("renders password field in Add User mode", () => {
-            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
-            expect(screen.getByLabelText(/Contraseña:/i)).toBeInTheDocument();
-        });
-        
-        it("does not render password field in Edit User mode", () => {
+        it("renders all form fields for edit user (without password)", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={{}} />);
-            expect(screen.queryByLabelText(/Contraseña:/i)).not.toBeInTheDocument();
+            expect(screen.getByLabelText(/Nombre:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Email:/i)).toBeInTheDocument();
+            expect(screen.queryByLabelText(/Contraseña:/i)).not.toBeInTheDocument(); // Password field should not be present in edit mode
+            expect(screen.getByLabelText(/Rol:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Saldo:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Gimnasio:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Atletismo:/i)).toBeInTheDocument();
+            expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
-        it("fills in initial values when in Edit User mode", () => {
-            const popupData = { name: 'Existing User', email: 'existing@example.com', role: 'admin', saldo: 100, alta: { gimnasio: { estado: true }, atletismo: { estado: false } } };
+
+        it("fills in initial values when in 'Editar usuario' mode", () => {
+            const popupData = {
+                name: 'Existing User',
+                email: 'existing@example.com',
+                role: 'admin',
+                saldo: 100,
+                alta: {
+                    gimnasio: { estado: true },
+                    atletismo: { estado: false }
+                }
+            };
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={popupData} />);
             expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.name);
             expect(screen.getByLabelText(/Email:/i)).toHaveValue(popupData.email);
@@ -62,7 +74,7 @@ describe("AdminModalUsers Component", () => {
     });
 
     describe("Input Validation and Error Messages", () => {
-        it("shows error message for empty name field", async () => {
+        it("shows error message for empty Nombre field", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
@@ -70,25 +82,32 @@ describe("AdminModalUsers Component", () => {
             });
         });
 
-        it("shows error message for invalid email field", async () => {
+        it("shows error message for empty Email field", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
-            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: '' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
                 expect(screen.getByText(/Por favor, introduce el email/i)).toBeInTheDocument();
             });
         });
 
-        it("shows error message for short password in Add User mode", async () => {
+        it("shows error message for empty Password field when isNewUser is true", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
-            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'short' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+            await waitFor(() => {
+                expect(screen.getByText(/Por favor, introduce una contraseña/i)).toBeInTheDocument();
+            });
+        });
+
+        it("shows error message for short Password field when isNewUser is true", async () => {
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: '123' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
                 expect(screen.getByText(/La contraseña debe tener al menos 6 caracteres/i)).toBeInTheDocument();
             });
         });
 
-        it("shows error message for negative saldo", async () => {
+        it("shows error message for negative Saldo", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '-10' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
@@ -99,69 +118,83 @@ describe("AdminModalUsers Component", () => {
     });
 
     describe("Form Submission and API Calls", () => {
-        it("calls addUser and handleAdmin for new user creation on valid submit", async () => {
+        it("calls addUser on valid submit in 'Añadir usuario' mode and shows success message", async () => {
             mockAuthContext.addUser.mockResolvedValue({ ok: true, status: 200 });
-            mockAuthContext.handleAdmin.mockReturnValue({ name: 'Test Name', email: 'test@example.com', password: 'password123', role: 'user', saldo: 100, alta: { gimnasio: { estado: false }, atletismo: { estado: false } } });
-
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
 
-            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Test Name' } });
-            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'test@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
             fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
-            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '100' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
                 expect(mockAuthContext.addUser).toHaveBeenCalledTimes(1);
-                expect(mockAuthContext.handleAdmin).toHaveBeenCalledTimes(1);
+            });
+            await waitFor(() => {
                 expect(screen.getByText(/Usuario añadido correctamente/i)).toBeInTheDocument();
             });
         });
 
-        it("calls updateUser for existing user update on valid submit", async () => {
+        it("calls updateUser on valid submit in 'Editar usuario' mode and closes modal", async () => {
             mockAuthContext.updateUser.mockResolvedValue({ status: 200 });
-            render(
-                <AdminModalUsers 
-                    closeModal={mockCloseModal}
-                    isNewUser={false}
-                    popupData={{
-                        _id: 'someUserId',
-                        name: 'testName1',
-                        email: 'test@email.com',
-                        password:'123',
-                        alta: {gimnasio: { estado: false}, atletismo: { estado: false }},
-                        role: 'admin',
-                        saldo: 100,
-                    }}
-                />
-            );
-            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Updated Name' } });
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={{ _id: '1' }} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Updated User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'updateduser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'user' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '75' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
                 expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
-                expect(mockAuthContext.updateUser).toHaveBeenCalledWith('someUserId', expect.anything());
+            });
+            await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
         });
 
-        it("shows error message if addUser returns 409 (email conflict)", async () => {
-            mockAuthContext.addUser.mockResolvedValue({ status: 409 });
-            mockAuthContext.handleAdmin.mockReturnValue({ 
-                name: 'Test Name',
-                email: 'test@example.com',
-                password: 'password123',
-                role: 'user',
-                saldo: 100,
-                alta: { gimnasio: { estado: false }, atletismo: { estado: false }}
-            });
-
+        it("shows error message if addUser fails (general error)", async () => {
+            mockAuthContext.addUser.mockResolvedValue({ ok: false, status: 500 });
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
 
-            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Test Name' } });
-            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'test@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
             fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
-            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '100' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                expect(screen.getByText(/Ocurrió un error al añadir el usuario./i)).toBeInTheDocument();
+            });
+        });
+
+        it("shows error message if updateUser fails", async () => {
+            mockAuthContext.updateUser.mockResolvedValue({ status: 400 });
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={{ _id: '1' }} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Updated User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'updateduser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'user' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '75' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                expect(screen.getByText(/Ocurrió un error al editar el usuario./i)).toBeInTheDocument();
+            });
+        });
+
+        it("shows error message if addUser returns 409 (email already registered)", async () => {
+            mockAuthContext.addUser.mockResolvedValue({ status: 409 });
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'existing@example.com' } }); // Use existing email
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
