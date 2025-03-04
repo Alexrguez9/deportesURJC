@@ -38,7 +38,9 @@ export const mockFacilitiesAndReservationsContext = {
     updateFacility: jest.fn().mockResolvedValue({ ok: true }),
     deleteReservation: jest.fn().mockResolvedValue({ ok: true }),
     deleteFacility: jest.fn().mockResolvedValue({ ok: true }),
-    contarReservasPorFranjaHoraria: jest.fn().mockResolvedValue(2)
+    contarReservasPorFranjaHoraria: jest.fn().mockResolvedValue(2),
+    getMinTime: jest.fn().mockResolvedValue(new Date()),
+    getMaxTime: jest.fn().mockResolvedValue(new Date())
 };
 
 export const mockTeamsAndResultsContext = {

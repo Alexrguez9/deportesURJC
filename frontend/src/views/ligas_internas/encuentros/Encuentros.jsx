@@ -9,8 +9,8 @@ import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 
 const Encuentros = () => {
     const { user, isAdmin } = useAuth();
-    const { results, fetchResults } = useTeamsAndResults();
-    const [filtroDeporte, setFiltroDeporte] = useState('Todos');
+    const { results, fetchResults, deleteResult } = useTeamsAndResults();
+    const [filtroDeporte, setFiltroDeporte] = useState('Fútbol-7');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [popupData, setPopupData] = useState(null);
     const [isNewResult, setIsNewResult] = useState(false);
@@ -27,7 +27,7 @@ const Encuentros = () => {
     };
 
     const filteredResults = results?.filter((results) => {
-        return filtroDeporte === 'Todos' || results.sport === filtroDeporte;
+        return filtroDeporte === 'Fútbol-7' || results.sport === filtroDeporte;
     });
 
     const openModal = async (resultado) => {
@@ -59,24 +59,6 @@ const Encuentros = () => {
         fetchResults();
     }
 
-    const deleteResult = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:4000/resultados/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error('Error al borrar el resultado');
-            }
-            fetchResults();
-        }
-        catch (error) {
-            console.error('Error al borrar el resultado:', error);
-        }
-    }
-
     return (
         <div id="component-content">
             {isModalOpen &&(
@@ -98,7 +80,6 @@ const Encuentros = () => {
             )}
             <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
-                    <option value="Todos">Todos</option>
                     <option value="Fútbol-7">Fútbol-7</option>
                     <option value="Fútbol-sala">Fútbol-sala</option>
                     <option value="Básket 3x3">Básket 3x3</option>
