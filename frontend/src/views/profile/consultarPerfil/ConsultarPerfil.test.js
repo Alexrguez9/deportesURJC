@@ -32,7 +32,7 @@ describe("ConsultarPerfil Component", () => {
         mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue(true);
     });
 
-    it.only("renders component with user data", () => {
+    it("renders component with user data", () => {
         render(<ConsultarPerfil />);
         expect(screen.getByRole("heading", { name: /mi cuenta/i })).toBeInTheDocument();
         expect(screen.getByText(/nombre: test user/i)).toBeInTheDocument();

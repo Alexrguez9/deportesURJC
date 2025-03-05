@@ -83,9 +83,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(registeredUser);
                     setIsAuthenticated(true);
                     navigate("/");
+                    return response;
+                } else {
+                    return { status: response.status };
                 }
-                
-                return response;
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
                 // mostrar un mensaje de error al usuario
@@ -103,12 +104,11 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
-
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
             } else {
-                // Manejar errores de cierre de sesión según sea necesario
+                console.error("Error al cerrar sesión:", response.status);
             }
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
@@ -129,8 +129,8 @@ export const AuthProvider = ({ children }) => {
       
             if (response.ok) {
                 const updatedUser = await response.json();
-                if (user._id === userId) {
-                    setUser(updatedUser); // Update user state in context
+                if (user?._id === userId) {
+                    setUser(updatedUser);
                 }
                 return response;
             } else {
@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
             credentials: 'include'
           });
           if (response.ok) {
-            if (user._id === userId) {
+            if (user?._id === userId) {
               setUser(null);
               setIsAuthenticated(false);
             }
@@ -197,7 +197,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
-
 
 export const useAuth = () => useContext(AuthContext);
