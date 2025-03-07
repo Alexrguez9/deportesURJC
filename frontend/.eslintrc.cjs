@@ -18,4 +18,16 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  globals: {
+    describe: 'readonly',
+    it: 'readonly',
+    expect: 'readonly',
+    jest: 'readonly',
+    beforeEach: 'readonly',
+    afterEach: 'readonly',
+    beforeAll: 'readonly',
+    afterAll: 'readonly',
+    screen: 'readonly',
+    test: 'readonly',
+ },
 }
