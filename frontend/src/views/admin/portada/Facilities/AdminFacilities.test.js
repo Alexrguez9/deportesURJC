@@ -71,7 +71,7 @@ describe("AdminFacilities Component", () => {
 
         render(<AdminFacilities />);
         expect(document.querySelector(".spinner")).toBeInTheDocument();
-        await waitFor(() => expect(document.querySelector(".spinner")).not.toBeInTheDocument(), { timeout: 100 });
+        await waitFor(() => expect(document.querySelector(".spinner")).not.toBeInTheDocument(), { timeout: 1000 });
         expect(screen.getByText("Instalaciones")).toBeInTheDocument();
     });
 

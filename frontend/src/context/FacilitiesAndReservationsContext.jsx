@@ -14,7 +14,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     }, []);
 
     const getInstalacion = async (id) => {
-        const instAux =  await instalaciones.find((instalacion) => instalacion._id === id);
+        const instAux =  instalaciones.find((instalacion) => instalacion._id === id);
         return instAux;
     };
 

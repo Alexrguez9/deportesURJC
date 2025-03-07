@@ -126,6 +126,21 @@ describe("AuthProvider", () => {
         );
       });
     });
+    it("debería ejecutar y asertar el mock de logout directamente", async () => {
+      mockAuthContext.user = {
+        _id: "123",
+        email: "test@admin.com",
+        role: "admin",
+      };
+      mockAuthContext.isAuthenticated = true;
+
+      await act(async () => {
+        await mockAuthContext.logout();
+      });
+
+      expect(mockAuthContext.user).toBe(null);
+      expect(mockAuthContext.isAuthenticated).toBe(false);
+    });
 
     it("debería manejar errores en el logout", async () => {
       fetch.mockResolvedValueOnce({ ok: false, status: 500 });
@@ -190,7 +205,6 @@ describe("AuthProvider", () => {
         expect(authValues.user).toBe(null);
       });
     });
-
   });
 
   describe("updateUser", () => {
@@ -361,16 +375,20 @@ describe("AuthProvider", () => {
 
   describe("isStudent", () => {
     it("debería retornar true si el usuario tiene email de alumno", () => {
-        mockAuthContext.user = {
-            _id: "123",
-            email: "student@alumnos.urjc.es",
-            role: "student",
-        };
+      mockAuthContext.user = {
+        _id: "123",
+        email: "student@alumnos.urjc.es",
+        role: "student",
+      };
     });
 
     it("debería retornar false si el usuario no tiene email de alumno", () => {
-        mockAuthContext.user = { _id: "123", email: "user@test.com", role: "user" };
-        expect(authValues.isStudent()).toBe(false);
+      mockAuthContext.user = {
+        _id: "123",
+        email: "user@test.com",
+        role: "user",
+      };
+      expect(authValues.isStudent()).toBe(false);
     });
 
     it("debería retornar false si no hay usuario logueado", () => {

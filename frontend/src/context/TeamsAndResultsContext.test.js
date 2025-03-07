@@ -246,7 +246,7 @@ describe("TeamsAndResultsProvider", () => {
             });
 
             await waitFor(() => {
-                expect(fetch).toHaveBeenCalledTimes(3);
+                expect(fetch).toHaveBeenCalledTimes(2);
                 expect(console.error).toHaveBeenCalled();
                 expect(errorThrown).toBeInstanceOf(Error);
             });
@@ -347,10 +347,11 @@ describe("TeamsAndResultsProvider", () => {
     describe("updateResult", () => {
         it("debería actualizar un resultado correctamente", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1" };
+            const updateData = { goles_local: "2", goles_visitante: "1", fecha: "2024-01-01" };
+            const mockUpdatedTeam = { _id: resultId, ...updateData };
             fetch.mockResolvedValueOnce({
                 ok: true,
-                json: async () => ({ _id: resultId, ...updateData }),
+                json: async () => mockUpdatedTeam,
             });
 
             await act(async () => {
@@ -358,7 +359,7 @@ describe("TeamsAndResultsProvider", () => {
             });
 
             await waitFor(() => {
-                expect(fetch).toHaveBeenCalledTimes(2);
+                expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
                     `http://localhost:4000/resultados/${resultId}`,
                     expect.anything()

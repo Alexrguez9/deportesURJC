@@ -135,6 +135,9 @@ describe("PagoAbono Component", () => {
                     atletismo: expect.objectContaining({ estado: false })
                 })
             }));
+        });
+
+        await waitFor(() => {
             expect(screen.getByText(/Pago completado con éxito!/i)).toBeInTheDocument();
         });
     });
@@ -310,9 +313,6 @@ describe("PagoAbono Component", () => {
         const pagarButton = screen.getByRole("button", { name: /obtener gratis/i });
         fireEvent.click(pagarButton);
 
-
-        await waitFor(() => {
-            expect(screen.getByText(/No estás dado de alta en el gimnasio./i)).toBeInTheDocument();
-        });
+        expect(screen.getByText(/No estás dado de alta en el gimnasio./i)).toBeInTheDocument();
     });
 });

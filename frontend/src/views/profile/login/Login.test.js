@@ -36,40 +36,6 @@ describe("Login Component", () => {
         expect(screen.getByRole('button', { name: /registrarse/i })).toBeInTheDocument();
     });
 
-    // it("renders loading spinner during login", async () => {
-    //     mockAuthContext.login.mockImplementation(async () => {
-    //         return new Promise(resolve => setTimeout(resolve, 50));
-    //     });
-    //     render(
-    //         <BrowserRouter>
-    //             <Login />
-    //         </BrowserRouter>
-    //     );
-    //     const loginForm = document.querySelector('#login-form');
-    //     const loginButton = within(loginForm).getByRole('button', { name: /iniciar sesión/i });
-    //     fireEvent.click(loginButton);
-    //     await waitFor(() => {
-    //         expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    //     });
-    // });
-
-    // it("renders loading spinner during registration", async () => {
-    //     mockAuthContext.addUser.mockImplementation(async () => {
-    //         return new Promise(resolve => setTimeout(resolve, 50));
-    //     });
-    //     render(
-    //         <BrowserRouter>
-    //             <Login />
-    //         </BrowserRouter>
-    //     );
-    //     const registerForm = document.querySelector('#register-form');
-    //     const registerButton = within(registerForm).getByRole('button', { name: /registrarse/i });
-    //     fireEvent.click(registerButton);
-    //     await waitFor(() => {
-    //         expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    //     });
-    // });
-
     it("handles successful login", async () => {
         const mockNavigate = jest.fn();
         jest.mock("react-router-dom", () => ({
@@ -118,6 +84,8 @@ describe("Login Component", () => {
     });
 
     it("handles registration error - email already in use", async () => {
+        mockAuthContext.user = null;
+        mockAuthContext.getAllUsers.mockResolvedValue([{ _id: "1", email: "user1@test.com"}]);
         mockAuthContext.addUser.mockResolvedValue({ ok: false, status: 500 });
         render(
             <BrowserRouter>
@@ -128,11 +96,11 @@ describe("Login Component", () => {
         const registerButton = within(registerForm).getByRole('button', { name: /registrarse/i });
         const nameInput = within(registerForm).getByLabelText(/nombre:/i, { selector: 'input' });
         const emailInput = within(registerForm).getByLabelText(/email:/i, { selector: 'input' });
-        const passwordInput = within(registerForm).getByLabelText(/^contraseña:/i, { selector: 'input' }); // Use ^ to specify start of line for password label
+        const passwordInput = within(registerForm).getByLabelText(/^contraseña:/i, { selector: 'input' });
         const repeatPasswordInput = within(registerForm).getByLabelText(/repetir contraseña:/i, { selector: 'input' });
 
         fireEvent.change(nameInput, { target: { value: 'New User' } });
-        fireEvent.change(emailInput, { target: { value: 'existing@example.com' } });
+        fireEvent.change(emailInput, { target: { value: 'user1@test.com' } });
         fireEvent.change(passwordInput, { target: { value: 'password123' } });
         fireEvent.change(repeatPasswordInput, { target: { value: 'password123' } });
         fireEvent.click(registerButton);
