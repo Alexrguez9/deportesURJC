@@ -109,6 +109,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             return response;
         } catch (error) {
             console.error("Error al actualizar equipo:", error);
+            throw error;
         }
     };
 
@@ -119,7 +120,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 jornada: Number(updateData.jornada),
                 goles_local: Number(updateData.goles_local),
                 goles_visitante: Number(updateData.goles_visitante),
-                fecha: new Date(updateData.fecha).toISOString(), // Asegura que sea formato ISO
+                fecha: new Date(updateData.fecha)?.toISOString(), // Asegura que sea formato ISO
             };
 
             const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
@@ -138,6 +139,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             return response;
         } catch (error) {
             console.error("Error al actualizar resultado:", error);
+            throw error;
         }
     };
 
@@ -151,12 +153,13 @@ export const TeamsAndResultsProvider = ({ children }) => {
             });
 
             if (!response?.ok) {
-                throw new Error('Error al borrar el equipo');
+                throw new Error(`Error al borrar el equipo: ${response.statusText}`);
             }
 
             setTeams((prev) => prev.filter((e) => e._id !== teamId));
         } catch (error) {
             console.error("Error al borrar equipo:", error);
+            throw error;
         }
     };
 
@@ -170,12 +173,13 @@ export const TeamsAndResultsProvider = ({ children }) => {
             });
 
             if (!response?.ok) {
-                throw new Error('Error al borrar el resultado');
+                throw new Error(`Error al borrar el resultado: ${response.statusText}`);
             }
 
             setResults((prev) => prev.filter((e) => e._id !== resultId));
         } catch (error) {
             console.error("Error al borrar resultado:", error);
+            throw error;
         }
     };
 

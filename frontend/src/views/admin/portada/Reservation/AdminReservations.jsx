@@ -62,6 +62,19 @@ const AdminReservations = () => {
     return <AccessDenied />;
   }
 
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date)) {
+        return "Invalid Date";
+      }
+      return date.toISOString().replace("T", " ").slice(0, 16);
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
+  };
+
   return (
     <div id="component-content">
         {isLoading && <Spinner />}
@@ -93,23 +106,23 @@ const AdminReservations = () => {
                 </thead>
                 <tbody>
                     {reservations.map((reservation) => (
-                        <tr key={reservation._id}>
-                            <td>{reservation.userId}</td>
-                            <td>{reservation.instalacionId}</td>
-                            <td>{new Date(reservation.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
-                            <td>{new Date(reservation.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
-                            <td>{reservation.precioTotal} €</td>
+                        <tr key={reservation?._id}>
+                            <td>{reservation?.userId}</td>
+                            <td>{reservation?.instalacionId}</td>
+                            <td>{formatDate(reservation?.fechaInicio)}</td>
+                            <td>{formatDate(reservation?.fechaFin)}</td>
+                            <td>{reservation?.precioTotal} €</td>
                             <td>
                             <GoPencil
                                 onClick={() => openModal(reservation)}
                                 className="editPencil"
                             />
                             <MdOutlineDelete
-                                onClick={() => handleDeleteReservation(reservation._id)}
+                                onClick={() => handleDeleteReservation(reservation?._id)}
                                 className="deleteTrash"
                             />
                             <IoPersonOutline 
-                                onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation.userId}`)}
+                                onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation?.userId}`)}
                                 className="infoButton"
                             />
                             </td>

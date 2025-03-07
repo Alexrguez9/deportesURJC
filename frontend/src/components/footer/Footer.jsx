@@ -41,7 +41,7 @@ const Footer = () => {
             <div id="legal">
                 <a href="">Aviso Legal</a>
                 <a href="">Política de Privacidad</a>
-                <a href="">Política de Cookies</a>   
+                <a href="">Política de Cookies</a>
             </div>
             <div id="license_copyright">
                 <p>Released under the MIT License.</p>

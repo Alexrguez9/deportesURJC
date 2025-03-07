@@ -150,7 +150,7 @@ const Login = () => {
             <div id="profile-card">
                     <div className="profile-card-content">
                         <h3>Iniciar sesión</h3>
-                        <form onSubmit={onSubmitLogin}>
+                        <form onSubmit={onSubmitLogin} id="login-form">
                             <div className="inputs">
                                 <div className="input-container">
                                     <label>
@@ -188,7 +188,7 @@ const Login = () => {
                     <div className="profile-card-content">
                         <section>
                             <h3>Registrarse</h3>
-                            <form onSubmit={onSubmitRegister}>
+                            <form onSubmit={onSubmitRegister} id="register-form">
                                 <div className="inputs">
                                     <div className="input-container">
                                         <label>

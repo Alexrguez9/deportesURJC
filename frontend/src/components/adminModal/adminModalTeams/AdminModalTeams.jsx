@@ -52,8 +52,12 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                     setErrorMessage('Error añadiendo el equipo');
                 }
             } else {
-                await updateTeam(popupData._id, formattedData);
-                closeModal();
+                const res = await updateTeam(popupData._id, formattedData);
+                if (res?.ok) {
+                    setSuccessMessage('Equipo actualizado correctamente');
+                } else {
+                    setErrorMessage('Error actualizando el equipo');
+                }
             }
         } catch (error) {
             setErrorMessage('Ocurrió un error al procesar la solicitud.');

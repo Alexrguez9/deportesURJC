@@ -19,6 +19,8 @@ const AdminUsers = () => {
     const [popupData, setPopupData] = useState(null);
     const [isNewUser, setIsNewUser] = useState(false);
     const[isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     const fetchUsers = async () => {
         try {
@@ -123,6 +125,8 @@ const AdminUsers = () => {
                             </tbody>
                         </table>
                     </section>
+                    {errorMessage && <p className="error-message">{errorMessage}</p>}
+                    {successMessage && <p className="success-message">{successMessage}</p>}
 
                 </React.Fragment>
             ) : (

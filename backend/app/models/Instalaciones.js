@@ -7,7 +7,7 @@ const instalacionSchema = new mongoose.Schema({
       required: true
     },
     isInternSport: {
-      type: String,
+      type: Boolean,
       required: true
     },
     descripcion: {

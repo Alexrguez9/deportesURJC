@@ -4,7 +4,7 @@
     flex-wrap: wrap;
 }
 
-#profile-card {
+/* #profile-card {
     display: flex;
     justify-content: center;
     max-width: 555px;
@@ -18,7 +18,7 @@
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 844px;
-}
+} */
 
 .inputs {
     display: grid;

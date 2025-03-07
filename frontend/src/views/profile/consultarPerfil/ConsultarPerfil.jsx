@@ -72,8 +72,8 @@ const ConsultarPerfil = () => {
                         <section>
                             <h2>Mi cuenta</h2>
                             <div className="centered-div profile-info">
-                                <p>Nombre: {user.name}</p>
-                                <p>Email: {user.email}</p>
+                                <p>Nombre: {user?.name}</p>
+                                <p>Email: {user?.email}</p>
                             {editMode ? (
                                 <div className="centered-div">
                                     <label>
@@ -96,7 +96,7 @@ const ConsultarPerfil = () => {
                                     <button onClick={() => { setEditMode(false); setErrorMessage('');} }>Cancelar</button>
                                 </div>
                             ) : (
-                                <button onClick={() => {setEditMode(true); setSuccessMessage('');}}>Editar perfil</button>
+                                user && <button onClick={() => {setEditMode(true); setSuccessMessage('');}}>Editar perfil</button>
                             )}
                             {user && successMessage && <p className="success-message">{successMessage}</p>}
                             {user && errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -111,7 +111,6 @@ const ConsultarPerfil = () => {
                         )}
                     </div>
                 </div>
-               
             </div>
             {showDeleteConfirmation && (
                 <div className="delete-confirmation-popup">

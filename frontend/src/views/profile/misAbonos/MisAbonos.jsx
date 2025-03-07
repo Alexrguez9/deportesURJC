@@ -35,9 +35,6 @@ const MisAbonos = () => {
     }
 
     useEffect(() => {
-        console.log('Usuario en MisAbonos: ', user);
-        console.log('user?.alta?.gimnasio?.estado:', user?.alta?.gimnasio?.estado);
-        console.log('user?.alta?.atletismo?.estado:', user?.alta?.atletismo?.estado);
     }, []);
 
     const opcionesReservaSalas = ['gimnasio', 'atletismo'];
@@ -50,7 +47,7 @@ const MisAbonos = () => {
                 {user ? (
                     <Fragment>
                         <div className="card">
-                            <p>Usuario: {user.name || 'Usuario'}</p>
+                            <p>Usuario: {user?.name || 'Usuario'}</p>
                             <h2>GIMNASIO MENSUAL</h2>
                             {estadoGimnasio ? (
                                 <Fragment>

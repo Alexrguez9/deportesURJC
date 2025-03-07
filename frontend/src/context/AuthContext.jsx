@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userData),
-                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -83,9 +83,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(registeredUser);
                     setIsAuthenticated(true);
                     navigate("/");
+                    return response;
+                } else {
+                    return { status: response.status };
                 }
-                
-                return response;
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
                 // mostrar un mensaje de error al usuario
@@ -103,12 +104,11 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
-
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
             } else {
-                // Manejar errores de cierre de sesión según sea necesario
+                console.error("Error al cerrar sesión:", response.status);
             }
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
@@ -129,8 +129,8 @@ export const AuthProvider = ({ children }) => {
       
             if (response.ok) {
                 const updatedUser = await response.json();
-                if (user._id === userId) {
-                    setUser(updatedUser); // Update user state in context
+                if (user?._id === userId) {
+                    setUser(updatedUser);
                 }
                 return response;
             } else {
@@ -147,16 +147,15 @@ export const AuthProvider = ({ children }) => {
         try {
           const response = await fetch(`http://localhost:4000/users/${userId}`, {
             method: 'DELETE',
-            credentials: 'include' // Include credentials for authorization
+            credentials: 'include'
           });
           if (response.ok) {
-            if (user._id === userId) {
-              setUser(null); // Set user state to null in context
-              setIsAuthenticated(false); // Set authentication state to false
+            if (user?._id === userId) {
+              setUser(null);
+              setIsAuthenticated(false);
             }
           } else {
             console.error('Error deleting user:', response.statusText);
-            // Handle deletion errors as needed (e.g., display error message)
           }
           return response;
         } catch (error) {
@@ -198,7 +197,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
-
 
 export const useAuth = () => useContext(AuthContext);

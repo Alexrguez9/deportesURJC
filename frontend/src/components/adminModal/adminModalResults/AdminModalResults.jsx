@@ -6,7 +6,7 @@ import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalResults.css";
 import { useForm } from "react-hook-form";
 
-const ResultsAdminModal = ({ closeModal, popupData, isNewResult }) => {
+const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     const { user } = useAuth();
     const { teams, addResult, updateResult } = useTeamsAndResults();
     const [successMessage, setSuccessMessage] = useState('');
@@ -72,7 +72,6 @@ const ResultsAdminModal = ({ closeModal, popupData, isNewResult }) => {
         const equipoLocal = filteredTeams.find(team => team.name === data.equipo_local);
         const equipoVisitante = filteredTeams.find(team => team.name === data.equipo_visitante);
         const fullDate = combineDateAndTime(data.fecha, data.hora);
-
         data = {
             ...data,
             equipo_local_id: equipoLocal?._id,
@@ -238,11 +237,10 @@ const ResultsAdminModal = ({ closeModal, popupData, isNewResult }) => {
                     {errorResults.login && <span className="error-message">{errorResults.login.message}</span>}
                 </form>
             )}
-            {/* {TODO: Añadir mensajes de éxito y error} */}
             {user && successMessage && <p className="success-message">{successMessage}</p>}
             {user && errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
     );
 };
 
-export default ResultsAdminModal;
+export default AdminModalResults;
