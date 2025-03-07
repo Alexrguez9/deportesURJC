@@ -1,5 +1,4 @@
-import React from "react";
-import { render, waitFor, screen, act } from "@testing-library/react";
+import { render, waitFor, act } from "@testing-library/react";
 import { TeamsAndResultsProvider, useTeamsAndResults } from "../context/TeamsAndResultsContext";
 
 // Mock de fetch global para simular las llamadas a la API

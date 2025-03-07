@@ -1,4 +1,8 @@
-import React, { useState, useEffect, Fragment } from "react";
+import {
+    useState,
+    useEffect,
+    Fragment 
+} from "react";
 import "./Encuentros.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";

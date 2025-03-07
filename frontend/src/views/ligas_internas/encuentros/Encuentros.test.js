@@ -1,5 +1,9 @@
-import React from 'react';
-import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import {
+    render,
+    screen,
+    waitFor,
+    fireEvent
+} from "@testing-library/react";
 import Encuentros from "./Encuentros";
 import { BrowserRouter } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";

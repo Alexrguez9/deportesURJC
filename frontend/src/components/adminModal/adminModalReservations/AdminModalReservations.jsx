@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../context/AuthContext";
 import "./AdminModalReservations.css";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
@@ -130,6 +130,19 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
       {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   );
+};
+
+
+AdminModalReservations.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  popupData: PropTypes.shape({
+    _id: PropTypes.string,
+    userId: PropTypes.string,
+    instalacionId: PropTypes.string,
+    fechaInicio: PropTypes.string,
+    fechaFin: PropTypes.string,
+    precioTotal: PropTypes.number,
+  }),
 };
 
 export default AdminModalReservations;

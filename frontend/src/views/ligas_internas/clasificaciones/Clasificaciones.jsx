@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import './Clasificaciones.css';
 import BackButton from '../../../components/backButton/BackButton';
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";

@@ -1,4 +1,3 @@
-import React from "react";
 import "./UserDetail.css";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";

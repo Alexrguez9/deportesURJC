@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import Card from "../../components/card/Card";
 import './ContentProfile.css';

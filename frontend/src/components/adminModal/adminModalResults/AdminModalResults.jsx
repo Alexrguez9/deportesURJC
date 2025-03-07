@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 import { IoMdClose } from "react-icons/io";
 import { getDateWithoutTime } from "../../../utils/results.js";
 import { useAuth } from "../../../context/AuthContext";
@@ -241,6 +242,23 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
             {user && errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
     );
+};
+
+AdminModalResults.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    popupData: PropTypes.shape({
+        sport: PropTypes.string,
+        jornada: PropTypes.number,
+        equipo_local: PropTypes.string,
+        goles_local: PropTypes.number,
+        equipo_visitante: PropTypes.string,
+        goles_visitante: PropTypes.number,
+        fecha: PropTypes.string,
+        hora: PropTypes.string,
+        lugar: PropTypes.string,
+        _id: PropTypes.string,
+    }),
+    isNewResult: PropTypes.bool.isRequired,
 };
 
 export default AdminModalResults;

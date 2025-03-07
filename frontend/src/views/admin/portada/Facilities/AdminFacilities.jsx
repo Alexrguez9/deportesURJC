@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import "./AdminFacilities.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -61,7 +61,7 @@ const AdminFacilities = () => {
   return (
     <div id="component-content">
       {isLoading && <Spinner />}
-      <React.Fragment>
+      <Fragment>
         {isModalOpen && (
           <AdminModalFacilities
             closeModal={closeModal}
@@ -108,7 +108,7 @@ const AdminFacilities = () => {
             </tbody>
           </table>
         </section>
-      </React.Fragment>
+      </Fragment>
     </div>
   );
 };

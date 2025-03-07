@@ -3,7 +3,12 @@ import { defaults } from 'jest-config';
 
 export default {
   transform: {
-    "^.+\\.jsx?$": "babel-jest"
+    "^.+\\.jsx?$": ["babel-jest", {
+      presets: [
+        ["@babel/preset-react", { runtime: 'automatic' }],
+        // "@babel/preset-env" // Añadir en caso de necesitarlo para el entorno de test
+      ]
+    }]
   },
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/setupTests.js"],

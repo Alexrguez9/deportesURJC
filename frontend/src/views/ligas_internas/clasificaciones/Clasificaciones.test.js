@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Clasificaciones from './Clasificaciones';
 import { useTeamsAndResults } from '../../../context/TeamsAndResultsContext';
@@ -7,7 +6,11 @@ jest.mock('../../../context/TeamsAndResultsContext', () => ({
   useTeamsAndResults: jest.fn(),
 }));
 
-jest.mock('../../../components/backButton/BackButton', () => () => <button>Volver</button>);
+jest.mock('../../../components/backButton/BackButton', () => {
+  const MockBackButton = () => <button>Volver</button>;
+  MockBackButton.displayName = 'MockBackButton';
+  return MockBackButton;
+});
 
 describe('Clasificaciones Component', () => {
   beforeEach(() => {

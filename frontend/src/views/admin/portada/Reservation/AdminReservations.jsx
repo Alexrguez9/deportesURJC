@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import "./AdminReservations.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -12,7 +12,7 @@ import Spinner from "../../../../components/spinner/Spinner";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
 
 const AdminReservations = () => {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin } = useAuth();
   const { getAllReservations, deleteReservation } = useFacilitiesAndReservations();
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
@@ -78,7 +78,7 @@ const AdminReservations = () => {
   return (
     <div id="component-content">
         {isLoading && <Spinner />}
-        <React.Fragment>
+        <Fragment>
             {isModalOpen && (
                 <AdminModalReservations
                 closeModal={closeModal}
@@ -131,7 +131,7 @@ const AdminReservations = () => {
                 </tbody>
                 </table>
             </section>
-        </React.Fragment>
+        </Fragment>
     </div>
   );
 };

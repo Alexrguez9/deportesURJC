@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import "./AdminUsers.css";
-import { Outlet } from "react-router-dom";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { IoEyeOutline } from "react-icons/io5";
@@ -76,7 +75,7 @@ const AdminUsers = () => {
         <div id="component-content">
             { isLoading && <Spinner />}
             {isAdmin() ? (
-                <React.Fragment>
+                <Fragment>
                      {isModalOpen &&(
                         <AdminModalUsers closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewUser={isNewUser}  />
                     )}
@@ -128,7 +127,7 @@ const AdminUsers = () => {
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
                     {successMessage && <p className="success-message">{successMessage}</p>}
 
-                </React.Fragment>
+                </Fragment>
             ) : (
                 <AccessDenied />
             )}

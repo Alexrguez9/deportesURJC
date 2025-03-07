@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';

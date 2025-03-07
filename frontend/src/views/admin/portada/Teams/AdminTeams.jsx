@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import "./AdminTeams.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -57,7 +57,7 @@ const AdminTeams = () => {
     return (
         <div id="component-content">
             {isAdmin() ? (
-                <React.Fragment>
+                <Fragment>
                     {isModalOpen &&(
                         <AdminModalTeams closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewTeam={isNewTeam}  />
                     )}
@@ -111,7 +111,7 @@ const AdminTeams = () => {
                             </tbody>
                         </table>
                     </section>
-                </React.Fragment>
+                </Fragment>
             ): (
                 <AccessDenied />
             )}

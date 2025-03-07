@@ -1,12 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import PagoAbono from "./PagoAbono";
 import { useAuth } from '../../../context/AuthContext';
 import { mockAuthContext } from "../../../utils/mocks";
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import * as mailUtils from '../../../utils/mails';
-import PaymentSimulation from '../../../components/paymentSimulation/PaymentSimulation';
-import Spinner from '../../../components/spinner/Spinner';
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()

@@ -1,4 +1,5 @@
-import React, { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import "./AdminModalFacilities.css";
@@ -151,6 +152,23 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
       {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   );
+};
+
+
+AdminModalFacilities.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+  popupData: PropTypes.shape({
+    _id: PropTypes.string,
+    nombre: PropTypes.string,
+    descripcion: PropTypes.string,
+    capacidad: PropTypes.number,
+    precioPorMediaHora: PropTypes.number,
+    isInternSport: PropTypes.bool,
+    horario: PropTypes.shape({
+      horarioInicio: PropTypes.string,
+      horarioFin: PropTypes.string,
+    }),
+  }),
 };
 
 export default AdminModalFacilities;

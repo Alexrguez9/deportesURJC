@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, waitFor, within, fireEvent } from "@testing-library/react";
 import Login from "./Login";
 import { useAuth } from "../../../context/AuthContext";

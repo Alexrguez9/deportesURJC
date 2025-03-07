@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './MisReservas.css';
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
