@@ -1,6 +1,5 @@
 // FacilitiesAndReservationsContext.test.js
-import React from "react";
-import { render, waitFor, screen, act } from "@testing-library/react";
+import { render, waitFor, act } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../context/FacilitiesAndReservationsContext";
 
 // Mock de fetch global para simular las llamadas a la API

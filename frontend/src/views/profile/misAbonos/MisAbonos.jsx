@@ -1,8 +1,6 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import './MisAbonos.css';
 import { useAuth } from '../../../context/AuthContext';
-import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
-
 
 const MisAbonos = () => {
     const { user, updateUser } = useAuth();
@@ -37,7 +35,6 @@ const MisAbonos = () => {
     useEffect(() => {
     }, []);
 
-    const opcionesReservaSalas = ['gimnasio', 'atletismo'];
     const estadoAtletismo = user?.alta?.atletismo?.estado;
     const estadoGimnasio = user?.alta?.gimnasio?.estado;
     return (

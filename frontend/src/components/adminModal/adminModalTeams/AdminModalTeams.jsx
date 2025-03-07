@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
+import PropTypes from 'prop-types';
 import { IoMdClose } from "react-icons/io";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
@@ -7,7 +8,7 @@ import { useForm } from "react-hook-form";
 
 const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
     const { user } = useAuth();
-    const { teams, addTeam, updateTeam } = useTeamsAndResults();
+    const { addTeam, updateTeam } = useTeamsAndResults();
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -178,6 +179,23 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
             {user && errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
     );
+};
+
+
+AdminModalTeams.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    popupData: PropTypes.shape({
+        sport: PropTypes.string,
+        name: PropTypes.string,
+        results: PropTypes.shape({
+            partidos_ganados: PropTypes.number,
+            partidos_perdidos: PropTypes.number,
+            partidos_empatados: PropTypes.number,
+        }),
+        points: PropTypes.number,
+        _id: PropTypes.string,
+    }),
+    isNewTeam: PropTypes.bool.isRequired,
 };
 
 export default AdminModalTeams;

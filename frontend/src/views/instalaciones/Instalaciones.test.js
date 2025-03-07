@@ -1,5 +1,9 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+    render,
+    screen,
+    fireEvent,
+    waitFor
+} from "@testing-library/react";
 import Instalaciones from "./Instalaciones";
 import { useAuth } from "../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../context/FacilitiesAndReservationsContext";

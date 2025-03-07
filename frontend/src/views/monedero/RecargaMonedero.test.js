@@ -1,4 +1,3 @@
-import React from "react";
 import { render } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../../context/FacilitiesAndReservationsContext";
 import { mockFacilitiesAndReservationsContext } from "../../utils/mocks";

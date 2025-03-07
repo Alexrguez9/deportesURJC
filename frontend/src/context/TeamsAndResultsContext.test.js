@@ -1,4 +1,3 @@
-import React from "react";
 import { render, waitFor, act } from "@testing-library/react";
 import { TeamsAndResultsProvider, useTeamsAndResults } from "../context/TeamsAndResultsContext";
 

@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../../context/AuthContext";
 import "./AdminModalUsers.css";
+import PropTypes from "prop-types";
 
 const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
     const { addUser, updateUser, handleAdmin } = useAuth();
@@ -176,6 +177,26 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
             {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
     );
+};
+
+
+AdminModalUsers.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    popupData: PropTypes.shape({
+        name: PropTypes.string,
+        email: PropTypes.string,
+        role: PropTypes.string,
+        saldo: PropTypes.number,
+        alta: PropTypes.shape({
+            gimnasio: PropTypes.shape({
+                estado: PropTypes.bool,
+            }),
+            atletismo: PropTypes.shape({
+                estado: PropTypes.bool,
+            }),
+        }),
+    }),
+    isNewUser: PropTypes.bool.isRequired,
 };
 
 export default AdminModalUsers;

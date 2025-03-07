@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminFacilities from "./AdminFacilities";
 import { useAuth } from "../../../../context/AuthContext";

@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from "@testing-library/react";
 import ContentAdminPanel from "./ContentAdminPanel";
 import { useAuth } from '../../context/AuthContext';
@@ -9,7 +8,11 @@ jest.mock("react-router-dom", () => ({
     Link: ({ to, children, className }) => <a href={to} className={className}>{children}</a>, // Mock Link for testing purposes
 }));
 
-jest.mock('../../components/backButton/BackButton', () => () => <button>Volver</button>);
+jest.mock('../../components/backButton/BackButton', () => {
+    const MockBackButton = () => <button>Volver</button>;
+    MockBackButton.displayName = 'MockBackButton';
+    return MockBackButton;
+});
 
 jest.mock('../../context/AuthContext', () => ({
     useAuth: jest.fn()
