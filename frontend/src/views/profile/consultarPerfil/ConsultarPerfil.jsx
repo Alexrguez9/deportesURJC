@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { toast } from "sonner";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
@@ -12,8 +13,6 @@ const ConsultarPerfil = () => {
     const [editMode, setEditMode] = useState(false);
     const [updatedName, setUpdatedName] = useState(user?.name || '');
     const [updatedPassword, setUpdatedPassword] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
     const handleOpenDeleteConfirmation = () => {
         setShowDeleteConfirmation(true);
@@ -36,17 +35,22 @@ const ConsultarPerfil = () => {
             for (const reservation of userReservas) {
                 await deleteReservation(reservation._id);
             }
-
-            await deleteUser(user._id);
+            const res = await deleteUser(user._id);
+            if (res.status === 200) {
+                toast.success('Cuenta eliminada con éxito.');
+            } else {
+                toast.error('Ha ocurrido un error al eliminar tu cuenta. Inténtalo de nuevo.');
+            }
             navigate('/'); // Redirecciona a home
         } else {
             console.error('Usuario no loggeado o no tiene ID');
+            toast.error('Ha ocurrido un error al eliminar tu cuenta. Inténtalo de nuevo.');
         }
     };
 
     const handleEditProfile = async () => {
         if (!updatedName.trim() || !updatedPassword.trim()) {
-            setErrorMessage("El nombre y la contraseña no pueden estar vacíos.");
+            toast.error("El nombre y la contraseña no pueden estar vacíos.");
             return;
         }
 
@@ -56,11 +60,11 @@ const ConsultarPerfil = () => {
                 password: updatedPassword,
             });
 
-            setSuccessMessage("Perfil actualizado con éxito.");
+            toast.success("Perfil actualizado con éxito.");
             setEditMode(false);
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);
-            setErrorMessage("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
+            toast.error("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
         }
     };
 
@@ -93,13 +97,11 @@ const ConsultarPerfil = () => {
                                         />
                                     </label>
                                     <button onClick={handleEditProfile}>Guardar cambios</button>
-                                    <button onClick={() => { setEditMode(false); setErrorMessage('');} }>Cancelar</button>
+                                    <button onClick={() => { setEditMode(false)} }>Cancelar</button>
                                 </div>
                             ) : (
-                                user && <button onClick={() => {setEditMode(true); setSuccessMessage('');}}>Editar perfil</button>
+                                user && <button onClick={() => { setEditMode(true)} }>Editar perfil</button>
                             )}
-                            {user && successMessage && <p className="success-message">{successMessage}</p>}
-                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                             </div>
                         </section>
                         <div></div>

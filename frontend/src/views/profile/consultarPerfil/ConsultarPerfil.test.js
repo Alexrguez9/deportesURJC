@@ -4,6 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner'; // Importa toast para poder mockearlo
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -18,6 +19,14 @@ jest.mock("../../../context/FacilitiesAndReservationsContext", () => ({
     useFacilitiesAndReservations: jest.fn()
 }));
 
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
+}));
+
+
 describe("ConsultarPerfil Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -25,10 +34,10 @@ describe("ConsultarPerfil Component", () => {
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
         mockAuthContext.user = { _id: "123", name: "Test User", email: "test@example.com", saldo: 10 };
         mockAuthContext.logout.mockResolvedValue(true);
-        mockAuthContext.deleteUser.mockResolvedValue(true);
+        mockAuthContext.deleteUser.mockResolvedValue({ status: 200 });
         mockAuthContext.updateUser.mockResolvedValue({ status: 200, data: { message: 'Profile updated' } });
         mockFacilitiesAndReservationsContext.reservas = [];
-        mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue(true);
+        mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue({ status: 200 });
     });
 
     it("renders component with user data", () => {
@@ -82,7 +91,7 @@ describe("ConsultarPerfil Component", () => {
 
         await waitFor(() => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith("123", { name: 'Updated Name', password: 'updatedPass' });
-            expect(screen.getByText(/perfil actualizado con éxito/i)).toBeInTheDocument();
+            expect(toast.success).toHaveBeenCalledWith("Perfil actualizado con éxito.");
         });
     });
 
@@ -94,7 +103,7 @@ describe("ConsultarPerfil Component", () => {
         fireEvent.click(saveButton);
 
         await waitFor(() => {
-            expect(screen.getByText(/el nombre y la contraseña no pueden estar vacíos/i)).toBeInTheDocument();
+            expect(toast.error).toHaveBeenCalledWith("El nombre y la contraseña no pueden estar vacíos.");
             expect(mockAuthContext.updateUser).not.toHaveBeenCalled();
         });
     });
@@ -112,7 +121,7 @@ describe("ConsultarPerfil Component", () => {
         fireEvent.click(saveButton);
 
         await waitFor(() => {
-            expect(screen.getByText(/hubo un error al actualizar tu perfil/i)).toBeInTheDocument();
+            expect(toast.error).toHaveBeenCalledWith("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
         });
     });
 
@@ -127,7 +136,7 @@ describe("ConsultarPerfil Component", () => {
 
         expect(screen.queryByLabelText(/nuevo nombre:/i)).not.toBeInTheDocument();
         expect(screen.queryByLabelText(/nueva contraseña:/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/el nombre y la contraseña no pueden estar vacíos/i)).not.toBeInTheDocument();
+        expect(toast.error).not.toHaveBeenCalled();
     });
 
     it("calls logout and navigates to home page when 'Cerrar sesión' button is clicked", async () => {
@@ -177,6 +186,7 @@ describe("ConsultarPerfil Component", () => {
             expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res2');
             expect(mockAuthContext.deleteUser).toHaveBeenCalledWith("123");
             expect(mockNavigate).toHaveBeenCalledWith("/");
+            expect(toast.success).toHaveBeenCalledWith('Cuenta eliminada con éxito.');
         });
     });
 
@@ -195,6 +205,7 @@ describe("ConsultarPerfil Component", () => {
             expect(mockFacilitiesAndReservationsContext.deleteReservation).not.toHaveBeenCalled();
             expect(mockAuthContext.deleteUser).toHaveBeenCalledWith("123");
             expect(mockNavigate).toHaveBeenCalledWith("/");
+            expect(toast.success).toHaveBeenCalledWith('Cuenta eliminada con éxito.');
         });
     });
 
@@ -208,5 +219,18 @@ describe("ConsultarPerfil Component", () => {
         expect(screen.queryByRole("button", { name: /editar perfil/i })).not.toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /cerrar sesión/i })).not.toBeInTheDocument();
         expect(screen.queryByRole("button", { name: /eliminar cuenta/i })).not.toBeInTheDocument();
+    });
+
+    it("shows error message on deleteUser failure", async () => {
+        mockAuthContext.deleteUser.mockResolvedValue({ status: 500 }); // Simula fallo en deleteUser
+        render(<ConsultarPerfil />);
+        const deleteAccountButton = screen.getByRole("button", { name: /eliminar cuenta/i });
+        fireEvent.click(deleteAccountButton);
+        const confirmDeleteButton = screen.getByRole("button", { name: /eliminar definitivamente/i });
+        fireEvent.click(confirmDeleteButton);
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Ha ocurrido un error al eliminar tu cuenta. Inténtalo de nuevo.');
+        });
     });
 });

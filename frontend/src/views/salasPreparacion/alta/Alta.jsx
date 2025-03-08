@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
 import './Alta.css';
 import BackButton from "../../../components/backButton/BackButton";
@@ -6,12 +7,8 @@ import BackButton from "../../../components/backButton/BackButton";
 const Alta = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
     const { user, updateUser } = useAuth();
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        setErrorMessage('');
-        setSuccessMessage('');
     }, [filtroDeporte]);
 
     const handleDeporteChange = (event) => {
@@ -30,9 +27,15 @@ const Alta = () => {
     const handleAlta = async () => {
         if(user) {
             if (user.alta.gimnasio.estado && user.alta.atletismo.estado) {
-                setErrorMessage('Ya estás dado de alta en las dos instalaciones.');
-                return;
+                throw { status: { ok: false, error: 'Ya estás dado de alta en las dos instalaciones.' } };
             }
+            if (filtroDeporte === 'Atletismo' && user.alta.atletismo.estado) {
+                throw { status: { ok: false, error: 'Ya estás dado de alta en atletismo' } };
+            }
+            if (filtroDeporte === 'Gimnasio' && user.alta.gimnasio.estado) {
+                throw { status: { ok: false, error: 'Ya estás dado de alta en gimnasio' } };
+            }
+
             const [fechaInicio, fechaFin] = calculateNewDate();
             const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
@@ -40,21 +43,15 @@ const Alta = () => {
             } else if (filtroDeporte === 'Atletismo') {
                 updatedUserData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin};
             } else {
-                setErrorMessage('Escoge una opción válida por favor.');
-                return;
+                throw { status: { ok: false, error: 'Escoja una opción válida por favor.' } };
             }
             try {
-                const response = await updateUser(user._id, updatedUserData );
-                
-                if (response.status === 200) {
-                    setSuccessMessage('Alta completada con éxito!');
-                } else {
-                    console.error('Error al actualizar el usuario:', response.data.message);
-                    setErrorMessage('Error al dar de alta. No se ha podido actulizar tu usuario');
+                const response = await updateUser(user._id, updatedUserData);
+                if (response.status !== 200) {
+                    throw { status: { ok: false, error: 'Error al dar de alta. No se ha podido actulizar tu usuario' } };
                 }
             } catch (error) {
-                console.error('Error al dar de alta:', error);
-                setErrorMessage('Error al dar de alta2. Inténtalo de nuevo más tarde.');
+                throw { status: { ok: false, error: 'Se ha producido un error al dar de alta. Inténtalo de nuevo más tarde.' } };
             }
         }
     };
@@ -74,10 +71,20 @@ const Alta = () => {
                     <option value="Atletismo">Atletismo</option>
                 </select>
                 <div className="button-alta">
-                    {user ? <button onClick={handleAlta} className="button-light">Darme de alta</button>: <p>Debes iniciar sesión para poder darte de alta</p>}
+                    {user ? 
+                        <button 
+                            className="button-light" 
+                            onClick={()=> {
+                                toast.promise(() => handleAlta(), {
+                                    loading: 'Dando de alta...',
+                                    success: 'Alta completada con éxito!',
+                                    error: (err) => {
+                                        return err?.status?.error || 'Error al dar de alta. Inténtalo de nuevo más tarde.';
+                                    },
+                                })
+                            }}>Darme de alta</button> 
+                        : <p>Debes iniciar sesión para poder darte de alta</p>}
                 </div>
-                {user && successMessage && <p className="success-message">{successMessage}</p>}
-                {user && errorMessage && <p className="error-message">{errorMessage}</p>}
             </section>
         </div>
     );

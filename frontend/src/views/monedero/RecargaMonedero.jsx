@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { useAuth } from '../../context/AuthContext';
 import "./RecargaMonedero.css";
 import Spinner from "../../components/spinner/Spinner";
@@ -29,12 +30,12 @@ const RecargaMonedero = () => {
                     setIsLoading(false);
 
                     if (response.status === 200) {
-                        alert(`¡Saldo de ${importe}€ añadido!`);
+                        toast.success(`¡Saldo de ${importe}€ añadido!`);
                         console.log('Mi updateData', updatedUserData);
                         console.log('Mi user', user);
                     } else {
                         console.error('Error al recargar el monedero:', response.data.message);
-                        alert('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
+                        toast.error('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
                     }
 
                     // Envía los datos de la compra al correo del usuario
@@ -46,17 +47,16 @@ const RecargaMonedero = () => {
                         `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                     );
                     
-                    // Reinicia el campo de importe
                     setImporte("");
-                }, 1000); // Simulamos 1 segundo de espera
+                }); // Simulamos 1 segundo de espera
 
             } catch (error) {
                 setIsLoading(false);
                 console.error('Error al dar de alta:', error);
-                alert('Error al dar de alta. Inténtalo de nuevo.');
+                toast.error('Error al dar de alta. Inténtalo de nuevo.');
             }
         } else {
-            alert("Por favor, introduce un importe válido.");
+            toast.error("Por favor, introduce un importe válido.");
         }
     };
 

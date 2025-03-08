@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { mockAuthContext } from "../../../utils/mocks";
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import * as mailUtils from '../../../utils/mails';
+import { toast } from 'sonner';
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
@@ -17,6 +18,25 @@ jest.mock("react-router-dom", () => ({
 jest.mock('../../../utils/mails', () => ({
     sendEmail: jest.fn()
 }));
+
+jest.mock('sonner', () => {
+    const mockToast = {
+        success: jest.fn(),
+        error: jest.fn(),
+        promise: jest.fn((promiseFn, { loading, success, error }) => {
+            return promiseFn()
+                .then(result => {
+                    mockToast.success(success);
+                    return Promise.resolve(result);
+                })
+                .catch(err => {
+                    mockToast.error(error(err));
+                    return Promise.resolve();
+                });
+        }),
+    };
+    return { toast: mockToast };
+});
 
 describe("PagoAbono Component", () => {
     let mockNavigate;
@@ -128,14 +148,14 @@ describe("PagoAbono Component", () => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', expect.objectContaining({
                 alta: expect.objectContaining({
-                    gimnasio: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Number) }),
+                    gimnasio: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Date) }), // Changed to Date
                     atletismo: expect.objectContaining({ estado: false })
                 })
             }));
         });
 
         await waitFor(() => {
-            expect(screen.getByText(/Pago completado con éxito!/i)).toBeInTheDocument();
+            expect(toast.success).toHaveBeenCalledWith('Pago completado con éxito!');
         });
     });
 
@@ -158,13 +178,13 @@ describe("PagoAbono Component", () => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', expect.objectContaining({
                 alta: expect.objectContaining({
-                    atletismo: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Number) }),
-                    gimnasio: expect.objectContaining({ estado: false})
+                    atletismo: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Date) }), // Changed to Date
+                    gimnasio: expect.objectContaining({ estado: false })
                 }),
                 email: 'test@example.com',
                 name: 'Test User',
             }));
-            expect(screen.getByText(/Pago completado con éxito!/i)).toBeInTheDocument();
+            expect(toast.success).toHaveBeenCalledWith('Pago completado con éxito!');
         });
     });
 
@@ -181,7 +201,7 @@ describe("PagoAbono Component", () => {
         fireEvent.click(pagarButton);
 
         await waitFor(() => {
-            expect(screen.getByText(/Se ha producido un error al dar de alta. Inténtalo de nuevo./i)).toBeInTheDocument();
+            expect(toast.error).toHaveBeenCalledWith('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
         });
     });
 
@@ -273,7 +293,7 @@ describe("PagoAbono Component", () => {
 
         await waitFor(() => {
             expect(document.querySelector(".spinner")).not.toBeInTheDocument();
-        }, {timeout: 1000});
+        }, { timeout: 1000 });
     });
 
     it("shows error message if user tries to pay for Atletismo without atletismo alta, but yes gym alta", async () => {
@@ -292,7 +312,7 @@ describe("PagoAbono Component", () => {
 
 
         await waitFor(() => {
-            expect(screen.getByText(/No estás dado de alta en el atletismo./i)).toBeInTheDocument();
+            expect(toast.error).toHaveBeenCalledWith('No estás dado de alta en el atletismo.');
         });
     });
 
@@ -310,6 +330,6 @@ describe("PagoAbono Component", () => {
         const pagarButton = screen.getByRole("button", { name: /obtener gratis/i });
         fireEvent.click(pagarButton);
 
-        expect(screen.getByText(/No estás dado de alta en el gimnasio./i)).toBeInTheDocument();
+        expect(toast.error).toHaveBeenCalledWith('No estás dado de alta en el gimnasio.');
     });
 });

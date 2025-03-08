@@ -3,6 +3,7 @@ import MisReservas from "./MisReservas";
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
+import { toast } from 'sonner';
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
@@ -10,6 +11,13 @@ jest.mock("../../../context/AuthContext", () => ({
 
 jest.mock("../../../context/FacilitiesAndReservationsContext", () => ({
     useFacilitiesAndReservations: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 describe("MisReservas Component", () => {
@@ -39,7 +47,7 @@ describe("MisReservas Component", () => {
             expect(deleteButtons.length).toBeGreaterThanOrEqual(2);
             expect(deleteButtons[0]).toBeInTheDocument();
             expect(deleteButtons[1]).toBeInTheDocument();
-        }, { timeout: 2000 });
+        });
     });
 
     it("renders 'No tienes reservas.' message when user is logged in but has no reservations", async () => {
@@ -68,7 +76,7 @@ describe("MisReservas Component", () => {
         await waitFor(() => {
             deleteButtons = screen.getAllByRole("button", { name: /eliminar reserva/i });
             expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
-        }, { timeout: 2000 });
+        });
 
         const deleteButton = deleteButtons[0];
         fireEvent.click(deleteButton);
@@ -76,7 +84,7 @@ describe("MisReservas Component", () => {
         await waitFor(() => {
             expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res1');
             expect(mockFacilitiesAndReservationsContext.getAllReservations).toHaveBeenCalledTimes(2);
-        }, { timeout: 2000 });
+        });
     });
 
     it("updates reservation list after successful deletion", async () => {
@@ -88,7 +96,7 @@ describe("MisReservas Component", () => {
         await waitFor(() => {
             deleteButtons = screen.getAllByRole("button", { name: /eliminar reserva/i });
             expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
-        }, { timeout: 2000 });
+        });
 
         const deleteButton = deleteButtons[0];
         fireEvent.click(deleteButton);
@@ -96,24 +104,59 @@ describe("MisReservas Component", () => {
         await waitFor(() => {
             expect(screen.queryByRole("cell", { name: /gimnasio/i })).not.toBeInTheDocument();
             expect(screen.getByRole("cell", { name: /pista atletismo/i })).toBeInTheDocument();
-        }, { timeout: 2000 });
+        });
     });
 
-    it("handles deleteReservation failure gracefully and shows error message", async () => { // Updated test title
+    it("handles deleteReservation failure gracefully and shows error message", async () => {
         mockFacilitiesAndReservationsContext.deleteReservation.mockRejectedValue(new Error("Delete error"));
         render(<MisReservas />);
         let deleteButtons;
         await waitFor(() => {
             deleteButtons = screen.getAllByRole("button", { name: /eliminar reserva/i });
             expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
-        }, { timeout: 2000 });
+        });
 
         const deleteButton = deleteButtons[0];
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
             expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res1');
-            expect(screen.getByText(/error al eliminar la reserva/i)).toBeInTheDocument(); // Assert error message is displayed
-        }, { timeout: 2000 });
+            expect(toast.error).toHaveBeenCalledWith('Error al eliminar la reserva. Inténtalo de nuevo.');
+        });
+    });
+
+    it("shows success message when reservation is successfully deleted", async () => {
+        render(<MisReservas />);
+        let deleteButtons;
+        await waitFor(() => {
+            deleteButtons = screen.getAllByRole("button", { name: /eliminar reserva/i });
+            expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
+        });
+
+        const deleteButton = deleteButtons[0];
+        fireEvent.click(deleteButton);
+
+        await waitFor(() => {
+            expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res1');
+            expect(toast.success).toHaveBeenCalledWith('Reserva eliminada correctamente');
+        });
+    });
+
+    it("shows error message when deleteReservation returns status other than 200", async () => {
+        mockFacilitiesAndReservationsContext.deleteReservation = jest.fn().mockResolvedValue({ status: 400 }); // Mock fallo en deleteReservation
+        render(<MisReservas />);
+        let deleteButtons;
+        await waitFor(() => {
+            deleteButtons = screen.getAllByRole("button", { name: /eliminar reserva/i });
+            expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
+        });
+
+        const deleteButton = deleteButtons[0];
+        fireEvent.click(deleteButton);
+
+        await waitFor(() => {
+            expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res1');
+            expect(toast.error).toHaveBeenCalledWith('Error al eliminar la reserva. Inténtalo de nuevo.'); // Verifica que se muestra el toast de error
+        });
     });
 });

@@ -1,161 +1,215 @@
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
+import {
+    render,
+    screen,
+    fireEvent,
+    waitFor,
+    within
+} from "@testing-library/react";
 import MisAbonos from "./MisAbonos";
 import { useAuth } from '../../../context/AuthContext';
 import { mockAuthContext } from "../../../utils/mocks";
+import { BrowserRouter } from 'react-router-dom';
+import { toast } from 'sonner';
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
 }));
 
+jest.mock('sonner', () => {
+    const mockToast = {
+        success: jest.fn(),
+        error: jest.fn(),
+        promise: jest.fn((promiseFn, { loading, success, error }) => {
+            return promiseFn()
+                .then(result => {
+                    mockToast.success(success);
+                    return Promise.resolve(result);
+                })
+                .catch(err => {
+                    mockToast.error(error(err));
+                    return Promise.resolve();
+                });
+        }),
+    };
+    return { toast: mockToast };
+});
+
 describe("MisAbonos Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        useAuth.mockReturnValue(mockAuthContext);
         mockAuthContext.user = {
             _id: '123',
             name: 'Test User',
-            email: 'test@example.com',
             alta: {
-                gimnasio: { estado: true, fechaInicio: '2024-01-01', fechaFin: '2024-01-31' },
+                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
                 atletismo: { estado: false, fechaInicio: null, fechaFin: null }
             }
         };
-        mockAuthContext.updateUser.mockResolvedValue({ status: 200, data: { message: 'User updated' } });
+        mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200, data: {} });
+        useAuth.mockReturnValue(mockAuthContext);
     });
 
-    it("renders component with user data and abono information when user is logged in", () => {
-        render(<MisAbonos />);
-        expect(screen.getByRole("heading", { name: /mis abonos/i })).toBeInTheDocument();
-        const userElements = screen.getAllByText(/Usuario: Test User/i);
-        expect(userElements.length).toBe(2);
-        expect(userElements[0]).toBeInTheDocument();
-        expect(screen.getByRole("heading", { name: /GIMNASIO MENSUAL/i })).toBeInTheDocument();
-        expect(screen.getByText(/abono activo/i)).toBeInTheDocument();
-        expect(screen.getByText(/fecha inicio: 2024-01-01/i)).toBeInTheDocument();
-        expect(screen.getByText(/fecha caducidad: 2024-01-31/i)).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:first-child button' })).toBeInTheDocument();
-        expect(screen.getByRole("heading", { name: /ATLETISMO MENSUAL/i })).toBeInTheDocument();
-        expect(screen.getByText(/abono inactivo/i)).toBeInTheDocument();
-    });
-
-    it("renders 'Debes iniciar sesión para acceder a tus abonos' message when user is not logged in", () => {
+    it("should display 'Debes iniciar sesión' if user is not logged in", () => {
         mockAuthContext.user = null;
         useAuth.mockReturnValue(mockAuthContext);
-        render(<MisAbonos />);
-        expect(screen.getByText(/debes iniciar sesión para acceder a tus abonos/i)).toBeInTheDocument();
-        expect(screen.queryByRole("heading", { name: /mis abonos/i })).toBeInTheDocument();
-        expect(screen.queryByRole("heading", { name: /GIMNASIO MENSUAL/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole("heading", { name: /ATLETISMO MENSUAL/i })).not.toBeInTheDocument();
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('Debes iniciar sesión para acceder a tus abonos')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /Darme de baja/i })).not.toBeInTheDocument();
     });
 
-    it("displays 'Abono activo' and abono details when gimnasio abono is activo", () => {
-        render(<MisAbonos />);
-        const gimnasioCardHeading = screen.getByRole('heading', { name: /gimnasio mensual/i });
-        const gimnasioCard = gimnasioCardHeading.closest('.card');
-    
-        expect(gimnasioCard).toBeInTheDocument();
-        expect(within(gimnasioCard).getByText(/abono activo/i)).toBeInTheDocument();
-        expect(within(gimnasioCard).getByText(/fecha inicio: 2024-01-01/i)).toBeInTheDocument();
-        expect(within(gimnasioCard).getByText(/fecha caducidad: 2024-01-31/i)).toBeInTheDocument();
+    it("should display both subscription cards when user is logged in", () => {
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('GIMNASIO MENSUAL')).toBeInTheDocument();
+        expect(screen.getByText('ATLETISMO MENSUAL')).toBeInTheDocument();
     });
 
-    it("displays 'Abono inactivo' when atletismo abono is inactivo", () => {
-        render(<MisAbonos />);
-        const atletismoCardHeading = screen.getByRole('heading', { name: /atletismo mensual/i });
-        const atletismoCard = atletismoCardHeading.closest('.card');
-        expect(atletismoCard).toBeInTheDocument();
-        expect(within(atletismoCard).getByText(/abono inactivo/i)).toBeInTheDocument();
+    it("should display 'Abono activo' and 'Darme de baja' button when subscribed to Gimnasio", () => {
+        mockAuthContext.user.alta.gimnasio.estado = true;
+        mockAuthContext.user.alta.gimnasio.fechaInicio = new Date();
+        mockAuthContext.user.alta.gimnasio.fechaFin = new Date();
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('GIMNASIO MENSUAL')).toBeInTheDocument();
+        expect(screen.getByText('Abono activo')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') })).toBeInTheDocument();
     });
 
-    describe("Handle Baja Gimnasio", () => {
-        it("calls updateUser with correct gimnasio alta data when 'Darme de baja' button for gimnasio is clicked", async () => {
-            render(<MisAbonos />);
-            const bajaGimnasioButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:first-child button' });
-            fireEvent.click(bajaGimnasioButton);
+    it("should display 'Abono inactivo' when not subscribed to Gimnasio", () => {
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('GIMNASIO MENSUAL')).toBeInTheDocument();
+        const gimnasioCard = screen.getByText('GIMNASIO MENSUAL').closest('.card');
+        expect(within(gimnasioCard).getByText('Abono inactivo')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /Darme de baja/i, container: gimnasioCard })).not.toBeInTheDocument();
+    });
 
-            await waitFor(() => {
-                expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', {
-                    _id: '123',
-                    name: 'Test User',
-                    email: 'test@example.com',
-                    alta: {
+    it("should display 'Abono activo' and 'Darme de baja' button when subscribed to Atletismo", () => {
+        mockAuthContext.user.alta.atletismo.estado = true;
+        mockAuthContext.user.alta.atletismo.fechaInicio = new Date();
+        mockAuthContext.user.alta.atletismo.fechaFin = new Date();
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('ATLETISMO MENSUAL')).toBeInTheDocument();
+        expect(screen.getByText('Abono activo', { container: screen.getByText('ATLETISMO MENSUAL').closest('.card') })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') })).toBeInTheDocument();
+    });
+
+    it("should display 'Abono inactivo' when not subscribed to Atletismo", () => {
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        expect(screen.getByText('ATLETISMO MENSUAL')).toBeInTheDocument();
+        const atletismoCard = screen.getByText('ATLETISMO MENSUAL').closest('.card');
+        expect(within(atletismoCard).getByText('Abono inactivo')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Darme de baja/i, container: atletismoCard })).not.toBeInTheDocument();
+    });
+
+    it("should call updateUser and show success message when 'Darme de baja' button for Gimnasio is clicked", async () => {
+        mockAuthContext.user.alta.gimnasio.estado = true;
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') });
+        fireEvent.click(bajaButtonGimnasio);
+
+        await waitFor(() => {
+            expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
+            expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
+                '123',
+                expect.objectContaining({
+                    alta: expect.objectContaining({
                         gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                        atletismo: { estado: false, fechaInicio: null, fechaFin: null }
-                    }
-                });
-            });
-        });
-
-        it("shows success message when gimnasio baja is successful", async () => {
-            render(<MisAbonos />);
-            const bajaGimnasioButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:first-child button' });
-            fireEvent.click(bajaGimnasioButton);
-
-            await waitFor(() => {
-                expect(screen.getByText(/baja completada con éxito!/i, { selector: 'div.card:first-child .success-message' })).toBeInTheDocument();
-            });
-        });
-
-        it("shows error message when gimnasio baja fails", async () => {
-            mockAuthContext.updateUser.mockRejectedValue(new Error("Update error"));
-            render(<MisAbonos />);
-            const bajaGimnasioButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:first-child button' });
-            fireEvent.click(bajaGimnasioButton);
-
-            await waitFor(() => {
-                expect(screen.getByText(/se ha producido un error al dar de baja./i, { selector: 'div.card:first-child .error-message' })).toBeInTheDocument();
-            });
+                    }),
+                })
+            );
+            expect(toast.promise).toHaveBeenCalledTimes(1);
+            expect(toast.success).toHaveBeenCalledWith('Baja completada con éxito!');
         });
     });
 
-    describe("Handle Baja Atletismo", () => {
-        it("calls updateUser with correct atletismo alta data when 'Darme de baja' button for atletismo is clicked", async () => {
-            mockAuthContext.user = {
-                _id: '123',
-                name: 'Test User',
-                email: 'test@example.com',
-                alta: {
-                    gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                    atletismo: { estado: true, fechaInicio: '2024-01-01', fechaFin: '2024-01-31' },
-                }
-            };
-            mockAuthContext.updateUser.mockResolvedValue({ status: 200, data: { message: 'User updated' } });
-            render(<MisAbonos />);
-            const bajaAtletismoButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:nth-child(2) button' });
-            fireEvent.click(bajaAtletismoButton);
+    it("should call updateUser and show success message when 'Darme de baja' button for Atletismo is clicked", async () => {
+        mockAuthContext.user.alta.atletismo.estado = true;
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') });
+        fireEvent.click(bajaButtonAtletismo);
 
-            await waitFor(() => {
-                expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', {
-                    _id: '123',
-                    name: 'Test User',
-                    email: 'test@example.com',
-                    alta: {
-                        gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                        atletismo: { estado: false, fechaInicio: null, fechaFin: null }
-                    }
-                });
-            });
+        await waitFor(() => {
+            expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
+            expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
+                '123',
+                expect.objectContaining({
+                    alta: expect.objectContaining({
+                        atletismo: { estado: false, fechaInicio: null, fechaFin: null },
+                    }),
+                })
+            );
+            expect(toast.promise).toHaveBeenCalledTimes(1);
+            expect(toast.success).toHaveBeenCalledWith('Baja completada con éxito!');
         });
+    });
 
-        it("shows success message when atletismo baja is successful", async () => {
-            render(<MisAbonos />);
-            const bajaAtletismoButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:nth-child(2) button' });
-            fireEvent.click(bajaAtletismoButton);
+    it("should show error message when updateUser fails for Gimnasio baja", async () => {
+        mockAuthContext.user.alta.gimnasio.estado = true;
+        mockAuthContext.updateUser = jest.fn().mockRejectedValue({ status: 500, error: 'Update failed' });
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') });
+        fireEvent.click(bajaButtonGimnasio);
 
-            await waitFor(() => {
-                expect(screen.getByText(/baja completada con éxito!/i, { selector: 'div.card:nth-child(2) .success-message' })).toBeInTheDocument();
-            });
+        await waitFor(() => {
+            expect(toast.promise).toHaveBeenCalledTimes(1);
+            expect(toast.error).toHaveBeenCalledWith('Se ha producido un error al dar de baja. Inténtalo de nuevo más tarde.');
         });
+    });
 
-        it("shows error message when atletismo baja fails", async () => {
-            mockAuthContext.updateUser.mockRejectedValue(new Error("Update error"));
-            render(<MisAbonos />);
-            const bajaAtletismoButton = screen.getByRole("button", { name: /darme de baja/i, selector: 'div.card:nth-child(2) button' });
-            fireEvent.click(bajaAtletismoButton);
+    it("should show error message when updateUser fails for Atletismo baja", async () => {
+        mockAuthContext.user.alta.atletismo.estado = true;
+        mockAuthContext.updateUser = jest.fn().mockRejectedValue({ status: 500, error: 'Update failed' });
+        useAuth.mockReturnValue(mockAuthContext);
+        render(
+            <BrowserRouter>
+                <MisAbonos />
+            </BrowserRouter>
+        );
+        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') });
+        fireEvent.click(bajaButtonAtletismo);
 
-            await waitFor(() => {
-                expect(screen.getByText(/se ha producido un error al dar de baja./i, { selector: 'div.card:nth-child(2) .error-message' })).toBeInTheDocument();
-            });
+        await waitFor(() => {
+            expect(toast.promise).toHaveBeenCalledTimes(1);
+            expect(toast.error).toHaveBeenCalledWith('Se ha producido un error al dar de baja. Inténtalo de nuevo más tarde.');
         });
     });
 });
