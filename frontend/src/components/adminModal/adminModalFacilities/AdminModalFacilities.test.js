@@ -2,13 +2,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalFacilities from "./AdminModalFacilities";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
-import * as sonner from 'sonner'; // Import sonner to mock toast
+import * as sonner from 'sonner';
 
 jest.mock('../../../context/FacilitiesAndReservationsContext', () => ({
     useFacilitiesAndReservations: jest.fn()
 }));
 
-jest.mock('sonner', () => ({ // Mock sonner module
+jest.mock('sonner', () => ({
     toast: {
         success: jest.fn(),
         error: jest.fn(),
@@ -21,8 +21,8 @@ describe("AdminModalFacilities Component", () => {
     beforeEach(() => {
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
         jest.clearAllMocks();
-        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
-        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {

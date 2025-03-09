@@ -1,5 +1,5 @@
-import { toast } from "sonner";
 import PropTypes from "prop-types";
+import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import "./AdminModalReservations.css";

@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
+import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
 import { getDateWithoutTime } from "../../../utils/results.js";
-import { useAuth } from "../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalResults.css";
 import { useForm } from "react-hook-form";
 
 const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
-    const { user } = useAuth();
     const { teams, addResult, updateResult } = useTeamsAndResults();
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [selectedSport, setSelectedSport] = useState(popupData?.sport || "");
     const [filteredTeams, setFilteredTeams] = useState([]);
     const initialValues = {
@@ -44,19 +41,35 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
             lugar: popupData?.lugar || "",
         },
     });
-
     useEffect(() => {
         async function fetchTeams() {
+            console.log('useEffect - popupData at start:', popupData); // Log de popupData al inicio
+            console.log('useEffect - popupData.equipo_local at start:', popupData?.equipo_local); // Log de popupData.equipo_local
+            console.log('useEffect - popupData.equipo_visitante at start:', popupData?.equipo_visitante); // Log de popupData.equipo_visitante
+            console.log('useEffect - popupData?.equipo_local:', popupData?.equipo_local);
+            console.log('useEffect - popupData?.equipo_visitante:', popupData?.equipo_visitante);
+    
+    
+            console.log('useEffect - popupData:', popupData); // Log al inicio del useEffect (existente)
+    
             if (popupData?.equipo_local) {
+                console.log('useEffect - Setting equipoLocal:', popupData.equipo_local);
                 setEquipoLocal(popupData.equipo_local);
+                console.log('useEffect - equipoLocal SET to:', popupData.equipo_local);
             } else if (popupData?.equipo_visitante) {
+                console.log('useEffect - Setting equipoVisitante:', popupData.equipo_visitante);
                 setEquipoVisitante(popupData.equipo_visitante);
+                console.log('useEffect - equipoVisitante SET to:', popupData.equipo_visitante);
+            } else {
+                console.log('useEffect - No initial equipo values in popupData.');
             }
             // Filtrar equipos basados en el deporte seleccionado
             const newFilteredTeams = teams.filter(team => team.sport === selectedSport);
             await setFilteredTeams(newFilteredTeams);
+            console.log('useEffect - filteredTeams SET, selectedSport:', selectedSport); // Log al final del useEffect
         }
         fetchTeams();
+        console.log('useEffect - After fetchTeams call (sync part of useEffect)'); // Log después de la llamada asíncrona
     }, [selectedSport, teams, popupData]);
 
     const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
@@ -81,20 +94,27 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
             fecha: fullDate.toISOString(),
         };
 
-        if (isNewResult) {
-            const addResultResponse = await addResult(data);
-            if (addResultResponse.ok) {
-                setSuccessMessage("Resultado añadido correctamente");
+        try {
+            if (isNewResult) {
+                const addResultResponse = await addResult(data);
+                if (!addResultResponse.ok) {
+                    toast.error("Error añadiendo el resultado");
+                    return;
+                }
+                toast.success("Resultado añadido correctamente");
+                closeModal();
             } else {
-                setErrorMessage("Error añadiendo el resultado");
+                const updateResultResponse = await updateResult(popupData._id, data);
+                if (!updateResultResponse.ok) {
+                    toast.error("Error actualizando el resultado");
+                    return;
+                }
+                toast.success("Resultado actualizado correctamente");
+                closeModal();
             }
-        } else {
-            const updateResultResponse = await updateResult(popupData._id, data);
-            if (updateResultResponse.ok) {
-                setSuccessMessage("Resultado actualizado correctamente");
-            } else {
-                setErrorMessage("Error actualizando el resultado");
-            }
+        } catch (error) {
+            toast.error("Ocurrió un error al procesar la solicitud.");
+            console.error('Error en onSubmit:', error);
         }
     });
 
@@ -102,144 +122,140 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
         <div id="admin-modal">
             <IoMdClose id="close-menu" onClick={closeModal} style={{ color: 'black' }} />
             {isNewResult ? <h2>Añadir resultado</h2> : <h2>Editar resultado</h2>}
-            {!successMessage && !errorMessage && (
-                <form onSubmit={onSubmit}>
-                    <div className="inputs">
-                        <div className="input-container">
-                            <label>
-                                Deporte:&nbsp;
-                                <select
-                                {...register("sport", { required: "Por favor, selecciona un deporte" })}
-                                    value={selectedSport}
-                                    onChange={(e) => {
-                                        setSelectedSport(e.target.value);
-                                    }}
-                                >
-                                    <option value="">Selecciona un deporte</option>
-                                    {uniqueSports.map((sport) => (
-                                        <option key={sport} value={sport}>
-                                            {sport}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errorResults.sport && <span className="error-message">{errorResults.sport.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Jornada:
-                                <input
-                                    type="number"
-                                    {...register("jornada", { required: "Por favor, introduce el número de la jornada" })}
-                                    defaultValue={initialValues.jornada}
-                                />
-                                {errorResults.jornada && <span className="error-message">{errorResults.jornada.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Equipo local:&nbsp;
-                                <select
-                                    {...register("equipo_local", { required: "Por favor, selecciona un equipo local" })}
-                                    value={equipoLocal}
-                                    onChange={(e) => setEquipoLocal(e.target.value)}
-                                >
-                                    <option value="">Selecciona un equipo</option>
-                                    {filteredTeams.map(team => (
-                                        <option key={team._id} value={team.name}>
-                                            {team.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errorResults.equipo_local && <span className="error-message">{errorResults.equipo_local.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Goles del equipo local:
-                                <input
-                                    type="number"
-                                    {...register("goles_local", { 
-                                        required: "Por favor, introduce los goles del equipo local",
-                                        validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
-                                    })}
-                                    defaultValue={initialValues.goles_local}
-                                />
-                                {errorResults.goles_local && <span className="error-message">{errorResults.goles_local.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Equipo visitante:&nbsp;
-                                <select
-                                    {...register("equipo_visitante", { required: "Por favor, selecciona un equipo visitante" })}
-                                    value={equipoVisitante}
-                                    onChange={(e) => setEquipoVisitante(e.target.value)}
-                                >
-                                    <option value="">Selecciona un equipo</option>
-                                    {filteredTeams.map(team => (
-                                        <option key={team._id} value={team.name}>
-                                            {team.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errorResults.equipo_visitante && <span className="error-message">{errorResults.equipo_visitante.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Goles del equipo visitante:
-                                <input
-                                    type="number"
-                                    {...register("goles_visitante", {
-                                        required: "Por favor, introduce los goles del equipo visitante",
-                                        validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
-                                    })}
-                                    defaultValue={initialValues.goles_visitante}
-                                />
-                                {errorResults.goles_visitante && <span className="error-message">{errorResults.goles_visitante.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Fecha:
-                                <input
-                                    type="date"
-                                    {...register("fecha", { required: "Por favor, introduce la fecha" })}
-                                    defaultValue={initialValues.fecha}
-                                />
-                                {errorResults.fecha && <span className="error-message">{errorResults.fecha.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Hora:
-                                <input
-                                    type="time"
-                                    {...register("hora", { required: "Por favor, introduce la hora" })}
-                                    defaultValue={initialValues.hora}
-                                />
-                                {errorResults.hora && <span className="error-message">{errorResults.hora.message}</span>}
-                            </label>
-                        </div>
-                        <div className="input-container">
-                            <label>
-                                Lugar:
-                                <input
-                                    type="text"
-                                    {...register("lugar", { required: "Por favor, introduce el lugar" })}
-                                    defaultValue={initialValues.lugar}
-                                />
-                                {errorResults.lugar && <span className="error-message">{errorResults.lugar.message}</span>}
-                            </label>
-                        </div>
+            <form onSubmit={onSubmit}>
+                <div className="inputs">
+                    <div className="input-container">
+                        <label>
+                            Deporte:&nbsp;
+                            <select
+                            {...register("sport", { required: "Por favor, selecciona un deporte" })}
+                                value={selectedSport}
+                                onChange={(e) => {
+                                    setSelectedSport(e.target.value);
+                                }}
+                            >
+                                <option value="">Selecciona un deporte</option>
+                                {uniqueSports.map((sport) => (
+                                    <option key={sport} value={sport}>
+                                        {sport}
+                                    </option>
+                                ))}
+                            </select>
+                            {errorResults.sport && <span className="error-message">{errorResults.sport.message}</span>}
+                        </label>
                     </div>
-                    <div><button type="submit" className="button-light">Guardar cambios</button></div>
-                    {errorResults.login && <span className="error-message">{errorResults.login.message}</span>}
-                </form>
-            )}
-            {user && successMessage && <p className="success-message">{successMessage}</p>}
-            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
+                    <div className="input-container">
+                        <label>
+                            Jornada:
+                            <input
+                                type="number"
+                                {...register("jornada", { required: "Por favor, introduce el número de la jornada" })}
+                                defaultValue={initialValues.jornada}
+                            />
+                            {errorResults.jornada && <span className="error-message">{errorResults.jornada.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Equipo local:&nbsp;
+                            <select
+                                {...register("equipo_local", { required: "Por favor, selecciona un equipo local" })}
+                                value={equipoLocal}
+                                onChange={(e) => setEquipoLocal(e.target.value)}
+                            >
+                                <option value="">Selecciona un equipo</option>
+                                {filteredTeams.map(team => (
+                                    <option key={team._id} value={team.name}>
+                                        {team.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errorResults.equipo_local && <span className="error-message">{errorResults.equipo_local.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Goles del equipo local:
+                            <input
+                                type="number"
+                                {...register("goles_local", { 
+                                    required: "Por favor, introduce los goles del equipo local",
+                                    validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
+                                })}
+                                defaultValue={initialValues.goles_local}
+                            />
+                            {errorResults.goles_local && <span className="error-message">{errorResults.goles_local.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Equipo visitante:&nbsp;
+                            <select
+                                {...register("equipo_visitante", { required: "Por favor, selecciona un equipo visitante" })}
+                                value={equipoVisitante}
+                                onChange={(e) => setEquipoVisitante(e.target.value)}
+                            >
+                                <option value="">Selecciona un equipo</option>
+                                {filteredTeams.map(team => (
+                                    <option key={team._id} value={team.name}>
+                                        {team.name}
+                                    </option>
+                                ))}
+                            </select>
+                            {errorResults.equipo_visitante && <span className="error-message">{errorResults.equipo_visitante.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Goles del equipo visitante:
+                            <input
+                                type="number"
+                                {...register("goles_visitante", {
+                                    required: "Por favor, introduce los goles del equipo visitante",
+                                    validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
+                                })}
+                                defaultValue={initialValues.goles_visitante}
+                            />
+                            {errorResults.goles_visitante && <span className="error-message">{errorResults.goles_visitante.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Fecha:
+                            <input
+                                type="date"
+                                {...register("fecha", { required: "Por favor, introduce la fecha" })}
+                                defaultValue={initialValues.fecha}
+                            />
+                            {errorResults.fecha && <span className="error-message">{errorResults.fecha.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Hora:
+                            <input
+                                type="time"
+                                {...register("hora", { required: "Por favor, introduce la hora" })}
+                                defaultValue={initialValues.hora}
+                            />
+                            {errorResults.hora && <span className="error-message">{errorResults.hora.message}</span>}
+                        </label>
+                    </div>
+                    <div className="input-container">
+                        <label>
+                            Lugar:
+                            <input
+                                type="text"
+                                {...register("lugar", { required: "Por favor, introduce el lugar" })}
+                                defaultValue={initialValues.lugar}
+                            />
+                            {errorResults.lugar && <span className="error-message">{errorResults.lugar.message}</span>}
+                        </label>
+                    </div>
+                </div>
+                <div><button type="submit" className="button-light">Guardar cambios</button></div>
+                {errorResults.login && <span className="error-message">{errorResults.login.message}</span>}
+            </form>
         </div>
     );
 };

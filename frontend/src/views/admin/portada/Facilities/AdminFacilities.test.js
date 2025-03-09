@@ -3,6 +3,7 @@ import AdminFacilities from "./AdminFacilities";
 import { useAuth } from "../../../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../../utils/mocks";
+import * as sonner from 'sonner';
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -15,6 +16,13 @@ jest.mock("../../../../context/AuthContext", () => ({
 
 jest.mock("../../../../context/FacilitiesAndReservationsContext", () => ({
     useFacilitiesAndReservations: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 describe("AdminFacilities Component", () => {
@@ -30,6 +38,8 @@ describe("AdminFacilities Component", () => {
         mockAuthContext.user = { name: "Admin" };
         mockFacilitiesAndReservationsContext.getAllFacilities.mockClear();
         mockFacilitiesAndReservationsContext.deleteFacility.mockClear();
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
 
         const mockFacilitiesData = [
             {
@@ -97,7 +107,7 @@ describe("AdminFacilities Component", () => {
 
         expect(screen.getByText("Nueva instalación")).toBeInTheDocument();
 
-        const closeButton = document.querySelector("#close-menu"); // Assuming AdminModalFacilities has the same close button ID
+        const closeButton = document.querySelector("#close-menu");
         fireEvent.click(closeButton);
 
         await waitFor(() => {
@@ -106,7 +116,8 @@ describe("AdminFacilities Component", () => {
         });
     });
 
-    it("deletes a facility and refetches facilities", async () => {
+    it("deletes a facility and refetches facilities and shows success toast", async () => {
+        mockFacilitiesAndReservationsContext.deleteFacility.mockResolvedValue({ ok: true });
         render(<AdminFacilities />);
         await waitFor(() => expect(screen.getByText("Facility 1")).toBeInTheDocument());
         const deleteButtons = document.querySelectorAll(".deleteTrash");
@@ -115,6 +126,22 @@ describe("AdminFacilities Component", () => {
 
         expect(mockFacilitiesAndReservationsContext.deleteFacility).toHaveBeenCalledWith("facility001");
         await waitFor(() => expect(mockFacilitiesAndReservationsContext.getAllFacilities).toHaveBeenCalledTimes(2)); // Initial fetch + fetch on delete
+        await waitFor(() => {
+            expect(sonner.toast.success).toHaveBeenCalledWith("Instalación eliminada correctamente");
+        });
+    });
+
+    it("shows error toast if deleteFacility fails", async () => {
+        mockFacilitiesAndReservationsContext.deleteFacility.mockRejectedValue(new Error("Delete facility failed"));
+        render(<AdminFacilities />);
+        await waitFor(() => expect(screen.getByText("Facility 1")).toBeInTheDocument());
+        const deleteButtons = document.querySelectorAll(".deleteTrash");
+        const deleteButton = deleteButtons[0];
+        fireEvent.click(deleteButton);
+
+        await waitFor(() => {
+            expect(sonner.toast.error).toHaveBeenCalledWith("Error al eliminar la instalación.");
+        });
     });
 
 
@@ -126,7 +153,7 @@ describe("AdminFacilities Component", () => {
         const heading = screen.getByRole("heading", { level: 1, name: "Acceso denegado" });
 
         expect(heading).toBeInTheDocument();
-        expect(screen.queryByText("Instalaciones")).not.toBeInTheDocument(); // Ensure facilities table is not rendered
+        expect(screen.queryByText("Instalaciones")).not.toBeInTheDocument();
     });
 
     it("renders BackButton component", () => {

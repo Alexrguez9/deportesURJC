@@ -45,7 +45,6 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
           horarioFin: new Date(data.horarioFin + "Z"), // Convertir a Date, manteneniendo la zona horaria local
         },
       };
-      console.log('---facilityData---', facilityData);
 
       if (popupData?._id) {
         const updateRes = await updateFacility(popupData._id, facilityData);
@@ -57,7 +56,6 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
         }
       } else {
         const addRes = await addFacility(facilityData);
-        console.log('---addRes---', addRes);
         if (!addRes.ok) {
           toast.error("Error al guardar la instalación.");
           return;

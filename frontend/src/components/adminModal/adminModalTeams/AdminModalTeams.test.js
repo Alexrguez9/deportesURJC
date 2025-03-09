@@ -3,7 +3,7 @@ import AdminModalTeams from "./AdminModalTeams";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import { mockAuthContext } from "../../../utils/mocks";
-import * as sonner from 'sonner'; // Import sonner to mock toast
+import { toast } from 'sonner';
 
 jest.mock('../../../context/AuthContext', () => ({
     useAuth: jest.fn()
@@ -13,7 +13,7 @@ jest.mock('../../../context/TeamsAndResultsContext', () => ({
     useTeamsAndResults: jest.fn()
 }));
 
-jest.mock('sonner', () => ({ // Mock sonner module
+jest.mock('sonner', () => ({
     toast: {
         success: jest.fn(),
         error: jest.fn(),
@@ -32,8 +32,8 @@ describe("AdminModalTeams Component", () => {
         useAuth.mockReturnValue(mockAuthContext);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
         jest.clearAllMocks();
-        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
-        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
+        toast.success.mockClear();
+        toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -124,7 +124,7 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(sonner.toast.success).toHaveBeenCalledWith('Equipo añadido correctamente');
+                expect(toast.success).toHaveBeenCalledWith('Equipo añadido correctamente');
             });
         });
 
@@ -150,7 +150,7 @@ describe("AdminModalTeams Component", () => {
                 expect(mockTeamsAndResultsContext.updateTeam).toHaveBeenCalledWith('someTeamId', expect.anything());
             });
             await waitFor(() => {
-                expect(sonner.toast.success).toHaveBeenCalledWith('Equipo actualizado correctamente');
+                expect(toast.success).toHaveBeenCalledWith('Equipo actualizado correctamente');
             });
         });
 
@@ -164,7 +164,7 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(sonner.toast.error).toHaveBeenCalledWith('Error añadiendo el equipo');
+                expect(toast.error).toHaveBeenCalledWith('Error añadiendo el equipo');
             });
         });
 
@@ -187,7 +187,7 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(sonner.toast.error).toHaveBeenCalledWith('Error actualizando el equipo');
+                expect(toast.error).toHaveBeenCalledWith('Error actualizando el equipo');
             });
         });
 
@@ -203,7 +203,7 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(sonner.toast.error).toHaveBeenCalledWith('Ocurrió un error al procesar la solicitud.');
+                expect(toast.error).toHaveBeenCalledWith('Ocurrió un error al procesar la solicitud.');
             });
         });
     });

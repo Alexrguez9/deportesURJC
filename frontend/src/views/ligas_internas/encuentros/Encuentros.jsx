@@ -3,6 +3,7 @@ import {
     useEffect,
     Fragment 
 } from "react";
+import { toast } from "sonner";
 import "./Encuentros.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -63,6 +64,21 @@ const Encuentros = () => {
         fetchResults();
     }
 
+    const handleDeleteResult = async (resultId) => {
+        try {
+            const deleteRes = await deleteResult(resultId);
+            if (!deleteRes.ok) {
+                toast.error("Error al eliminar el resultado.");
+                return;
+            }
+            toast.success("Resultado eliminado correctamente");
+            fetchResults();
+        } catch (error) {
+            toast.error("Error al eliminar el resultado.");
+            console.error("Error en handleDeleteResult:", error);
+        }
+    }
+
     return (
         <div id="component-content">
             {isModalOpen &&(
@@ -121,7 +137,7 @@ const Encuentros = () => {
                                     <td>{results.lugar}</td>
                                     <td>
                                         {isAdmin() && <GoPencil onClick={() => openModal(results)} className="editPencil" />}
-                                        {isAdmin() && <MdOutlineDelete onClick={() => deleteResult(results._id)} className="deleteTrash" />}
+                                        {isAdmin() && <MdOutlineDelete onClick={() => handleDeleteResult(results._id)} className="deleteTrash" />}
                                     </td>
                                 </tr>
                             ))}

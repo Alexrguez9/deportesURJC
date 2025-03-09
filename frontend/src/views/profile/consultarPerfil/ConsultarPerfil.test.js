@@ -4,7 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner'; // Importa toast para poder mockearlo
+import { toast } from 'sonner';
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),

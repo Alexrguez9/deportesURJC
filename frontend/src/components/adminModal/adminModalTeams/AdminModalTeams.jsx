@@ -7,9 +7,7 @@ import "./AdminModalTeams.css";
 import { useForm } from "react-hook-form";
 
 const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
-    const { user } = useAuth();
     const { addTeam, updateTeam } = useTeamsAndResults();
-
 
     const {
         register,

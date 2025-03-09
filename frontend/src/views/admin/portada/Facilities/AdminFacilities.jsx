@@ -1,9 +1,10 @@
 import { useState, useEffect, Fragment } from "react";
+import { toast } from "sonner";
 import "./AdminFacilities.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { useAuth } from "../../../../context/AuthContext";
-import AdminModalFacilities from "../../../../components/adminModal/adminModalFacilities/AdminModalFacilities";
+import AdminModalFacilities from "../../../../components/adminModal/adminModalFacilities/adminModalFacilities";
 import BackButton from "../../../../components/backButton/BackButton";
 import Spinner from "../../../../components/spinner/Spinner";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
@@ -47,10 +48,16 @@ const AdminFacilities = () => {
 
   const handleDeleteFacility = async (facilityId) => {
     try {
-      await deleteFacility(facilityId);
+      const deleteRes = await deleteFacility(facilityId);
+      if (!deleteRes.ok) {
+        toast.error("Error al eliminar la instalación.");
+        return;
+      }
+      toast.success("Instalación eliminada correctamente");
       fetchFacilities();
     } catch (error) {
       console.error("Error al eliminar la instalación:", error);
+      toast.error("Error al eliminar la instalación.");
     }
   };
 
