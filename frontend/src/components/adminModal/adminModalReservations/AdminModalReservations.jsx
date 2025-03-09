@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { toast } from "sonner";
 import PropTypes from "prop-types";
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
@@ -7,8 +7,6 @@ import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndRese
 
 const AdminModalReservations = ({ closeModal, popupData }) => {
   const { addReservation, updateReservation } = useFacilitiesAndReservations();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
 
   const formatDateForInput = (date) => {
     if (!date) return "";
@@ -18,23 +16,20 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: popupData
       ? {
-          ...popupData,
-          fechaInicio: formatDateForInput(popupData.fechaInicio),
-          fechaFin: formatDateForInput(popupData.fechaFin),
-        }
+        ...popupData,
+        fechaInicio: formatDateForInput(popupData.fechaInicio),
+        fechaFin: formatDateForInput(popupData.fechaFin),
+      }
       : {
-          userId: "",
-          instalacionId: "",
-          fechaInicio: "",
-          fechaFin: "",
-          precioTotal: 0,
-        },
+        userId: "",
+        instalacionId: "",
+        fechaInicio: "",
+        fechaFin: "",
+        precioTotal: 0,
+      },
   });
 
   const onSubmit = async (data) => {
-    setErrorMessage("");
-    setSuccessMessage("");
-
     try {
       const reservationData = {
         ...data,
@@ -43,15 +38,25 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
       };
 
       if (popupData?._id) {
-        await updateReservation(popupData._id, reservationData);
+        const updateRes = await updateReservation(popupData._id, reservationData);
+        if (!updateRes.ok) {
+          toast.error("Error al editar la reserva.");
+          return;
+        } else {
+          toast.success("Reserva editada correctamente");
+        }
       } else {
-        await addReservation(reservationData);
+        const addRes = await addReservation(reservationData);
+        if (!addRes.ok) {
+          toast.error("Error al guardar la reserva.");
+          return;
+        } else {
+          toast.success("Reserva guardada correctamente");
+        }
       }
-
-      setSuccessMessage("Reserva guardada correctamente");
       closeModal();
     } catch (error) {
-      setErrorMessage("Error al guardar la reserva.");
+      toast.error("Error al procesar el formulario de reservas.");
       console.error("Error en el formulario de reservas:", error);
     }
   };
@@ -60,74 +65,70 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
     <div id="admin-modal">
       <IoMdClose id="close-menu" onClick={closeModal} style={{ color: "black" }} />
       <h2>{popupData ? "Editar reserva" : "Nueva reserva"}</h2>
-      {!successMessage && (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="inputs">
-            <div className="input-container">
-              <label>
-                Usuario ID:
-                <input
-                  type="text"
-                  {...register("userId", { required: "Introduce un ID de usuario válido" })}
-                />
-                {errors.userId && <span className="error-message">{errors.userId.message}</span>}
-              </label>
-            </div>
-            <div className="input-container">
-              <label>
-                Instalación ID:
-                <input
-                  type="text"
-                  {...register("instalacionId", { required: "Introduce un ID de instalación válido" })}
-                />
-                {errors.instalacionId && <span className="error-message">{errors.instalacionId.message}</span>}
-              </label>
-            </div>
-            <div className="input-container">
-              <label>
-                Fecha inicio:
-                <input
-                  type="datetime-local"
-                  {...register("fechaInicio", { required: "Introduce una fecha de inicio" })}
-                />
-                {errors.fechaInicio && (
-                  <span className="error-message">{errors.fechaInicio.message}</span>
-                )}
-              </label>
-            </div>
-            <div className="input-container">
-              <label>
-                Fecha fin:
-                <input
-                  type="datetime-local"
-                  {...register("fechaFin", { required: "Introduce una fecha de fin" })}
-                />
-                {errors.fechaFin && <span className="error-message">{errors.fechaFin.message}</span>}
-              </label>
-            </div>
-            <div className="input-container">
-              <label>
-                Precio total:
-                <input
-                  type="number"
-                  {...register("precioTotal", {
-                    required: "Introduce un precio total",
-                    min: { value: 0, message: "El precio no puede ser negativo" },
-                  })}
-                />
-                {errors.precioTotal && (
-                  <span className="error-message">{errors.precioTotal.message}</span>
-                )}
-              </label>
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="inputs">
+          <div className="input-container">
+            <label>
+              Usuario ID:
+              <input
+                type="text"
+                {...register("userId", { required: "Introduce un ID de usuario válido" })}
+              />
+              {errors.userId && <span className="error-message">{errors.userId.message}</span>}
+            </label>
           </div>
-          <div>
-            <button type="submit" className="button-light">Guardar</button>
+          <div className="input-container">
+            <label>
+              Instalación ID:
+              <input
+                type="text"
+                {...register("instalacionId", { required: "Introduce un ID de instalación válido" })}
+              />
+              {errors.instalacionId && <span className="error-message">{errors.instalacionId.message}</span>}
+            </label>
           </div>
-        </form>
-      )}
-      {successMessage && <p className="success-message">{successMessage}</p>}
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <div className="input-container">
+            <label>
+              Fecha inicio:
+              <input
+                type="datetime-local"
+                {...register("fechaInicio", { required: "Introduce una fecha de inicio" })}
+              />
+              {errors.fechaInicio && (
+                <span className="error-message">{errors.fechaInicio.message}</span>
+              )}
+            </label>
+          </div>
+          <div className="input-container">
+            <label>
+              Fecha fin:
+              <input
+                type="datetime-local"
+                {...register("fechaFin", { required: "Introduce una fecha de fin" })}
+              />
+              {errors.fechaFin && <span className="error-message">{errors.fechaFin.message}</span>}
+            </label>
+          </div>
+          <div className="input-container">
+            <label>
+              Precio total:
+              <input
+                type="number"
+                {...register("precioTotal", {
+                  required: "Introduce un precio total",
+                  min: { value: 0, message: "El precio no puede ser negativo" },
+                })}
+              />
+              {errors.precioTotal && (
+                <span className="error-message">{errors.precioTotal.message}</span>
+              )}
+            </label>
+          </div>
+        </div>
+        <div>
+          <button type="submit" className="button-light">Guardar</button>
+        </div>
+      </form>
     </div>
   );
 };

@@ -2,9 +2,17 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUsers from "./AdminModalUsers";
 import { useAuth } from "../../../context/AuthContext";
 import { mockAuthContext } from "../../../utils/mocks";
+import * as sonner from 'sonner'; // Import sonner to mock toast
 
 jest.mock('../../../context/AuthContext', () => ({
     useAuth: jest.fn()
+}));
+
+jest.mock('sonner', () => ({ // Mock sonner module
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 const mockCloseModal = jest.fn();
@@ -13,6 +21,8 @@ describe("AdminModalUsers Component", () => {
     beforeEach(() => {
         useAuth.mockReturnValue(mockAuthContext);
         jest.clearAllMocks();
+        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
+        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
     });
 
     describe("Rendering and Initial Display", () => {
@@ -132,11 +142,11 @@ describe("AdminModalUsers Component", () => {
                 expect(mockAuthContext.addUser).toHaveBeenCalledTimes(1);
             });
             await waitFor(() => {
-                expect(screen.getByText(/Usuario añadido correctamente/i)).toBeInTheDocument();
+                expect(sonner.toast.success).toHaveBeenCalledWith("Usuario añadido correctamente");
             });
         });
 
-        it("calls updateUser on valid submit in 'Editar usuario' mode and closes modal", async () => {
+        it("calls updateUser on valid submit in 'Editar usuario' mode and closes modal and shows success message", async () => {
             mockAuthContext.updateUser.mockResolvedValue({ status: 200 });
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={{ _id: '1' }} />);
 
@@ -152,6 +162,9 @@ describe("AdminModalUsers Component", () => {
             await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
+            await waitFor(() => {
+                expect(sonner.toast.success).toHaveBeenCalledWith("Usuario editado correctamente");
+            });
         });
 
         it("shows error message if addUser fails (general error)", async () => {
@@ -166,7 +179,7 @@ describe("AdminModalUsers Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Ocurrió un error al añadir el usuario./i)).toBeInTheDocument();
+                expect(sonner.toast.error).toHaveBeenCalledWith("Ocurrió un error al añadir el usuario.");
             });
         });
 
@@ -181,7 +194,7 @@ describe("AdminModalUsers Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Ocurrió un error al editar el usuario./i)).toBeInTheDocument();
+                expect(sonner.toast.error).toHaveBeenCalledWith("Ocurrió un error al editar el usuario.");
             });
         });
 
@@ -197,7 +210,7 @@ describe("AdminModalUsers Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/El correo ya está registrado. Por favor, usa uno diferente./i)).toBeInTheDocument();
+                expect(sonner.toast.error).toHaveBeenCalledWith("El correo ya está registrado. Por favor, usa uno diferente.");
             });
         });
     });

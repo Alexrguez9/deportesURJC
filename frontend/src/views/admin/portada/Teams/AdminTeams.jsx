@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from "react";
+import { toast } from "sonner";
 import "./AdminTeams.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -54,6 +55,21 @@ const AdminTeams = () => {
         fetchTeams();
     }
 
+    const handleDeleteTeam = async (teamId) => {
+        try {
+            const deleteRes = await deleteTeam(teamId);
+            if (!deleteRes.ok) {
+                toast.error("Error al eliminar el equipo.");
+                return;
+            }
+            toast.success("Equipo eliminado correctamente");
+            fetchTeams();
+        } catch (error) {
+            console.error("Error al eliminar el equipo:", error);
+            toast.error("Error al eliminar el equipo.");
+        }
+    }
+
     return (
         <div id="component-content">
             {isAdmin() ? (
@@ -104,7 +120,7 @@ const AdminTeams = () => {
                                         <td>{teams?.points}</td>
                                         <td>
                                             <GoPencil onClick={() => openModal(teams)} className="editPencil" />
-                                            <MdOutlineDelete onClick={() => deleteTeam(teams._id)} className="deleteTrash" />
+                                            <MdOutlineDelete onClick={() => handleDeleteTeam(teams._id)} className="deleteTrash" />
                                         </td>
                                     </tr>
                                 ))}

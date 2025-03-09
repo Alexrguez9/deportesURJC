@@ -31,6 +31,10 @@ const MisAbonos = () => {
 
     const estadoAtletismo = user?.alta?.atletismo?.estado;
     const estadoGimnasio = user?.alta?.gimnasio?.estado;
+    const fechaInicioGimnasio = user?.alta?.gimnasio?.fechaInicio;
+    const fechaFinGimnasio = user?.alta?.gimnasio?.fechaFin;
+    const fechaInicioAtletismo = user?.alta?.atletismo?.fechaInicio;
+    const fechaFinAtletismo = user?.alta?.atletismo?.fechaFin;
     return (
         <div>
             <h1>Mis Abonos</h1>
@@ -43,8 +47,8 @@ const MisAbonos = () => {
                             {estadoGimnasio ? (
                                 <Fragment>
                                     <p>Abono activo</p>
-                                    <p>Fecha inicio: { user?.alta?.gimnasio?.fechaInicio?.toLocaleDateString('es-ES') }</p>
-                                    <p>Fecha caducidad: { user?.alta?.gimnasio?.fechaFin?.toLocaleDateString('es-ES') }</p>
+                                    <p>Fecha inicio: { fechaInicioGimnasio }</p>
+                                    <p>Fecha caducidad: { fechaFinGimnasio }</p>
                                     {/* <p>{ user?.alta?.gimnasio?.fechaInicio?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                     <button 
                                         onClick={()=> {
@@ -69,8 +73,8 @@ const MisAbonos = () => {
                             {estadoAtletismo ? (
                                 <Fragment>
                                     <p>Abono activo</p>
-                                    <p>Fecha inicio: { user?.alta?.atletismo?.fechaInicio?.toLocaleDateString('es-ES') }</p>
-                                    <p>Fecha caducidad: { user?.alta?.atletismo?.fechaFin?.toLocaleDateString('es-ES') }</p>
+                                    <p>Fecha inicio: { fechaInicioAtletismo }</p>
+                                    <p>Fecha caducidad: { fechaFinAtletismo }</p>
                                     {/* <p>{ user?.alta?.atletismo?.fechaInicio?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                     <button 
                                         onClick={()=> {

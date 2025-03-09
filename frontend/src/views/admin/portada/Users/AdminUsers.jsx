@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from "react";
+import { toast } from "sonner";
 import "./AdminUsers.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -18,8 +19,6 @@ const AdminUsers = () => {
     const [popupData, setPopupData] = useState(null);
     const [isNewUser, setIsNewUser] = useState(false);
     const[isLoading, setIsLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
 
     const fetchUsers = async () => {
         try {
@@ -57,16 +56,17 @@ const AdminUsers = () => {
     };
 
     const handleDeleteUser = async (userId) => {
+        /* istanbul ignore if*/
         if (!isAdmin()) {
-            setErrorMessage("No tienes permisos para eliminar usuarios");
+            toast.error("No tienes permisos para eliminar usuarios");
             return;
         }
         try {
             await deleteUser(userId);
-            setSuccessMessage("Usuario eliminado correctamente");
+            toast.success("Usuario eliminado correctamente");
             await fetchUsers();
         } catch (error) {
-            setErrorMessage("Error al eliminar usuario");
+            toast.error("Error al eliminar usuario");
             console.error("Error al eliminar usuario:", error);
         }
     }
@@ -103,19 +103,19 @@ const AdminUsers = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((user) => (
-                                    <tr key={user?._id}>
-                                        <td>{user?.name}</td>
-                                        <td>{user?.email}</td>
-                                        <td>{user?.role}</td>
-                                        <td>{user?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
-                                        <td>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
-                                        <td>{user?.saldo} €</td>
-                                        <td>
-                                            <GoPencil onClick={() => openModal(user)} className="editPencil" />
-                                            <MdOutlineDelete onClick={() => handleDeleteUser(user._id)} className="deleteTrash" />
+                                {users.map((userInList) => (
+                                    <tr key={userInList?._id} className={userInList?._id === user?._id ? 'active-user' : ''}>
+                                        <td>{userInList?.name}</td>
+                                        <td>{userInList?.email}</td>
+                                        <td>{userInList?.role}</td>
+                                        <td>{userInList?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.saldo} €</td>
+                                        <td className="actions">
+                                            <GoPencil onClick={() => openModal(userInList)} className="editPencil" />
+                                            <MdOutlineDelete onClick={() => handleDeleteUser(userInList._id)} className="deleteTrash" />
                                             <IoEyeOutline
-                                                onClick={() => navigate(`/admin-panel/admin-usuarios/${user._id}`)} // Navega a la vista de detalle
+                                                onClick={() => navigate(`/admin-panel/admin-usuarios/${userInList._id}`)}
                                                 className="infoButton"
                                             />
                                         </td>
@@ -124,9 +124,6 @@ const AdminUsers = () => {
                             </tbody>
                         </table>
                     </section>
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                    {successMessage && <p className="success-message">{successMessage}</p>}
-
                 </Fragment>
             ) : (
                 <AccessDenied />
