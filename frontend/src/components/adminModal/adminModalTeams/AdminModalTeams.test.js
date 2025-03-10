@@ -3,6 +3,7 @@ import AdminModalTeams from "./AdminModalTeams";
 import { useAuth } from "../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import { mockAuthContext } from "../../../utils/mocks";
+import { toast } from 'sonner';
 
 jest.mock('../../../context/AuthContext', () => ({
     useAuth: jest.fn()
@@ -10,6 +11,13 @@ jest.mock('../../../context/AuthContext', () => ({
 
 jest.mock('../../../context/TeamsAndResultsContext', () => ({
     useTeamsAndResults: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 const mockCloseModal = jest.fn();
@@ -24,6 +32,8 @@ describe("AdminModalTeams Component", () => {
         useAuth.mockReturnValue(mockAuthContext);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
         jest.clearAllMocks();
+        toast.success.mockClear();
+        toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -100,11 +110,11 @@ describe("AdminModalTeams Component", () => {
     });
 
     describe("Form Submission and API Calls", () => {
-        it("calls addTeam for new team creation on valid submit and shows success message", async () => {
+        it("calls addTeam for new team creation on valid submit and shows success toast", async () => {
             mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
             mockTeamsAndResultsContext.addTeam.mockResolvedValue({ ok: true });
             render(<AdminModalTeams closeModal={mockCloseModal} isNewTeam={true} />);
-        
+
             fireEvent.change(screen.getByLabelText(/Deporte:/i), { target: { value: 'Fútbol-7' } });
             fireEvent.change(screen.getByLabelText(/Nombre del equipo:/i), { target: { value: 'New Team Name' } });
             fireEvent.change(screen.getByLabelText(/Partidos ganados:/i), { target: { value: '5' } });
@@ -112,19 +122,17 @@ describe("AdminModalTeams Component", () => {
             fireEvent.change(screen.getByLabelText(/Partidos empatados:/i), { target: { value: '1' } });
             fireEvent.change(screen.getByLabelText(/Puntos:/i), { target: { value: '16' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
-        
-            await new Promise(resolve => setTimeout(resolve, 0));
-        
+
             await waitFor(() => {
-                expect(screen.getByText(/Equipo añadido correctamente/i)).toBeInTheDocument();
+                expect(toast.success).toHaveBeenCalledWith('Equipo añadido correctamente');
             });
         });
 
-        it("calls updateTeam for existing team update on valid submit", async () => {
-            mockTeamsAndResultsContext.updateTeam.mockResolvedValue();
+        it("calls updateTeam for existing team update on valid submit and shows success toast", async () => {
+            mockTeamsAndResultsContext.updateTeam.mockResolvedValue({ ok: true });
             render(<AdminModalTeams
                 closeModal={mockCloseModal}
-                isNewTeam={false} 
+                isNewTeam={false}
                 popupData={{
                     _id: 'someTeamId',
                     sport: 'Fútbol-7',
@@ -141,9 +149,12 @@ describe("AdminModalTeams Component", () => {
                 expect(mockTeamsAndResultsContext.updateTeam).toHaveBeenCalledTimes(1);
                 expect(mockTeamsAndResultsContext.updateTeam).toHaveBeenCalledWith('someTeamId', expect.anything());
             });
+            await waitFor(() => {
+                expect(toast.success).toHaveBeenCalledWith('Equipo actualizado correctamente');
+            });
         });
 
-        it("shows error message if addTeam fails", async () => {
+        it("shows error toast if addTeam fails", async () => {
             mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
             mockTeamsAndResultsContext.addTeam.mockResolvedValue({ ok: false });
             render(<AdminModalTeams closeModal={mockCloseModal} isNewTeam={true} />);
@@ -153,11 +164,11 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error añadiendo el equipo/i)).toBeInTheDocument();
+                expect(toast.error).toHaveBeenCalledWith('Error añadiendo el equipo');
             });
         });
 
-        it("shows error message if updateTeam fails", async () => {
+        it("shows error toast if updateTeam fails", async () => {
             mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
             mockTeamsAndResultsContext.updateTeam.mockResolvedValue({ ok: false });
             render(<AdminModalTeams
@@ -176,23 +187,23 @@ describe("AdminModalTeams Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error actualizando el equipo/i)).toBeInTheDocument();
+                expect(toast.error).toHaveBeenCalledWith('Error actualizando el equipo');
             });
         });
 
-         it("shows generic error message if updateTeam fails", async () => {
+        it("shows generic error toast if updateTeam throws error", async () => {
             mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
             mockTeamsAndResultsContext.updateTeam.mockRejectedValue(new Error("Update failed"));
             render(<AdminModalTeams
                 closeModal={mockCloseModal}
                 isNewTeam={false}
-                popupData={{ _id: 'someTeamId', sport: 'Fútbol-7', name: 'Existing Team'}}
+                popupData={{ _id: 'someTeamId', sport: 'Fútbol-7', name: 'Existing Team' }}
             />);
 
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Ocurrió un error al procesar la solicitud./i)).toBeInTheDocument();
+                expect(toast.error).toHaveBeenCalledWith('Ocurrió un error al procesar la solicitud.');
             });
         });
     });

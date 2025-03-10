@@ -3,6 +3,7 @@ import AdminTeams from "./AdminTeams";
 import { useAuth } from "../../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../../context/TeamsAndResultsContext";
 import { mockAuthContext, mockTeamsAndResultsContext } from "../../../../utils/mocks";
+import * as sonner from 'sonner'; // Import sonner to mock toast
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -17,6 +18,13 @@ jest.mock("../../../../context/TeamsAndResultsContext", () => ({
     useTeamsAndResults: jest.fn()
 }));
 
+jest.mock('sonner', () => ({ // Mock sonner module
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
+}));
+
 describe("AdminTeams Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
@@ -28,6 +36,8 @@ describe("AdminTeams Component", () => {
         mockAuthContext.user = { name: "Admin" }; // Set a default user
         mockTeamsAndResultsContext.fetchTeams.mockClear(); // Clear call counts specifically if needed
         mockTeamsAndResultsContext.deleteTeam.mockClear();
+        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
+        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
 
         mockTeamsAndResultsContext.teams = [ // Define teams directly in mock context for each test if needed, or keep defaults.
             {
@@ -82,7 +92,8 @@ describe("AdminTeams Component", () => {
         await waitFor(() => expect(screen.getByText("Editar equipo")).toBeInTheDocument());
     });
 
-    it("deletes a team", () => {
+    it("deletes a team and shows success toast", async () => {
+        mockTeamsAndResultsContext.deleteTeam.mockResolvedValue({ ok: true });
         render(<AdminTeams />);
 
         const deleteButtons = document.querySelectorAll(".deleteTrash");
@@ -90,8 +101,23 @@ describe("AdminTeams Component", () => {
         fireEvent.click(deleteButton);
 
         expect(mockTeamsAndResultsContext.deleteTeam).toHaveBeenCalledWith("001");
+        await waitFor(() => {
+            expect(sonner.toast.success).toHaveBeenCalledWith("Equipo eliminado correctamente");
+        });
     });
 
+    it("shows error toast if deleteTeam fails", async () => {
+        mockTeamsAndResultsContext.deleteTeam.mockRejectedValue(new Error("Delete team failed"));
+        render(<AdminTeams />);
+
+        const deleteButtons = document.querySelectorAll(".deleteTrash");
+        const deleteButton = deleteButtons[0];
+        fireEvent.click(deleteButton);
+
+        await waitFor(() => {
+            expect(sonner.toast.error).toHaveBeenCalledWith("Error al eliminar el equipo.");
+        });
+    });
 
     it("shows AccessDenied if user is not an admin", () => {
         mockAuthContext.isAdmin.mockReturnValue(false);

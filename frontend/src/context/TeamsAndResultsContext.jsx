@@ -83,12 +83,12 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 body: JSON.stringify(formattedData),
             });
 
-            if (response?.ok) {
-                await response.json();
-                return response;
-            } else {
+            if (!response?.ok) {
                 throw new Error(`Error adding result: ${response.statusText}`);
             }
+            const data = await response.json();
+            setResults([...results, data]);
+            return response;
         } catch (error) {
             console.error('Error adding result:', error);
             throw error;
@@ -162,6 +162,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             }
 
             setTeams((prev) => prev.filter((e) => e._id !== teamId));
+            return response;
         } catch (error) {
             console.error("Error al borrar equipo:", error);
             throw error;
@@ -182,6 +183,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             }
 
             setResults((prev) => prev.filter((e) => e._id !== resultId));
+            return response;
         } catch (error) {
             console.error("Error al borrar resultado:", error);
             throw error;

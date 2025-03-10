@@ -101,7 +101,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             
             const newFacility = await response.json();
             setInstalaciones([...instalaciones, newFacility]);
-            return newFacility;
+            return response;
         } catch (error) {
             console.error("Error al agregar instalación:", error);
             return null;
@@ -122,6 +122,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error al actualizar la reserva');
             }
             await getAllReservations();
+            return response;
         } catch (error) {
             console.error('Error al actualizar la reserva:', error);
         }
@@ -141,6 +142,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error al actualizar la instalación');
             }
             await getAllFacilities();
+            return response;
         } catch (error) {
             console.error('Error al actualizar la instalación:', error);
         }
@@ -159,8 +161,8 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             throw new Error('Error al eliminar la reserva');
           }
       
-          const res = await getAllReservations();
-          return res;
+          await getAllReservations();
+          return response;
       
         } catch (error) {
           console.error('Error al eliminar la reserva:', error);
@@ -182,7 +184,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
           }
       
           await getAllFacilities();
-      
+          return response;
         } catch (error) {
           console.error('Error al eliminar la instalación:', error);
         }
@@ -218,5 +220,4 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     );
 };
 
-// Custom hook para usar el contexto
 export const useFacilitiesAndReservations = () => useContext(FacilitiesAndReservationsContext);

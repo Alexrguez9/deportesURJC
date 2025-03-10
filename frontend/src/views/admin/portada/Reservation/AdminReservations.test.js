@@ -3,6 +3,7 @@ import AdminReservations from "./AdminReservations";
 import { useAuth } from "../../../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../../utils/mocks";
+import{ toast } from 'sonner';
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -15,6 +16,13 @@ jest.mock("../../../../context/AuthContext", () => ({
 
 jest.mock("../../../../context/FacilitiesAndReservationsContext", () => ({
     useFacilitiesAndReservations: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 describe("AdminReservations Component", () => {
@@ -30,6 +38,8 @@ describe("AdminReservations Component", () => {
         mockAuthContext.user = { name: "Admin" };
         mockFacilitiesAndReservationsContext.getAllReservations.mockClear();
         mockFacilitiesAndReservationsContext.deleteReservation.mockClear();
+        toast.success.mockClear();
+        toast.error.mockClear();
 
         const mockReservationsData = [
             {
@@ -69,7 +79,7 @@ describe("AdminReservations Component", () => {
                 }, 50);
             });
         });
-    
+
         render(<AdminReservations />);
         expect(document.querySelector(".spinner")).toBeInTheDocument();
         await waitFor(() => expect(document.querySelector(".spinner")).not.toBeInTheDocument(), { timeout: 100 });
@@ -87,7 +97,7 @@ describe("AdminReservations Component", () => {
 
     it("opens modal to edit a reservation", async () => {
         render(<AdminReservations />);
-        
+
         await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
         const editButton = document.querySelector(".editPencil");
         fireEvent.click(editButton);
@@ -110,7 +120,8 @@ describe("AdminReservations Component", () => {
     });
 
 
-    it("deletes a reservation and refetches reservations", async () => {
+    it("deletes a reservation and refetches reservations and shows success toast", async () => {
+        mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue({ ok: true });
         render(<AdminReservations />);
         await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
         const deleteButtons = document.querySelectorAll(".deleteTrash");
@@ -119,6 +130,23 @@ describe("AdminReservations Component", () => {
 
         expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith("001");
         await waitFor(() => expect(mockFacilitiesAndReservationsContext.getAllReservations).toHaveBeenCalledTimes(2)); // Initial fetch + fetch on delete
+        await waitFor(() => {
+            expect(toast.success).toHaveBeenCalledWith("Reserva eliminada correctamente");
+        });
+    });
+
+    it("shows error toast when deleting a reservation fails", async () => {
+        mockFacilitiesAndReservationsContext.deleteReservation.mockRejectedValue(new Error("Delete error"));
+        render(<AdminReservations />);
+        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
+        const deleteButtons = document.querySelectorAll(".deleteTrash");
+        const deleteButton = deleteButtons[0];
+        fireEvent.click(deleteButton);
+
+        expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith("001");
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith("Error al eliminar reserva.");
+        });
     });
 
     it("navigates to user profile when clicking user icon", async () => {
@@ -175,4 +203,15 @@ describe("AdminReservations Component", () => {
         expect(mockFacilitiesAndReservationsContext.getAllReservations).not.toHaveBeenCalled();
     });
 
+    it("handles error when fetching reservations fails", async () => {
+        mockFacilitiesAndReservationsContext.getAllReservations.mockRejectedValue(new Error("Failed to fetch"));
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
+        render(<AdminReservations />);
+        await waitFor(() => {
+            expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Error al obtener las reservas:", expect.any(Error));
+        });
+        consoleErrorSpy.mockRestore();
+    });
 });

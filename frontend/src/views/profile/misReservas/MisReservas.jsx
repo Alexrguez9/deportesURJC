@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import './MisReservas.css';
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
@@ -7,7 +8,6 @@ const MisReservas = () => {
     const { user } = useAuth();
     const { instalaciones, deleteReservation, getAllReservations } = useFacilitiesAndReservations();
     const [filteredReservas, setFilteredReservas] = useState([]);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const fetchReservas = async () => {
         const reservations = await getAllReservations();
@@ -24,14 +24,14 @@ const MisReservas = () => {
         try {
             const res = await deleteReservation(reservaId);
             if (!res || res.status !== 200) {
-                setErrorMessage('Error al eliminar la reserva. Inténtalo de nuevo.');
+                toast.error('Error al eliminar la reserva. Inténtalo de nuevo.');
                 return;
+            } else {
+                toast.success('Reserva eliminada correctamente');
             }
             fetchReservas();
-            setErrorMessage('');
         } catch (error) {
-            console.error("Error deleting reservation:", error);
-            setErrorMessage('Error al eliminar la reserva. Inténtalo de nuevo.');
+            toast.error('Error al eliminar la reserva. Inténtalo de nuevo.');
         }
     };
 
@@ -69,7 +69,6 @@ const MisReservas = () => {
                                     ))}
                                 </tbody>
                             </table>
-                            {errorMessage && <p className="error-message">{errorMessage}</p>}
                         </>
                     ))
                 : <p>Inicia sesión para acceder a tus reservas</p>}

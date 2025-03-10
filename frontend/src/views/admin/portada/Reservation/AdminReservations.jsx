@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from "react";
+import { toast } from 'sonner';
 import "./AdminReservations.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -32,10 +33,7 @@ const AdminReservations = () => {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
-      fetchReservations();
-    }
-    
+    if (isAdmin()) fetchReservations();
   }, []);
 
   const openModal = (reservation) => {
@@ -51,9 +49,15 @@ const AdminReservations = () => {
 
   const handleDeleteReservation = async (reservationId) => {
     try {
-      await deleteReservation(reservationId);
+      const deleteRes = await deleteReservation(reservationId);
+      if (!deleteRes.ok) {
+        toast.error("Error al eliminar la reserva.");
+        return;
+      }
+      toast.success("Reserva eliminada correctamente");
       fetchReservations();
     } catch (error) {
+      toast.error("Error al eliminar reserva.");
       console.error("Error al eliminar reserva:", error);
     }
   };

@@ -2,9 +2,17 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalReservations from "./AdminModalReservations";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
+import { toast } from 'sonner';
 
 jest.mock('../../../context/FacilitiesAndReservationsContext', () => ({
     useFacilitiesAndReservations: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 const mockCloseModal = jest.fn();
@@ -13,6 +21,8 @@ describe("AdminModalReservations Component", () => {
     beforeEach(() => {
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
         jest.clearAllMocks();
+        toast.success.mockClear();
+        toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -98,7 +108,7 @@ describe("AdminModalReservations Component", () => {
     });
 
     describe("Form Submission and API Calls", () => {
-        it("calls addReservation on valid submit and shows success message", async () => {
+        it("calls addReservation on valid submit and shows success toast", async () => {
             mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: true });
             render(<AdminModalReservations closeModal={mockCloseModal} />);
 
@@ -115,9 +125,12 @@ describe("AdminModalReservations Component", () => {
              await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
+            await waitFor(() => {
+                expect(toast.success).toHaveBeenCalledWith("Reserva guardada correctamente");
+            });
         });
 
-        it("calls updateReservation on valid submit when popupData is provided", async () => {
+        it("calls updateReservation on valid submit when popupData is provided and shows success toast", async () => {
             mockFacilitiesAndReservationsContext.updateReservation.mockResolvedValue({ ok: true });
             render(<AdminModalReservations closeModal={mockCloseModal} popupData={{ _id: '1' }} />);
 
@@ -134,9 +147,12 @@ describe("AdminModalReservations Component", () => {
             await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
+            await waitFor(() => {
+                expect(toast.success).toHaveBeenCalledWith("Reserva editada correctamente");
+            });
         });
 
-        it("shows error message if addReservation fails", async () => {
+        it("shows error toast if addReservation fails", async () => {
             mockFacilitiesAndReservationsContext.addReservation.mockRejectedValue(new Error("Add reservation failed"));
             render(<AdminModalReservations closeModal={mockCloseModal} />);
 
@@ -148,11 +164,11 @@ describe("AdminModalReservations Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error al guardar la reserva./i)).toBeInTheDocument();
+                expect(toast.error).toHaveBeenCalledWith("Error al procesar el formulario de reservas.");
             });
         });
 
-        it("shows error message if updateReservation fails", async () => {
+        it("shows error toast if updateReservation fails", async () => {
             mockFacilitiesAndReservationsContext.updateReservation.mockRejectedValue(new Error("Update reservation failed"));
             render(<AdminModalReservations closeModal={mockCloseModal} popupData={{ _id: '1' }} />);
 
@@ -164,7 +180,7 @@ describe("AdminModalReservations Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error al guardar la reserva./i)).toBeInTheDocument();
+                expect(toast.error).toHaveBeenCalledWith("Error al procesar el formulario de reservas.");
             });
         });
     });

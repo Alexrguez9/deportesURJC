@@ -2,9 +2,17 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalFacilities from "./AdminModalFacilities";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
+import * as sonner from 'sonner';
 
 jest.mock('../../../context/FacilitiesAndReservationsContext', () => ({
     useFacilitiesAndReservations: jest.fn()
+}));
+
+jest.mock('sonner', () => ({
+    toast: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 const mockCloseModal = jest.fn();
@@ -13,6 +21,8 @@ describe("AdminModalFacilities Component", () => {
     beforeEach(() => {
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
         jest.clearAllMocks();
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -40,6 +50,7 @@ describe("AdminModalFacilities Component", () => {
 
         it("fills in initial values when in 'Editar instalación' mode", () => {
             const popupData = {
+                _id: '1',
                 nombre: 'Pista Test',
                 descripcion: 'Descripción prueba',
                 capacidad: 10,
@@ -114,7 +125,7 @@ describe("AdminModalFacilities Component", () => {
     });
 
     describe("Form Submission and API Calls", () => {
-        it("calls addFacility on valid submit and closes modal", async () => {
+        it("calls addFacility on valid submit and shows success toast", async () => {
             mockFacilitiesAndReservationsContext.addFacility.mockResolvedValue({ ok: true });
             render(<AdminModalFacilities closeModal={mockCloseModal} />);
 
@@ -132,9 +143,12 @@ describe("AdminModalFacilities Component", () => {
             await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
+            await waitFor(() => {
+                expect(sonner.toast.success).toHaveBeenCalledWith("Instalación guardada correctamente");
+            });
         });
 
-        it("calls updateFacility on valid submit when popupData is provided", async () => {
+        it("calls updateFacility on valid submit when popupData is provided and shows success toast", async () => {
             mockFacilitiesAndReservationsContext.updateFacility.mockResolvedValue({ ok: true });
             render(<AdminModalFacilities closeModal={mockCloseModal} popupData={{ _id: '1' }} />);
 
@@ -152,9 +166,12 @@ describe("AdminModalFacilities Component", () => {
             await waitFor(() => {
                 expect(mockCloseModal).toHaveBeenCalledTimes(1);
             });
+            await waitFor(() => {
+                expect(sonner.toast.success).toHaveBeenCalledWith("Instalación editada correctamente");
+            });
         });
 
-        it("shows error message if addFacility fails", async () => {
+        it("shows error toast if addFacility fails", async () => {
             mockFacilitiesAndReservationsContext.addFacility.mockRejectedValue(new Error("Add facility failed"));
             render(<AdminModalFacilities closeModal={mockCloseModal} />);
 
@@ -167,11 +184,11 @@ describe("AdminModalFacilities Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error al guardar la instalación./i)).toBeInTheDocument();
+                expect(sonner.toast.error).toHaveBeenCalledWith("Error al procesar el formulario de instalaciones.");
             });
         });
 
-        it("shows error message if updateFacility fails", async () => {
+        it("shows error toast if updateFacility fails", async () => {
             mockFacilitiesAndReservationsContext.updateFacility.mockRejectedValue(new Error("Update facility failed"));
             render(<AdminModalFacilities closeModal={mockCloseModal} popupData={{ _id: '1' }} />);
 
@@ -184,7 +201,7 @@ describe("AdminModalFacilities Component", () => {
             fireEvent.click(screen.getByRole('button', { name: /Guardar/i }));
 
             await waitFor(() => {
-                expect(screen.getByText(/Error al guardar la instalación./i)).toBeInTheDocument();
+                expect(sonner.toast.error).toHaveBeenCalledWith("Error al procesar el formulario de instalaciones.");
             });
         });
     });
