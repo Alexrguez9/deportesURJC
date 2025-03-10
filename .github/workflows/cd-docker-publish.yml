@@ -16,9 +16,17 @@ jobs:
 
       - name: Extract release version
         run: |
-          ref=${GITHUB_REF#refs/tags/}
-          sanitized_ref=$(echo "$ref" | sed 's/\//-/g')
-          echo "RELEASE_NAME=$sanitized_ref" >> $GITHUB_ENV
+          if [[ startsWith "$GITHUB_REF" "refs/tags/release-candidate-" ]]; then
+            # Triggered by release-candidate tag
+            ref=${GITHUB_REF#refs/tags/}
+            sanitized_ref=$(echo "$ref" | sed 's/\//-/g')
+            echo "RELEASE_NAME=$sanitized_ref" >> $GITHUB_ENV
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            # Triggered by push to main branch
+            echo "RELEASE_NAME=main-latest" >> $GITHUB_ENV # Tag fijo para main
+          else
+            echo "RELEASE_NAME=unknown-release" >> $GITHUB_ENV # Fallback, por si acaso (opcional)
+          fi
 
       - name: Log in to DockerHub
         run: |
