@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -13,8 +14,6 @@ const Instalaciones = () => {
     const [facilities, setFacilities] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [selectedInstalacionId, setSelectedInstalacionId] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [instalacionCompleta, setInstalacionCompleta] = useState({});
     const [minTime, setMinTime] = useState(new Date());
     const [maxTime, setMaxTime] = useState(new Date());
@@ -104,7 +103,7 @@ const Instalaciones = () => {
             }
 
             const maxTime = new Date();
-            maxTime.setHours(hours-2, minutes, 0); // ZONA HORARIA: UTC+2 (por eso restamos 2)
+            maxTime.setHours(hours-2, minutes, 0); // Ajuste UTC+2
         
             return maxTime;
         } else {
@@ -141,33 +140,43 @@ const Instalaciones = () => {
         };
 
         const numReservas = await contarReservasPorFranjaHoraria(selectedInstalacionId, startDate);
-        if (numReservas >= instalacionCompleta.capacidad) {
-            setSuccessMessage('');
-            setErrorMessage('Actualmente ya hay ' + numReservas + ' reservas para esa hora. Por favor, selecciona otra hora.');
-            return;
-        }
+        toast.promise(
+            async () => {
+                if (numReservas >= instalacionCompleta.capacidad) {
+                    // setErrorMessage('Actualmente ya hay ' + numReservas + ' reservas para esa hora. Por favor, selecciona otra hora.');
+                    throw { status: { ok: false, error: 'Actualmente ya no hay reservas disponibles para esa hora. Por favor, selecciona otra hora.' } };
+                }
 
-        try {
-            const response = await addReservation(reserva);
-            //setPrecioTotal(response.data.precioTotal);
-            //alert(`Reserva realizada con éxito. Precio total: ${response.data.precioTotal}€`);
-            if (response.ok) {
-                sendEmail(
-                    user.email,
-                    'DeportesURJC - Confirmación de reserva',
-                    `Hola ${user.name},\n\n` +
-                    `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
-                    `Gracias por utilizar nuestro servicio.\nDeportes URJC`
-                );
-                setSuccessMessage('Reserva realizada con éxito.');
-            } else {
-                setErrorMessage('Hubo un problema al realizar la reserva. Inténtalo de nuevo.');
+                try {
+                    const response = await addReservation(reserva);
+                    //setPrecioTotal(response.data.precioTotal);
+                    if (!response.ok) {
+                        throw { status: { ok: false, error: 'Hubo un problema al realizar la reserva. Inténtalo de nuevo.' } };
+                    } else {
+                        sendEmail(
+                            user.email,
+                            'DeportesURJC - Confirmación de reserva',
+                            `Hola ${user.name},\n\n` +
+                            `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
+                            `Gracias por utilizar nuestro servicio.\nDeportes URJC`
+                        );
+                        return { success: true };
+                    }
+                } catch (error) {
+                    /* istanbul ignore next */
+                    console.error("Error al realizar la reserva:", error);
+                    throw { status: { ok: false, error: 'Hubo un problema al realizar la reserva. Inténtalo de nuevo.' } };
+                }
+            },
+            {
+                loading: 'Realizando reserva...',
+                success: 'Reserva realizada con éxito!',
+                error: (err) => {
+                    return err?.status?.error || 'Error al realizar la reserva. Inténtalo de nuevo más tarde.';
+                },
+                duration: 3000,
             }
-        } catch (error) {
-            /* istanbul ignore next */
-            console.error("Error al realizar la reserva:", error);
-            alert("Hubo un problema al realizar la reserva. Inténtalo de nuevo.");
-        }
+        );
     };
 
     return (
@@ -187,11 +196,9 @@ const Instalaciones = () => {
                                 {...register("facilityId", { required: "Por favor, selecciona un deporte" })}
                                     value={selectedInstalacionId}
                                     onChange={(e) => {
-                                        setSuccessMessage('');
                                         setSelectedInstalacionId(e.target.value);
                                         getMinTime(); // actualizamos la hora mínima y máxima cuando cambiamos de instalación
                                         obtenerInstalacionCompleta(e.target.value);
-                                        setErrorMessage('');
                                     }
                                 }
                             >
@@ -210,8 +217,7 @@ const Instalaciones = () => {
                                 <DatePicker
                                     selected={startDate}
                                     onChange={(date) => {
-                                        setSuccessMessage('');
-                                        setStartDate(date)
+                                        setStartDate(date);
                                         }
                                     }
                                     //locale="es-ES"
@@ -223,7 +229,7 @@ const Instalaciones = () => {
                                     minTime={ minTime }
                                     maxTime={ maxTime}
                                     minDate={new Date()}
-                                    role="datetime"
+                                    className="date-picker"
                                 />
                             <button type="submit">Reservar</button>
                         </>
@@ -231,8 +237,6 @@ const Instalaciones = () => {
                     }
                 </form>
                 : <p>Debes iniciar sesión para reservar</p>}
-            {successMessage && <div className="success-message">{successMessage}</div>}
-            {errorMessage && <div className="error-message">{errorMessage}</div>}
         </div>
     );
 };
