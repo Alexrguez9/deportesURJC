@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
-import { getDateWithoutTime } from "../../../utils/results.js";
+import { getDateWithoutTime } from "../../../utils/dates.js";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalResults.css";
 import { useForm } from "react-hook-form";
@@ -41,35 +41,22 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
             lugar: popupData?.lugar || "",
         },
     });
+
     useEffect(() => {
         async function fetchTeams() {
-            console.log('useEffect - popupData at start:', popupData); // Log de popupData al inicio
-            console.log('useEffect - popupData.equipo_local at start:', popupData?.equipo_local); // Log de popupData.equipo_local
-            console.log('useEffect - popupData.equipo_visitante at start:', popupData?.equipo_visitante); // Log de popupData.equipo_visitante
-            console.log('useEffect - popupData?.equipo_local:', popupData?.equipo_local);
-            console.log('useEffect - popupData?.equipo_visitante:', popupData?.equipo_visitante);
-    
-    
-            console.log('useEffect - popupData:', popupData); // Log al inicio del useEffect (existente)
-    
             if (popupData?.equipo_local) {
-                console.log('useEffect - Setting equipoLocal:', popupData.equipo_local);
                 setEquipoLocal(popupData.equipo_local);
-                console.log('useEffect - equipoLocal SET to:', popupData.equipo_local);
             } else if (popupData?.equipo_visitante) {
-                console.log('useEffect - Setting equipoVisitante:', popupData.equipo_visitante);
                 setEquipoVisitante(popupData.equipo_visitante);
-                console.log('useEffect - equipoVisitante SET to:', popupData.equipo_visitante);
             } else {
-                console.log('useEffect - No initial equipo values in popupData.');
+                setEquipoLocal("");
+                setEquipoVisitante("");
             }
             // Filtrar equipos basados en el deporte seleccionado
             const newFilteredTeams = teams.filter(team => team.sport === selectedSport);
             await setFilteredTeams(newFilteredTeams);
-            console.log('useEffect - filteredTeams SET, selectedSport:', selectedSport); // Log al final del useEffect
         }
         fetchTeams();
-        console.log('useEffect - After fetchTeams call (sync part of useEffect)'); // Log después de la llamada asíncrona
     }, [selectedSport, teams, popupData]);
 
     const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
@@ -79,8 +66,7 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
         const [hours, minutes] = time.split(':');
         dateObj.setHours(hours, minutes, 0, 0);
         return dateObj;
-    };   
-
+    };
 
     const onSubmit = handleSubmitEncuentros(async (data) => {
         const equipoLocal = filteredTeams.find(team => team.name === data.equipo_local);

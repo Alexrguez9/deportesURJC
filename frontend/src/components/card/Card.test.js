@@ -35,7 +35,6 @@ describe("Card Component", () => {
     });
     it("does not render the img tag when img prop is not provided", () => {
         render(<Card description="Test Description" />);
-        console.log(screen.debug());
         const imgElement = screen.queryByRole('img');
         expect(imgElement).not.toBeInTheDocument();
     });
