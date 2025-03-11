@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import './MisReservas.css';
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
+import { getPrettyDate } from '../../../utils/dates';
 
 const MisReservas = () => {
     const { user } = useAuth();
@@ -57,8 +58,8 @@ const MisReservas = () => {
                                     {filteredReservas.map((reserva) => (
                                         <tr key={reserva._id}>
                                             <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
-                                            <td>{new Date(reserva.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
-                                            <td>{new Date(reserva.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
+                                            <td>{getPrettyDate(reserva.fechaInicio)}</td>
+                                            <td>{getPrettyDate(reserva.fechaFin)}</td>
                                             <td>{reserva.precioTotal} €</td>
                                             <td>
                                                 <button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>

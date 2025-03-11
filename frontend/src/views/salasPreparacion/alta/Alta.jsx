@@ -18,7 +18,8 @@ const Alta = () => {
     const calculateNewDate = () => {
         if (user) {
             const fechaInicio = new Date();
-            const fechaFin = new Date().getDate() + 30; // Added 30 days
+            const fechaFin = new Date(fechaInicio);
+            fechaFin.setMonth(fechaFin.getMonth() + 1); // Un mes de alta
             return [fechaInicio, fechaFin];
         }
         return [null, null];
@@ -36,12 +37,12 @@ const Alta = () => {
                 throw { status: { ok: false, error: 'Ya estás dado de alta en gimnasio' } };
             }
 
-            const [fechaInicio, fechaFin] = calculateNewDate();
+            const [initDate, endDate] = calculateNewDate();
             const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
-                updatedUserData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
+                updatedUserData.alta.gimnasio = { estado: true, fechaInicio: initDate, fechaFin: endDate };
             } else if (filtroDeporte === 'Atletismo') {
-                updatedUserData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin};
+                updatedUserData.alta.atletismo = { estado: true, fechaInicio: initDate, fechaFin: endDate};
             } else {
                 throw { status: { ok: false, error: 'Escoja una opción válida por favor.' } };
             }

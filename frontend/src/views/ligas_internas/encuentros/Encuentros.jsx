@@ -11,6 +11,7 @@ import { useAuth } from "../../../context/AuthContext";
 import BackButton from "../../../components/backButton/BackButton";
 import ResultsAdminModal from "../../../components/adminModal/adminModalResults/AdminModalResults";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
+import { getPrettyDate } from "../../../utils/dates";
 
 const Encuentros = () => {
     const { user, isAdmin } = useAuth();
@@ -118,7 +119,6 @@ const Encuentros = () => {
                                 <th>Goles visitante</th>
                                 <th>Equipo visitante</th>
                                 <th>Fecha</th>
-                                <th>Hora</th>
                                 <th>Lugar</th>
                             </tr>
                         </thead>
@@ -132,8 +132,7 @@ const Encuentros = () => {
                                     <td>-</td>
                                     <td>{results.goles_visitante}</td>
                                     <td>{results.equipo_visitante}</td>
-                                    <td>{results.fecha}</td>
-                                    <td>{results.hora}</td>
+                                    <td>{getPrettyDate(results.fecha)}</td>
                                     <td>{results.lugar}</td>
                                     <td>
                                         {isAdmin() && <GoPencil onClick={() => openModal(results)} className="editPencil" />}

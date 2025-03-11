@@ -2,6 +2,7 @@ import { useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
 import './MisAbonos.css';
 import { useAuth } from '../../../context/AuthContext';
+import { getPrettyDate } from '../../../utils/dates';
 
 const MisAbonos = () => {
     const { user, updateUser } = useAuth();
@@ -31,10 +32,10 @@ const MisAbonos = () => {
 
     const estadoAtletismo = user?.alta?.atletismo?.estado;
     const estadoGimnasio = user?.alta?.gimnasio?.estado;
-    const fechaInicioGimnasio = user?.alta?.gimnasio?.fechaInicio;
-    const fechaFinGimnasio = user?.alta?.gimnasio?.fechaFin;
-    const fechaInicioAtletismo = user?.alta?.atletismo?.fechaInicio;
-    const fechaFinAtletismo = user?.alta?.atletismo?.fechaFin;
+    const fechaInicioGimnasio = getPrettyDate(user?.alta?.gimnasio?.fechaInicio)
+    const fechaFinGimnasio = getPrettyDate(user?.alta?.gimnasio?.fechaFin)
+    const fechaInicioAtletismo = getPrettyDate(user?.alta?.atletismo?.fechaInicio)
+    const fechaFinAtletismo = getPrettyDate(user?.alta?.atletismo?.fechaFin)
     return (
         <div>
             <h1>Mis Abonos</h1>

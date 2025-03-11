@@ -14,7 +14,7 @@ jest.mock('sonner', () => ({
     },
 }));
 
-jest.mock('../../../utils/results.js', () => ({
+jest.mock('../../../utils/dates.js', () => ({
     getDateWithoutTime: jest.fn().mockImplementation(date => date)
 }));
 
