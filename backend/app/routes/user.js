@@ -22,6 +22,9 @@ router.post('/users/logout', controller.logout);
 // Ruta PUT user
 router.put('/users/:id', controller.updateOne);
 
+// Ruta PUT user edit password and profile
+router.put("/users/:id/profile", controller.updatePasswordAndName);
+
 // Ruta DELETE user
 router.delete('/users/:id', controller.deleteOne);
 

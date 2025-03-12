@@ -16,9 +16,7 @@ exports.getData = async (req, res) => {
 // Obtener un usuario por su id
 exports.getOne = async (req, res) => {
     try {
-        console.log('-----req.params', req.params);
         const { id } = req.params;
-        console.log('---id:', id);
         const user = await User.findById(id);
         res.json(user);
     } catch (error) {
@@ -35,7 +33,6 @@ exports.register = async (req, res) => {
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log('---existingUser:', existingUser);
             return res.status(409).json({ error: 'El correo ya está registrado.' });
         }
 
@@ -136,6 +133,39 @@ exports.updateOne = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al actualizar datos', message: error.message });
+    }
+};
+
+exports.updatePasswordAndName = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { currentPassword, newPassword, name } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Verificar la contraseña actual
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Contraseña actual incorrecta" });
+        }
+
+        // Actualizar la contraseña si se proporciona una nueva
+        if (newPassword) {
+            user.password = await bcrypt.hash(newPassword, 10);
+        }
+        // Actualizar el nombre si se proporciona
+        if (name) {
+            user.name = name;
+        }
+        const updatedUser = await user.save();
+        res.json({ message: "Perfil actualizado correctamente", updatedUser });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al actualizar el perfil", message: error.message });
     }
 };
 
