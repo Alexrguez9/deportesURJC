@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ConsultarPerfil = () => {
-    const { user, logout, deleteUser, updateUser } = useAuth();
+    const { user, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservas, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [updatedName, setUpdatedName] = useState(user?.name || '');
     const [updatedPassword, setUpdatedPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
 
     const handleOpenDeleteConfirmation = () => {
         setShowDeleteConfirmation(true);
@@ -55,11 +56,11 @@ const ConsultarPerfil = () => {
         }
 
         try {
-            await updateUser(user._id, {
-                name: updatedName,
-                password: updatedPassword,
-            });
-
+            const updatedUserRes = await updatePasswordAndName(user?._id, currentPassword, updatedPassword, updatedName);
+            if (!updatedUserRes) {
+                toast.error("Error al actualizar el perfil. Inténtalo de nuevo.");
+                return;
+            }
             toast.success("Perfil actualizado con éxito.");
             setEditMode(false);
         } catch (error) {
@@ -86,6 +87,14 @@ const ConsultarPerfil = () => {
                                             type="text"
                                             value={updatedName}
                                             onChange={(e) => setUpdatedName(e.target.value)}
+                                        />
+                                    </label>
+                                    <label>
+                                        Contraseña actual:
+                                        <input
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
                                         />
                                     </label>
                                     <label>

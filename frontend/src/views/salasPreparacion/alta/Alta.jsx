@@ -48,7 +48,7 @@ const Alta = () => {
             }
             try {
                 const response = await updateUser(user._id, updatedUserData);
-                if (response.status !== 200) {
+                if (!response.ok) {
                     throw { status: { ok: false, error: 'Error al dar de alta. No se ha podido actulizar tu usuario' } };
                 }
             } catch (error) {

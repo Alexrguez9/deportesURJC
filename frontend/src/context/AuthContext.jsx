@@ -145,7 +145,30 @@ export const AuthProvider = ({ children }) => {
             console.error('Error updating user:', error);
             throw error;
           }
-    }
+    };
+
+    const updatePasswordAndName = async (userId, currentPassword, newPassword, name) => {
+        try {
+            const response = await fetch(`http://localhost:4000/users/${userId}/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ currentPassword, newPassword, name }),
+                credentials: 'include'
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudo actualizar el perfil`);
+            }
+    
+            const updatedUser = await response.json();
+            return updatedUser;
+        } catch (error) {
+            console.error("Error al actualizar el perfil:", error);
+            throw error;
+        }
+    };
 
     const deleteUser = async (userId) => {
         try {
@@ -196,7 +219,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin }}>
+        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin, updatePasswordAndName }}>
         {children}
         </AuthContext.Provider>
     );
