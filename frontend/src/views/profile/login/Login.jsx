@@ -30,12 +30,32 @@ const Login = () => {
         formState: { errors: errorsLogin },
     } = useForm();
 
+    
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+            if (name && errorsLogin.login) {
+                clearErrorsLogin("login");
+            }
+        });
+
+        const subscriptionRegister = watchRegister((value, { name }) => {
+            if (name && errorsRegister.register) {
+                clearErrorsRegister("register");
+            }
+        });
+
+        return () => {
+            subscription.unsubscribe();
+            subscriptionRegister.unsubscribe();
+        };
+    }, [watch, watchRegister, errorsLogin, errorsRegister, clearErrorsLogin, clearErrorsRegister]);
+
     const onSubmitRegister = handleSubmitRegister(async (data) => {
         clearErrorsRegister(); // Clear previous errors
         setIsRegisterLoading(true);
         try{ 
             if (!user) {
-                const updatedData = handleAdmin(data);
+                const updatedData = await handleAdmin(data);
                 const resRegister = await addUser(updatedData, navigate);
                 if (resRegister.ok) {
                     navigate("/profile");
@@ -44,6 +64,11 @@ const Login = () => {
                     setErrorRegister("register", {
                         type: "manual",
                         message: "Email ya en uso"
+                    });
+                } else if ( resRegister.status === 409 ) {
+                    setErrorRegister("register", {
+                        type: "manual",
+                        message: "Correo ya está registrado.Prueba con otro"
                     });
                 } else if ( !resRegister.ok ) {
                     setErrorRegister("register", {
@@ -60,15 +85,6 @@ const Login = () => {
             setIsRegisterLoading(false);
         }
     });
-
-    useEffect(() => {
-        const subscription = watch((value, { name }) => {
-            if (name && errorsLogin.login) {
-                clearErrorsLogin("login");
-            }
-        });
-        return () => subscription.unsubscribe();
-    }, [watch, clearErrorsLogin, errorsLogin]);
     
     const onSubmitLogin = handleSubmitLogin(async (data) => {
         clearErrorsLogin(); // Clear previous errors
@@ -79,14 +95,8 @@ const Login = () => {
             password: watch("loginPassword"),
         };
 
-        const updatedData = handleAdmin(dataWatch);
         try {
-            const userData = {
-                email: updatedData.email,
-                password: updatedData.password,
-                role: updatedData.role
-            };
-            const resLogin = await login(userData, navigate);
+            const resLogin = await login(dataWatch, navigate);
 
             if ( resLogin.status === 401 ) {
                 setErrorLogin("login", {

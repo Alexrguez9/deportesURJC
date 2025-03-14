@@ -29,12 +29,15 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, alta, balance } = req.body;
-
+        console.log('----REGISTER----');
+        console.log('---name:', name);
+        console.log('---email:', email);
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
         }
+        console.log('---existingUser:', existingUser);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -44,14 +47,14 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             alta: {
                 gimnasio: {
-                  estado: alta.gimnasio.estado || null,
-                  fechaInicio: alta.gimnasio.fechaInicio || null,
-                  fechaFin: alta.gimnasio.fechaFin || null,
+                  estado: alta?.gimnasio.estado || null,
+                  fechaInicio: alta?.gimnasio.fechaInicio || null,
+                  fechaFin: alta?.gimnasio.fechaFin || null,
                 },
                 atletismo: {
-                  estado: alta.atletismo.estado || null,
-                  fechaInicio: alta.atletismo.fechaInicio || null,
-                  fechaFin: alta.atletismo.fechaFin || null,
+                  estado: alta?.atletismo.estado || null,
+                  fechaInicio: alta?.atletismo.fechaInicio || null,
+                  fechaFin: alta?.atletismo.fechaFin || null,
                 },
             },
             abono_renovado: false,
@@ -70,7 +73,7 @@ exports.register = async (req, res) => {
 // Iniciar sesión
 exports.login = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
         
         if (!user) {
@@ -185,3 +188,30 @@ exports.deleteOne = async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar datos', message: error.message });
     }
 };
+
+require("dotenv").config(); // Asegurar que se carguen las variables de entorno
+
+// Función para comprobar si el email es igual al ADMIN_EMAIL
+exports.checkIfAdmin = (req, res) => {
+    try {
+        const { email } = req.body; // Recibir el email del usuario desde el frontend
+
+        if (!email) {
+            return res.status(400).json({ error: "Email es requerido" });
+        }
+
+        const adminEmail = process.env.ADMIN_EMAIL?.replace(/['"]/g, ''); // Limpiar comillas del .env
+        if (!adminEmail) {
+            return res.status(500).json({ error: "ADMIN_EMAIL no está configurado en el servidor" });
+        }
+
+        const isAdmin = email === adminEmail;
+        console.log(`📩 Comparando email ${email} con admin: ${adminEmail} → Resultado: ${isAdmin}`);
+
+        return res.json({ isAdmin });
+    } catch (error) {
+        console.error("❌ Error en checkIfAdmin:", error);
+        return res.status(500).json({ error: "Error en la verificación de admin", message: error.message });
+    }
+};
+
