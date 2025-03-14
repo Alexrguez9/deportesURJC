@@ -9,6 +9,7 @@ import BackButton from "../../../../components/backButton/BackButton";
 import Spinner from "../../../../components/spinner/Spinner";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
+import { getHours } from "../../../../utils/dates";
 
 const AdminFacilities = () => {
   const { isAdmin } = useAuth();
@@ -81,7 +82,9 @@ const AdminFacilities = () => {
           <GoPlus onClick={() => openModal()} className="iconPlus" size="1.5em" />
         </div>
         <h1>Instalaciones</h1>
-        <p>Aquí puedes administrar las instalaciones disponibles en la web.</p>
+        <p>Aquí puedes administrar las instalaciones disponibles en la web.
+          <br />Los precios son por media hora.
+        </p>
         <section>
           <table>
             <thead>
@@ -89,7 +92,9 @@ const AdminFacilities = () => {
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Capacidad</th>
-                <th>Precio por 30 min</th>
+                <th>Horario inicio</th>
+                <th>Horario fin</th>
+                <th>Precio</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -99,6 +104,8 @@ const AdminFacilities = () => {
                   <td>{facility.nombre}</td>
                   <td>{facility.descripcion}</td>
                   <td>{facility.capacidad}</td>
+                  <td>{getHours(facility.horario.horarioInicio)}</td>
+                  <td>{getHours(facility.horario.horarioFin)}</td>
                   <td>{facility.precioPorMediaHora} €</td>
                   <td>
                     <GoPencil

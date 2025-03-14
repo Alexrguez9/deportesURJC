@@ -28,7 +28,7 @@ exports.getOne = async (req, res) => {
 // Registrar un nuevo usuario
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role, alta, balance } = req.body;
 
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
@@ -44,19 +44,19 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             alta: {
                 gimnasio: {
-                  estado: false, // Valor inicial para gimnasio: no dado de alta
-                  fechaInicio: null, // Fecha de inicio inicial: null
-                  fechaFin: null, // Fecha de fin inicial: null
+                  estado: alta.gimnasio.estado || null,
+                  fechaInicio: alta.gimnasio.fechaInicio || null,
+                  fechaFin: alta.gimnasio.fechaFin || null,
                 },
                 atletismo: {
-                  estado: false, // Valor inicial para atletismo: no dado de alta
-                  fechaInicio: null, // Fecha de inicio inicial: null
-                  fechaFin: null, // Fecha de fin inicial: null
+                  estado: alta.atletismo.estado || null,
+                  fechaInicio: alta.atletismo.fechaInicio || null,
+                  fechaFin: alta.atletismo.fechaFin || null,
                 },
             },
             abono_renovado: false,
-            saldo: 0,
-            role,
+            balance: balance || 0,
+            role: role || 'user',
         });
 
         const savedUser = await newUser.save();
@@ -92,7 +92,7 @@ exports.login = async (req, res) => {
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
                 alta: user.alta,
-                saldo: user.saldo,
+                balance: user.balance,
                 role: user.role,
                 //token
         });

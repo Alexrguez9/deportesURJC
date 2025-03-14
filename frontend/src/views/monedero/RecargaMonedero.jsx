@@ -22,7 +22,7 @@ const RecargaMonedero = () => {
             try {
                 // Actualiza el saldo del usuario
                 const updatedUserData = { ...user };
-                updatedUserData.saldo = user.saldo + Number(importe);
+                updatedUserData.balance = user.balance + Number(importe);
                 const response = await updateUser(user._id, updatedUserData);
 
 
@@ -43,7 +43,7 @@ const RecargaMonedero = () => {
                         user.email, 
                         "Deportes URJC - Recarga de monedero con éxito",
                         `Hola ${user.name},\n\n` +
-                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.saldo - Number(importe)}.\n\n` +
+                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.balance - Number(importe)}.\n\n` +
                         `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                     );
                     
@@ -83,7 +83,7 @@ const RecargaMonedero = () => {
                     <h2>Datos de envío del justificante</h2>
                     <p><strong>Nombre:</strong> {user?.name}</p>
                     <p><strong>Correo:</strong> {user?.email}</p>
-                    <p><strong>Saldo actual:</strong> {user?.saldo} €</p>
+                    <p><strong>Saldo actual:</strong> {user?.balance} €</p>
                 </section>
                 </>
             )}

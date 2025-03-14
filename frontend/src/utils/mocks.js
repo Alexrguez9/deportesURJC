@@ -16,6 +16,9 @@ export const mockAuthContext = {
     ]),
     addUser: jest.fn().mockResolvedValue({ _id: "3", email: "newuser@test.com", role: "user" }),
     updateUser: jest.fn().mockResolvedValue({ _id: "123", email: "updated@test.com" }),
+    updatePasswordAndName: jest.fn((userId, newPassword, newName) => {
+        return Promise.resolve({ success: true, userId, newPassword, newName });
+    }),
     deleteUser: jest.fn().mockResolvedValue(true),
     isAdmin: jest.fn(() => mockAuthContext.user?.role === "admin"),
     isStudent: jest.fn(() => mockAuthContext.user?.role === "student"),

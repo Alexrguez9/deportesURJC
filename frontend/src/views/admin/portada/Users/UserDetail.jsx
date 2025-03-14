@@ -76,7 +76,7 @@ const UserDetail = () => {
                 </>
                 )}
                 <div>
-                <strong>Saldo:</strong> <span>{user.saldo} €</span>
+                <strong>Saldo:</strong> <span>{user.balance} €</span>
                 </div>
             </div>
         </div>

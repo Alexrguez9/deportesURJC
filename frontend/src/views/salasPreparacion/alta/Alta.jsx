@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
 import './Alta.css';
 import BackButton from "../../../components/backButton/BackButton";
+import { getMonthlyDateRange } from "../../../utils/dates";
 
 const Alta = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
@@ -15,15 +16,6 @@ const Alta = () => {
         setFiltroDeporte(event.target.value);
     };
 
-    const calculateNewDate = () => {
-        if (user) {
-            const fechaInicio = new Date();
-            const fechaFin = new Date(fechaInicio);
-            fechaFin.setMonth(fechaFin.getMonth() + 1); // Un mes de alta
-            return [fechaInicio, fechaFin];
-        }
-        return [null, null];
-    };
 
     const handleAlta = async () => {
         if(user) {
@@ -37,7 +29,7 @@ const Alta = () => {
                 throw { status: { ok: false, error: 'Ya estás dado de alta en gimnasio' } };
             }
 
-            const [initDate, endDate] = calculateNewDate();
+            const [initDate, endDate] = getMonthlyDateRange(user);
             const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
                 updatedUserData.alta.gimnasio = { estado: true, fechaInicio: initDate, fechaFin: endDate };

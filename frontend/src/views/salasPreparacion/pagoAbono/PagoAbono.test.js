@@ -278,7 +278,7 @@ describe("PagoAbono Component", () => {
     });
 
     it("renders spinner while loading", async () => {
-        mockAuthContext.updateUser = jest.fn(() => new Promise(resolve => setTimeout(() => resolve({ status: 200, data: {} }), 500)));
+        mockAuthContext.updateUser = jest.fn(() => new Promise(resolve => setTimeout(() => resolve({ status: 200, data: {} }))));
 
         render(
             <BrowserRouter>
@@ -293,7 +293,7 @@ describe("PagoAbono Component", () => {
 
         await waitFor(() => {
             expect(document.querySelector(".spinner")).not.toBeInTheDocument();
-        }, { timeout: 1000 });
+        });
     });
 
     it("shows error message if user tries to pay for Atletismo without atletismo alta, but yes gym alta", async () => {

@@ -14,6 +14,10 @@ jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
 }));
 
+jest.mock("../../../utils/dates", () => ({
+    getMonthlyDateRange: jest.fn(() => ["2025-03-01T00:00:00.000Z", "2025-04-01T00:00:00.000Z"])
+}));
+
 jest.mock('sonner', () => {
     const mockToast = {
         success: jest.fn(),
@@ -202,11 +206,17 @@ describe("Alta Component", () => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
                 '123',
                 expect.objectContaining({
+                    _id: '123',
                     alta: expect.objectContaining({
                         gimnasio: expect.objectContaining({
                             estado: true,
-                            fechaInicio: expect.any(Date),
-                            fechaFin: expect.anything() // Could be Date or number because of getDate()+30
+                            fechaInicio: "2025-03-01T00:00:00.000Z",
+                            fechaFin: "2025-04-01T00:00:00.000Z"
+                        }),
+                        atletismo: expect.objectContaining({
+                            estado: false,
+                            fechaInicio: null,
+                            fechaFin: null
                         }),
                     }),
                 })
@@ -230,11 +240,17 @@ describe("Alta Component", () => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
                 '123',
                 expect.objectContaining({
+                    _id: '123',
                     alta: expect.objectContaining({
                         atletismo: expect.objectContaining({
                             estado: true,
-                            fechaInicio: expect.any(Date),
-                            fechaFin: expect.anything() // Could be Date or number because of getDate()+30
+                            fechaInicio: "2025-03-01T00:00:00.000Z",
+                            fechaFin: "2025-04-01T00:00:00.000Z"
+                        }),
+                        gimnasio: expect.objectContaining({
+                            estado: false,
+                            fechaInicio: null,
+                            fechaFin: null
                         }),
                     }),
                 })
