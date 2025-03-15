@@ -4,9 +4,10 @@ import { useAuth } from "../../../context/AuthContext";
 import "./AdminModalUsers.css";
 import PropTypes from "prop-types";
 import { toast } from 'sonner';
+import { getMonthlyDateRange } from "../../../utils/dates";
 
 const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
-    const { addUser, updateUser, handleAdmin } = useAuth();
+    const { user, addUser, updateUser, handleAdmin } = useAuth();
 
     const {
         register,
@@ -19,7 +20,7 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
         email: popupData?.email || "",
         password: "",
         role: popupData?.role || "user",
-        saldo: popupData?.saldo || 0,
+        balance: popupData?.balance || 0,
         gimnasio: popupData?.alta?.gimnasio?.estado || false,
         atletismo: popupData?.alta?.atletismo?.estado || false,
     };
@@ -30,16 +31,22 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
             alta: {
                 gimnasio: {
                     estado: data.gimnasio,
+                    fechaInicio: data.gimnasio ? getMonthlyDateRange(user)[0] : null,
+                    fechaFin: data.gimnasio ? getMonthlyDateRange(user)[1] : null
                 },
                 atletismo: {
                     estado: data.atletismo,
+                    fechaInicio: data.atletismo ? getMonthlyDateRange(user)[0] : null,
+                    fechaFin: data.atletismo ? getMonthlyDateRange(user)[1] : null
                 },
             },
         };
+        delete formattedData.gimnasio;
+        delete formattedData.atletismo;
 
         try {
             if (isNewUser) {
-                const updatedData = handleAdmin(data);
+                const updatedData = handleAdmin(formattedData);
                 const res = await addUser(updatedData);
                 if (res.status === 409) {
                     toast.error('El correo ya está registrado. Por favor, usa uno diferente.');
@@ -133,13 +140,13 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
                             Saldo:
                             <input
                                 type="number"
-                                {...register("saldo", {
+                                {...register("balance", {
                                     required: "Por favor, introduce el saldo",
                                     min: { value: 0, message: "El saldo no puede ser negativo" },
                                 })}
-                                defaultValue={initialValues.saldo}
+                                defaultValue={initialValues.balance}
                             />
-                            {errors.saldo && <span className="error-message">{errors.saldo.message}</span>}
+                            {errors.balance && <span className="error-message">{errors.balance.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -177,7 +184,7 @@ AdminModalUsers.propTypes = {
         name: PropTypes.string,
         email: PropTypes.string,
         role: PropTypes.string,
-        saldo: PropTypes.number,
+        balance: PropTypes.number,
         alta: PropTypes.shape({
             gimnasio: PropTypes.shape({
                 estado: PropTypes.bool,

@@ -32,7 +32,8 @@ describe("ConsultarPerfil Component", () => {
         jest.clearAllMocks();
         useAuth.mockReturnValue(mockAuthContext);
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
-        mockAuthContext.user = { _id: "123", name: "Test User", email: "test@example.com", saldo: 10 };
+        mockAuthContext.user = { _id: "123", name: "Test User", email: "test@example.com", balance: 10, role: "admin" };
+        mockAuthContext.isAdmin = jest.fn().mockReturnValue(true);
         mockAuthContext.logout.mockResolvedValue(true);
         mockAuthContext.deleteUser.mockResolvedValue({ status: 200 });
         mockAuthContext.updateUser.mockResolvedValue({ status: 200, data: { message: 'Profile updated' } });
@@ -83,14 +84,16 @@ describe("ConsultarPerfil Component", () => {
         const editButton = screen.getByRole("button", { name: /editar perfil/i });
         fireEvent.click(editButton);
         const nameInput = screen.getByLabelText(/nuevo nombre:/i);
+        const actualPasswordInput = screen.getByLabelText(/contraseña actual:/i);
         const passwordInput = screen.getByLabelText(/nueva contraseña:/i);
+        fireEvent.change(actualPasswordInput, { target: { value: 'actualPass' } });
         fireEvent.change(nameInput, { target: { value: 'Updated Name' } });
         fireEvent.change(passwordInput, { target: { value: 'updatedPass' } });
         const saveButton = screen.getByRole("button", { name: /guardar cambios/i });
         fireEvent.click(saveButton);
 
         await waitFor(() => {
-            expect(mockAuthContext.updateUser).toHaveBeenCalledWith("123", { name: 'Updated Name', password: 'updatedPass' });
+            expect(mockAuthContext.updatePasswordAndName).toHaveBeenCalledWith("123", "actualPass", "updatedPass", "Updated Name");
             expect(toast.success).toHaveBeenCalledWith("Perfil actualizado con éxito.");
         });
     });
@@ -109,12 +112,14 @@ describe("ConsultarPerfil Component", () => {
     });
 
     it("shows error message on updateUser failure", async () => {
-        mockAuthContext.updateUser.mockRejectedValue(new Error("Update error"));
+        mockAuthContext.updatePasswordAndName.mockRejectedValue(new Error("Update error"));
         render(<ConsultarPerfil />);
         const editButton = screen.getByRole("button", { name: /editar perfil/i });
         fireEvent.click(editButton);
         const nameInput = screen.getByLabelText(/nuevo nombre:/i);
+        const actualPasswordInput = screen.getByLabelText(/contraseña actual:/i);
         const passwordInput = screen.getByLabelText(/nueva contraseña:/i);
+        fireEvent.change(actualPasswordInput, { target: { value: 'actualPass' } });
         fireEvent.change(nameInput, { target: { value: 'Updated Name' } });
         fireEvent.change(passwordInput, { target: { value: 'updatedPass' } });
         const saveButton = screen.getByRole("button", { name: /guardar cambios/i });

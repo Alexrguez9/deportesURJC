@@ -66,7 +66,7 @@ describe("AdminModalUsers Component", () => {
                 name: 'Existing User',
                 email: 'existing@example.com',
                 role: 'admin',
-                saldo: 100,
+                balance: 100,
                 alta: {
                     gimnasio: { estado: true },
                     atletismo: { estado: false }
@@ -76,7 +76,7 @@ describe("AdminModalUsers Component", () => {
             expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.name);
             expect(screen.getByLabelText(/Email:/i)).toHaveValue(popupData.email);
             expect(screen.getByLabelText(/Rol:/i)).toHaveValue(popupData.role);
-            expect(screen.getByLabelText(/Saldo:/i)).toHaveValue(popupData.saldo);
+            expect(screen.getByLabelText(/Saldo:/i)).toHaveValue(popupData.balance);
             expect(screen.getByLabelText(/Gimnasio:/i)).toBeChecked();
             expect(screen.getByLabelText(/Atletismo:/i)).not.toBeChecked();
         });

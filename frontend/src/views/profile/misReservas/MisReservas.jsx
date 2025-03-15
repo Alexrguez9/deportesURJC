@@ -13,7 +13,7 @@ const MisReservas = () => {
     const fetchReservas = async () => {
         const reservations = await getAllReservations();
         if (user) {
-            setFilteredReservas(reservations.filter(reserva => reserva.userId === user._id));
+            setFilteredReservas(reservations?.filter(reserva => reserva.userId === user._id));
         }
     };
 

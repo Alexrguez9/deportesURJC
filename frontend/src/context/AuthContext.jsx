@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
                     navigate("/");
                     return response;
                 } else {
-                    return { status: response.status };
+                    return response;
                 }
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
@@ -208,15 +208,35 @@ export const AuthProvider = ({ children }) => {
     }
 
     /* 
-    Función inicial para asignar el rol del primer usuario. De esta manera ya tendremos un user admin de inicio, que pueda ir editando los roles de los demás usuarios.
-    Actualmente, solo se usa en la pantalla de registro de usuarios.
-    Modificar según las necesidades de la aplicación. 
+    * SOLAMENTE SE HACE USO EN EL REGISTER DE LA APLICACIÓN
+    * Función inicial para asignarpoer tener un primer usuario admin y así, poder ir editando los roles de los demás usuarios...
+    * Modificar según las necesidades de la aplicación. 
     */
-    const handleAdmin = (data) => {
-        const email = data.email;
-        const role = email.includes("@admin") ? "admin" : "user";
-        return { ...data, role };
+    const handleAdmin = async (data) => {
+        try {
+            const response = await fetch("http://localhost:4000/users/check-admin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: data.email }),
+            });
+    
+            if (!response.ok) {
+                console.error("⚠️ Error al verificar si el usuario es admin:", response.status);
+                return { ...data, role: "user" }; // Si hay error, asignamos "user" por defecto
+            }
+    
+            const { isAdmin } = await response.json();
+    
+            return { ...data, role: isAdmin ? "admin" : "user" };
+        } catch (error) {
+            console.error("Error en handleAdmin:", error);
+            return { ...data, role: "user" }; // Si hay error de red, asignamos "user"
+        }
     };
+    
+    
 
     return (
         <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin, updatePasswordAndName }}>

@@ -37,7 +37,7 @@ const AdminUsers = () => {
 
     const openModal = (user) => {
         if (!user) {
-            setPopupData({ email: "", name: "", role: "", saldo: 0 });
+            setPopupData({ email: "", name: "", role: "", balance: 0 });
             const newUser = true; // Variable temporal
             setIsNewUser(newUser);
             setIsModalOpen(true);
@@ -110,7 +110,7 @@ const AdminUsers = () => {
                                         <td>{userInList?.role}</td>
                                         <td>{userInList?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
                                         <td>{userInList?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
-                                        <td>{userInList?.saldo} €</td>
+                                        <td>{userInList?.balance} €</td>
                                         <td className="actions">
                                             <GoPencil onClick={() => openModal(userInList)} className="editPencil" />
                                             <MdOutlineDelete onClick={() => handleDeleteUser(userInList._id)} className="deleteTrash" />

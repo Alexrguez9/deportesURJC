@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ConsultarPerfil = () => {
-    const { user, logout, deleteUser, updatePasswordAndName } = useAuth();
+    const { user, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservas, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -79,6 +79,8 @@ const ConsultarPerfil = () => {
                             <div className="centered-div profile-info">
                                 <p>Nombre: {user?.name}</p>
                                 <p>Email: {user?.email}</p>
+                                <p>Saldo: {user?.balance} €</p>
+                                {isAdmin() && <p>Role: {user?.role}</p>}
                             {editMode ? (
                                 <div className="centered-div">
                                     <label>
@@ -113,7 +115,6 @@ const ConsultarPerfil = () => {
                             )}
                             </div>
                         </section>
-                        <div></div>
                         {user && (
                             <div>
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
