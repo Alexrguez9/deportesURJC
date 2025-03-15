@@ -22,7 +22,13 @@ router.post('/users/logout', controller.logout);
 // Ruta PUT user
 router.put('/users/:id', controller.updateOne);
 
+// Ruta PUT user edit password and profile
+router.put("/users/:id/profile", controller.updatePasswordAndName);
+
 // Ruta DELETE user
 router.delete('/users/:id', controller.deleteOne);
+
+// Nueva ruta para obtener el email del admin desde .env
+router.post("/users/check-admin", controller.checkIfAdmin );
 
 module.exports = router;

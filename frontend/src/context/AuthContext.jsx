@@ -1,4 +1,8 @@
-import React, { createContext, useState, useContext } from "react";
+import {
+    createContext,
+    useState,
+    useContext
+} from "react";
 
 // Creamos contexto
 const AuthContext = createContext();
@@ -42,7 +46,7 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userData),
-                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -83,9 +87,10 @@ export const AuthProvider = ({ children }) => {
                     setUser(registeredUser);
                     setIsAuthenticated(true);
                     navigate("/");
+                    return response;
+                } else {
+                    return response;
                 }
-                
-                return response;
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
                 // mostrar un mensaje de error al usuario
@@ -103,12 +108,11 @@ export const AuthProvider = ({ children }) => {
                 method: 'POST',
                 credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
             });
-
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
             } else {
-                // Manejar errores de cierre de sesión según sea necesario
+                console.error("Error al cerrar sesión:", response.status);
             }
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
@@ -129,8 +133,8 @@ export const AuthProvider = ({ children }) => {
       
             if (response.ok) {
                 const updatedUser = await response.json();
-                if (user._id === userId) {
-                    setUser(updatedUser); // Update user state in context
+                if (user?._id === userId) {
+                    setUser(updatedUser);
                 }
                 return response;
             } else {
@@ -141,22 +145,44 @@ export const AuthProvider = ({ children }) => {
             console.error('Error updating user:', error);
             throw error;
           }
-    }
+    };
+
+    const updatePasswordAndName = async (userId, currentPassword, newPassword, name) => {
+        try {
+            const response = await fetch(`http://localhost:4000/users/${userId}/profile`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ currentPassword, newPassword, name }),
+                credentials: 'include'
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: No se pudo actualizar el perfil`);
+            }
+    
+            const updatedUser = await response.json();
+            return updatedUser;
+        } catch (error) {
+            console.error("Error al actualizar el perfil:", error);
+            throw error;
+        }
+    };
 
     const deleteUser = async (userId) => {
         try {
           const response = await fetch(`http://localhost:4000/users/${userId}`, {
             method: 'DELETE',
-            credentials: 'include' // Include credentials for authorization
+            credentials: 'include'
           });
           if (response.ok) {
-            if (user._id === userId) {
-              setUser(null); // Set user state to null in context
-              setIsAuthenticated(false); // Set authentication state to false
+            if (user?._id === userId) {
+              setUser(null);
+              setIsAuthenticated(false);
             }
           } else {
             console.error('Error deleting user:', response.statusText);
-            // Handle deletion errors as needed (e.g., display error message)
           }
           return response;
         } catch (error) {
@@ -182,23 +208,41 @@ export const AuthProvider = ({ children }) => {
     }
 
     /* 
-    Función inicial para asignar el rol del primer usuario. De esta manera ya tendremos un user admin de inicio, que pueda ir editando los roles de los demás usuarios.
-    Actualmente, solo se usa en la pantalla de registro de usuarios.
-    Modificar según las necesidades de la aplicación. 
+    * SOLAMENTE SE HACE USO EN EL REGISTER DE LA APLICACIÓN
+    * Función inicial para asignarpoer tener un primer usuario admin y así, poder ir editando los roles de los demás usuarios...
+    * Modificar según las necesidades de la aplicación. 
     */
-    const handleAdmin = (data) => {
-        const email = data.email;
-        const role = email.includes("@admin") ? "admin" : "user";
-        return { ...data, role };
+    const handleAdmin = async (data) => {
+        try {
+            const response = await fetch("http://localhost:4000/users/check-admin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: data.email }),
+            });
+    
+            if (!response.ok) {
+                console.error("⚠️ Error al verificar si el usuario es admin:", response.status);
+                return { ...data, role: "user" }; // Si hay error, asignamos "user" por defecto
+            }
+    
+            const { isAdmin } = await response.json();
+    
+            return { ...data, role: isAdmin ? "admin" : "user" };
+        } catch (error) {
+            console.error("Error en handleAdmin:", error);
+            return { ...data, role: "user" }; // Si hay error de red, asignamos "user"
+        }
     };
+    
+    
 
     return (
-        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin }}>
+        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin, updatePasswordAndName }}>
         {children}
         </AuthContext.Provider>
     );
 };
-
-
 
 export const useAuth = () => useContext(AuthContext);

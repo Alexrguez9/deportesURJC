@@ -1,5 +1,5 @@
 # DeportesURJC app web
- This is a project for mi Final Degree Project.
+ This is a project for my Final Degree Project.
  It´s developed with React for the frontend, Express for the backend and MongoDB for the database, in this case, MongoDB Atlas.
 
 ## Deploy in local
@@ -15,3 +15,11 @@ npm run dev
  ### Terminal 1
   0. If not in proyect, create a docker-compose.yml file (this step may be usefull if you cloned dockerhub version)
   1. Run: docker-compose up --build
+
+
+## Tests
+ ### Run all tests
+ npm run test
+
+ ### Run all tests with coverage
+ npm run test:coverage

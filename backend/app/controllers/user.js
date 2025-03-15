@@ -16,9 +16,7 @@ exports.getData = async (req, res) => {
 // Obtener un usuario por su id
 exports.getOne = async (req, res) => {
     try {
-        console.log('-----req.params', req.params);
         const { id } = req.params;
-        console.log('---id:', id);
         const user = await User.findById(id);
         res.json(user);
     } catch (error) {
@@ -30,14 +28,16 @@ exports.getOne = async (req, res) => {
 // Registrar un nuevo usuario
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
-
+        const { name, email, password, role, alta, balance } = req.body;
+        console.log('----REGISTER----');
+        console.log('---name:', name);
+        console.log('---email:', email);
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            console.log('---existingUser:', existingUser);
             return res.status(409).json({ error: 'El correo ya está registrado.' });
         }
+        console.log('---existingUser:', existingUser);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -47,19 +47,19 @@ exports.register = async (req, res) => {
             password: hashedPassword,
             alta: {
                 gimnasio: {
-                  estado: false, // Valor inicial para gimnasio: no dado de alta
-                  fechaInicio: null, // Fecha de inicio inicial: null
-                  fechaFin: null, // Fecha de fin inicial: null
+                  estado: alta?.gimnasio.estado || null,
+                  fechaInicio: alta?.gimnasio.fechaInicio || null,
+                  fechaFin: alta?.gimnasio.fechaFin || null,
                 },
                 atletismo: {
-                  estado: false, // Valor inicial para atletismo: no dado de alta
-                  fechaInicio: null, // Fecha de inicio inicial: null
-                  fechaFin: null, // Fecha de fin inicial: null
+                  estado: alta?.atletismo.estado || null,
+                  fechaInicio: alta?.atletismo.fechaInicio || null,
+                  fechaFin: alta?.atletismo.fechaFin || null,
                 },
             },
             abono_renovado: false,
-            saldo: 0,
-            role,
+            balance: balance || 0,
+            role: role || 'user',
         });
 
         const savedUser = await newUser.save();
@@ -73,7 +73,7 @@ exports.register = async (req, res) => {
 // Iniciar sesión
 exports.login = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { email, password } = req.body;
         const user = await User.findOne({ email });
         
         if (!user) {
@@ -95,7 +95,7 @@ exports.login = async (req, res) => {
                 estado_alta: user.estado_alta,
                 abono_renovado: user.abono_renovado,
                 alta: user.alta,
-                saldo: user.saldo,
+                balance: user.balance,
                 role: user.role,
                 //token
         });
@@ -139,6 +139,39 @@ exports.updateOne = async (req, res) => {
     }
 };
 
+exports.updatePasswordAndName = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { currentPassword, newPassword, name } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        // Verificar la contraseña actual
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Contraseña actual incorrecta" });
+        }
+
+        // Actualizar la contraseña si se proporciona una nueva
+        if (newPassword) {
+            user.password = await bcrypt.hash(newPassword, 10);
+        }
+        // Actualizar el nombre si se proporciona
+        if (name) {
+            user.name = name;
+        }
+        const updatedUser = await user.save();
+        res.json({ message: "Perfil actualizado correctamente", updatedUser });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al actualizar el perfil", message: error.message });
+    }
+};
+
 // Eliminar un usuario
 exports.deleteOne = async (req, res) => {
     try {
@@ -155,3 +188,28 @@ exports.deleteOne = async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar datos', message: error.message });
     }
 };
+
+require("dotenv").config(); // Asegurar que se carguen las variables de entorno
+
+// Función para comprobar si el email es igual al ADMIN_EMAIL
+exports.checkIfAdmin = (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: "Email es requerido" });
+        }
+
+        if (!adminEmail) {
+            return res.status(500).json({ error: "ADMIN_EMAIL no está configurado en el servidor" });
+        }
+
+        const isAdmin = email === adminEmail;
+
+        return res.json({ isAdmin });
+    } catch (error) {
+        console.error("❌ Error en checkIfAdmin:", error);
+        return res.status(500).json({ error: "Error en la verificación de admin", message: error.message });
+    }
+};
+

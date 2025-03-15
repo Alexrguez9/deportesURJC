@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { toast } from "sonner";
 import "./AdminUsers.css";
-import { Outlet } from "react-router-dom";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { IoEyeOutline } from "react-icons/io5";
@@ -37,7 +37,7 @@ const AdminUsers = () => {
 
     const openModal = (user) => {
         if (!user) {
-            setPopupData({ email: "", name: "", role: "", saldo: 0 });
+            setPopupData({ email: "", name: "", role: "", balance: 0 });
             const newUser = true; // Variable temporal
             setIsNewUser(newUser);
             setIsModalOpen(true);
@@ -56,16 +56,17 @@ const AdminUsers = () => {
     };
 
     const handleDeleteUser = async (userId) => {
+        /* istanbul ignore if*/
         if (!isAdmin()) {
-            setErrorMessage("No tienes permisos para eliminar usuarios");
+            toast.error("No tienes permisos para eliminar usuarios");
             return;
         }
         try {
             await deleteUser(userId);
-            setSuccessMessage("Usuario eliminado correctamente");
+            toast.success("Usuario eliminado correctamente");
             await fetchUsers();
         } catch (error) {
-            setErrorMessage("Error al eliminar usuario");
+            toast.error("Error al eliminar usuario");
             console.error("Error al eliminar usuario:", error);
         }
     }
@@ -74,7 +75,7 @@ const AdminUsers = () => {
         <div id="component-content">
             { isLoading && <Spinner />}
             {isAdmin() ? (
-                <React.Fragment>
+                <Fragment>
                      {isModalOpen &&(
                         <AdminModalUsers closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewUser={isNewUser}  />
                     )}
@@ -102,19 +103,19 @@ const AdminUsers = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {users.map((user) => (
-                                    <tr key={user?._id}>
-                                        <td>{user?.name}</td>
-                                        <td>{user?.email}</td>
-                                        <td>{user?.role}</td>
-                                        <td>{user?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
-                                        <td>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
-                                        <td>{user?.saldo} €</td>
-                                        <td>
-                                            <GoPencil onClick={() => openModal(user)} className="editPencil" />
-                                            <MdOutlineDelete onClick={() => handleDeleteUser(user._id)} className="deleteTrash" />
+                                {users.map((userInList) => (
+                                    <tr key={userInList?._id} className={userInList?._id === user?._id ? 'active-user' : ''}>
+                                        <td>{userInList?.name}</td>
+                                        <td>{userInList?.email}</td>
+                                        <td>{userInList?.role}</td>
+                                        <td>{userInList?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.balance} €</td>
+                                        <td className="actions">
+                                            <GoPencil onClick={() => openModal(userInList)} className="editPencil" />
+                                            <MdOutlineDelete onClick={() => handleDeleteUser(userInList._id)} className="deleteTrash" />
                                             <IoEyeOutline
-                                                onClick={() => navigate(`/admin-panel/admin-usuarios/${user._id}`)} // Navega a la vista de detalle
+                                                onClick={() => navigate(`/admin-panel/admin-usuarios/${userInList._id}`)}
                                                 className="infoButton"
                                             />
                                         </td>
@@ -123,8 +124,7 @@ const AdminUsers = () => {
                             </tbody>
                         </table>
                     </section>
-
-                </React.Fragment>
+                </Fragment>
             ) : (
                 <AccessDenied />
             )}

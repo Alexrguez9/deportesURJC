@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { toast } from 'sonner';
 import "./AdminReservations.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
@@ -12,7 +13,7 @@ import Spinner from "../../../../components/spinner/Spinner";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
 
 const AdminReservations = () => {
-  const { isAdmin, user } = useAuth();
+  const { isAdmin } = useAuth();
   const { getAllReservations, deleteReservation } = useFacilitiesAndReservations();
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
@@ -32,10 +33,7 @@ const AdminReservations = () => {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
-      fetchReservations();
-    }
-    
+    if (isAdmin()) fetchReservations();
   }, []);
 
   const openModal = (reservation) => {
@@ -51,9 +49,15 @@ const AdminReservations = () => {
 
   const handleDeleteReservation = async (reservationId) => {
     try {
-      await deleteReservation(reservationId);
+      const deleteRes = await deleteReservation(reservationId);
+      if (!deleteRes.ok) {
+        toast.error("Error al eliminar la reserva.");
+        return;
+      }
+      toast.success("Reserva eliminada correctamente");
       fetchReservations();
     } catch (error) {
+      toast.error("Error al eliminar reserva.");
       console.error("Error al eliminar reserva:", error);
     }
   };
@@ -62,10 +66,23 @@ const AdminReservations = () => {
     return <AccessDenied />;
   }
 
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date)) {
+        return "Invalid Date";
+      }
+      return date.toISOString().replace("T", " ").slice(0, 16);
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
+  };
+
   return (
     <div id="component-content">
         {isLoading && <Spinner />}
-        <React.Fragment>
+        <Fragment>
             {isModalOpen && (
                 <AdminModalReservations
                 closeModal={closeModal}
@@ -93,23 +110,23 @@ const AdminReservations = () => {
                 </thead>
                 <tbody>
                     {reservations.map((reservation) => (
-                        <tr key={reservation._id}>
-                            <td>{reservation.userId}</td>
-                            <td>{reservation.instalacionId}</td>
-                            <td>{new Date(reservation.fechaInicio).toISOString().replace("T", " ").slice(0, 16)}</td>
-                            <td>{new Date(reservation.fechaFin).toISOString().replace("T", " ").slice(0, 16)}</td>
-                            <td>{reservation.precioTotal} €</td>
+                        <tr key={reservation?._id}>
+                            <td>{reservation?.userId}</td>
+                            <td>{reservation?.instalacionId}</td>
+                            <td>{formatDate(reservation?.fechaInicio)}</td>
+                            <td>{formatDate(reservation?.fechaFin)}</td>
+                            <td>{reservation?.precioTotal} €</td>
                             <td>
                             <GoPencil
                                 onClick={() => openModal(reservation)}
                                 className="editPencil"
                             />
                             <MdOutlineDelete
-                                onClick={() => handleDeleteReservation(reservation._id)}
+                                onClick={() => handleDeleteReservation(reservation?._id)}
                                 className="deleteTrash"
                             />
                             <IoPersonOutline 
-                                onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation.userId}`)}
+                                onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation?.userId}`)}
                                 className="infoButton"
                             />
                             </td>
@@ -118,7 +135,7 @@ const AdminReservations = () => {
                 </tbody>
                 </table>
             </section>
-        </React.Fragment>
+        </Fragment>
     </div>
   );
 };

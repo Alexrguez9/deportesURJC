@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PaymentForm from "../../../components/paymentSimulation/PaymentSimulation";
@@ -7,71 +7,65 @@ import './PagoAbono.css';
 import { studentsPricesMessage, externalPrice } from './CONSTANTS';
 import BackButton from '../../../components/backButton/BackButton';
 import Spinner from '../../../components/spinner/Spinner';
+import { toast } from 'sonner';
 
 const PagoAbono = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
     const { user, updateUser, isStudent } = useAuth();
     const navigate = useNavigate()
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const calculateNewDate = () => {
         if (user) {
             const fechaInicio = new Date();
-            const fechaFin = new Date().getDate() + 30;
-
-            // <p>{user?.alta?.di.toLocaleString('es-ES', { month: 'long', year: 'numeric' })} / {fechaFin.toLocaleString('es-ES', { month: 'long', year: 'numeric' })}</p>
-            //     <p>{fechaInicio.toLocaleDateString('es-ES')} - {fechaFin.toLocaleDateString('es-ES')}</p>
-            //     <p><em>{fechaInicio.toLocaleDateString('es-ES', { weekday: 'long' })}</em></p>
+            const fechaFin = new Date();
+            fechaFin.setDate(fechaFin.getDate() + 30); // Suma 30 días
 
             return [fechaInicio, fechaFin];
         }
         return [null, null];
     };
-    
-    useEffect(() => {
-        setErrorMessage('');
-        setSuccessMessage('');
-    }, [filtroDeporte]);
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
     };
 
     const handlePago = async () => {
-        setErrorMessage('');
-        setSuccessMessage('');
         setIsLoading(true);
-        if(user) {
+        if (user) {
+            /* istanbul ignore if */
             if (!user?.alta?.gimnasio?.estado && !user?.alta?.atletismo?.estado) {
-                errorMessage('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
-                return;
-            }
-            
-            const [fechaInicio, fechaFin] = calculateNewDate();
-            if (!fechaInicio || !fechaFin) {
-                errorMessage('No se pudo calcular la fecha de renovación. Por favor verifica los datos.');
+                toast.error('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
+                setIsLoading(false);
                 return;
             }
 
-            const updateData = {...user};
+            const [fechaInicio, fechaFin] = calculateNewDate();
+            if (!fechaInicio || !fechaFin) {
+                toast.error('No se pudo calcular la fecha de renovación. Por favor verifica los datos.');
+                setIsLoading(false);
+                return;
+            }
+
+            const updateData = { ...user };
+            /* istanbul ignore else */
             if (filtroDeporte === 'Gimnasio') {
                 if (!user?.alta?.gimnasio?.estado) {
-                    setErrorMessage(['No estás dado de alta en el gimnasio.']);
+                    toast.error('No estás dado de alta en el gimnasio.');
                     setIsLoading(false);
                     return;
                 }
                 updateData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
             } else if (filtroDeporte === 'Atletismo') {
                 if (!user?.alta?.atletismo?.estado) {
-                    setErrorMessage(['No estás dado de alta en el atletismo.']);
+                    toast.error('No estás dado de alta en el atletismo.');
                     setIsLoading(false);
                     return;
                 }
                 updateData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
-            } else {
-                alert('Escoge Gimnasio o Atletismo por favor.');
+            }else {
+                toast.error('Escoge Gimnasio o Atletismo por favor.');
+                setIsLoading(false);
                 return;
             }
             try {
@@ -79,7 +73,7 @@ const PagoAbono = () => {
                 setTimeout(() => {
                     setIsLoading(false);
                     if (response.status === 200) {
-                        setSuccessMessage('Pago completado con éxito!');
+                        toast.success('Pago completado con éxito!');
                         sendEmail(
                             user.email,
                             'DeportesURJC - Confirmación de Pago de abono',
@@ -89,25 +83,26 @@ const PagoAbono = () => {
                         );
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
-                        alert('Error al dar de alta. Inténtalo de nuevo más tarde.');
+                        toast.error('Error al dar de alta. Inténtalo de nuevo más tarde.');
                     }
                 });
             } catch (error) {
                 console.error('Error al dar de alta:', error);
-                alert('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
+                toast.error('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
+                setIsLoading(false);
             }
         }
     };
 
     const handleAlta = () => {
-        navigate('/salas-preparacion/alta'); 
+        navigate('/salas-preparacion/alta');
     };
 
     return (
         <div id="component-content">
-                <div className="back-button-div">
-                    <BackButton />
-                </div>
+            <div className="back-button-div">
+                <BackButton />
+            </div>
             <h1>Pago Abono</h1>
             <p>Bienvenido a la página de pago del abono de atletismo o gimnasio de la URJC.
                 <br />Aquí podrás abonar <b>por 30 días</b> tu abono de atletismo o gimnasio.
@@ -115,37 +110,33 @@ const PagoAbono = () => {
             </p>
             {user ? (
                 (user?.alta?.gimnasio?.estado || user?.alta?.atletismo?.estado) ? (
-                <section>
-                    <select value={filtroDeporte} onChange={handleDeporteChange}>
-                    <option value="Gimnasio">Gimnasio</option>
-                    <option value="Atletismo">Atletismo</option>
-                    </select>
-                    
-                    <div className="centered-div button-alta">
-                    {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
-                    {isStudent() && (
-                        user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
-                            <button onClick={handlePago}>Renovar</button>
-                            ) : (
-                                <button onClick={handlePago}>Pagar</button>
-                            )
-                    
-                    )}
-                    </div>
-                    {isLoading && <Spinner />}
-                    {successMessage && <p className="success-message">{successMessage}</p>}
-                    {errorMessage && <p className="error-message">{errorMessage}</p>}
-                </section>
+                    <section>
+                        <select value={filtroDeporte} onChange={handleDeporteChange}>
+                            <option value="Gimnasio">Gimnasio</option>
+                            <option value="Atletismo">Atletismo</option>
+                        </select>
+                        <div className="centered-div button-alta">
+                            {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
+                            {isStudent() && (
+                                user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
+                                    <button onClick={handlePago}>Renovar gratis</button>
+                                ) : (
+                                    <button onClick={handlePago}>Obtener gratis</button>
+                                )
+                            )}
+                        </div>
+                        {isLoading && <Spinner />}
+                    </section>
                 ) : (
-                <div>
-                    <p className="text-error">
-                    No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).
-                    </p>
-                    <button onClick={handleAlta}>Alta de usuarios</button>
-                </div>
+                    <div>
+                        <p className="text-error">
+                            No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).
+                        </p>
+                        <button onClick={handleAlta}>Alta de usuarios</button>
+                    </div>
                 )
             ) : (
-                <p>Debes iniciar sesión para poder darte de alta</p>
+                <p>Debes iniciar sesión para poder pagar o renovar tu abono</p>
             )
             }
         </div>

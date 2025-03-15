@@ -1,19 +1,19 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
+import { toast } from "sonner";
 import './ConsultarPerfil.css';    
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ConsultarPerfil = () => {
-    const { user, logout, deleteUser, updateUser } = useAuth();
+    const { user, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservas, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [updatedName, setUpdatedName] = useState(user?.name || '');
     const [updatedPassword, setUpdatedPassword] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
 
     const handleOpenDeleteConfirmation = () => {
         setShowDeleteConfirmation(true);
@@ -36,31 +36,36 @@ const ConsultarPerfil = () => {
             for (const reservation of userReservas) {
                 await deleteReservation(reservation._id);
             }
-
-            await deleteUser(user._id);
+            const res = await deleteUser(user._id);
+            if (res.status === 200) {
+                toast.success('Cuenta eliminada con éxito.');
+            } else {
+                toast.error('Ha ocurrido un error al eliminar tu cuenta. Inténtalo de nuevo.');
+            }
             navigate('/'); // Redirecciona a home
         } else {
             console.error('Usuario no loggeado o no tiene ID');
+            toast.error('Ha ocurrido un error al eliminar tu cuenta. Inténtalo de nuevo.');
         }
     };
 
     const handleEditProfile = async () => {
         if (!updatedName.trim() || !updatedPassword.trim()) {
-            setErrorMessage("El nombre y la contraseña no pueden estar vacíos.");
+            toast.error("El nombre y la contraseña no pueden estar vacíos.");
             return;
         }
 
         try {
-            await updateUser(user._id, {
-                name: updatedName,
-                password: updatedPassword,
-            });
-
-            setSuccessMessage("Perfil actualizado con éxito.");
+            const updatedUserRes = await updatePasswordAndName(user?._id, currentPassword, updatedPassword, updatedName);
+            if (!updatedUserRes) {
+                toast.error("Error al actualizar el perfil. Inténtalo de nuevo.");
+                return;
+            }
+            toast.success("Perfil actualizado con éxito.");
             setEditMode(false);
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);
-            setErrorMessage("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
+            toast.error("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
         }
     };
 
@@ -72,8 +77,10 @@ const ConsultarPerfil = () => {
                         <section>
                             <h2>Mi cuenta</h2>
                             <div className="centered-div profile-info">
-                                <p>Nombre: {user.name}</p>
-                                <p>Email: {user.email}</p>
+                                <p>Nombre: {user?.name}</p>
+                                <p>Email: {user?.email}</p>
+                                <p>Saldo: {user?.balance} €</p>
+                                {isAdmin() && <p>Role: {user?.role}</p>}
                             {editMode ? (
                                 <div className="centered-div">
                                     <label>
@@ -85,6 +92,14 @@ const ConsultarPerfil = () => {
                                         />
                                     </label>
                                     <label>
+                                        Contraseña actual:
+                                        <input
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                        />
+                                    </label>
+                                    <label>
                                         Nueva contraseña:
                                         <input
                                             type="password"
@@ -93,16 +108,13 @@ const ConsultarPerfil = () => {
                                         />
                                     </label>
                                     <button onClick={handleEditProfile}>Guardar cambios</button>
-                                    <button onClick={() => { setEditMode(false); setErrorMessage('');} }>Cancelar</button>
+                                    <button onClick={() => { setEditMode(false)} }>Cancelar</button>
                                 </div>
                             ) : (
-                                <button onClick={() => {setEditMode(true); setSuccessMessage('');}}>Editar perfil</button>
+                                user && <button onClick={() => { setEditMode(true)} }>Editar perfil</button>
                             )}
-                            {user && successMessage && <p className="success-message">{successMessage}</p>}
-                            {user && errorMessage && <p className="error-message">{errorMessage}</p>}
                             </div>
                         </section>
-                        <div></div>
                         {user && (
                             <div>
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
@@ -111,7 +123,6 @@ const ConsultarPerfil = () => {
                         )}
                     </div>
                 </div>
-               
             </div>
             {showDeleteConfirmation && (
                 <div className="delete-confirmation-popup">

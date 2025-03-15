@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect
+} from 'react';
 
 // Crear el contexto
 const FacilitiesAndReservationsContext = createContext();
@@ -22,20 +27,16 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:4000/instalaciones');
             if (!response.ok) {
-                throw new Error('Error en el fetch de instalaciones');
-                
-            }
-
-            if (response.ok) {
-                const facilities = await response.json();
-                setInstalaciones(facilities);
-                return facilities;
-            } else {
                 console.error("Error al obtener la lista de instalaciones:", response.status);
                 return null;
             }
+
+            const facilities = await response.json();
+            setInstalaciones(facilities);
+            return facilities;
         } catch (error) {
-            console.error("Error al cargar instalaciones instalaciones:", error);
+            console.error("Error al cargar instalaciones:", error);
+            return null;
         }
     };
 
@@ -43,18 +44,16 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:4000/reservas');
             if (!response.ok) {
-                throw new Error('Error en el fetch de reservas');
-            }
-            if (response.ok) {
-                const reservas = await response.json();
-                setReservas(reservas);
-                return reservas;
-            } else {
                 console.error("Error al obtener la lista de reservas:", response.status);
-                return null; // Manejar el error según sea necesario
+                return null;
             }
+    
+            const reservas = await response.json();
+            setReservas(reservas);
+            return reservas;
         } catch (error) {
-            console.error("Error al cargar instalaciones reservas:", error);
+            console.error("Error al cargar reservas:", error);
+            return null;
         }
     };
 
@@ -96,7 +95,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             
             const newFacility = await response.json();
             setInstalaciones([...instalaciones, newFacility]);
-            return newFacility;
+            return response;
         } catch (error) {
             console.error("Error al agregar instalación:", error);
             return null;
@@ -117,6 +116,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error al actualizar la reserva');
             }
             await getAllReservations();
+            return response;
         } catch (error) {
             console.error('Error al actualizar la reserva:', error);
         }
@@ -136,6 +136,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error al actualizar la instalación');
             }
             await getAllFacilities();
+            return response;
         } catch (error) {
             console.error('Error al actualizar la instalación:', error);
         }
@@ -155,9 +156,11 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
           }
       
           await getAllReservations();
+          return response;
       
         } catch (error) {
           console.error('Error al eliminar la reserva:', error);
+          return error;
         }
     };
 
@@ -175,7 +178,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
           }
       
           await getAllFacilities();
-      
+          return response;
         } catch (error) {
           console.error('Error al eliminar la instalación:', error);
         }
@@ -211,5 +214,4 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     );
 };
 
-// Custom hook para usar el contexto
 export const useFacilitiesAndReservations = () => useContext(FacilitiesAndReservationsContext);

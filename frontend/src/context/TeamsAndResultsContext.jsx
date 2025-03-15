@@ -1,4 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import {
+    createContext,
+    useContext, 
+    useState,
+    useEffect
+} from 'react';
 
 const TeamsAndResultsContext = createContext();
 
@@ -19,6 +24,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             }
             const data = await response.json();
             setTeams(data);
+            return data;
         } catch (error) {
             console.error("Error al cargar equipos:", error);
         }
@@ -26,14 +32,15 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const fetchResults = async () => {
         try {
-            const response = await fetch('http://localhost:4000/encuentros');
+            const response = await fetch('http://localhost:4000/resultados');
             if (!response?.ok) {
-                throw new Error('Error al cargar los encuentros');
+                throw new Error('Error al cargar los resultados');
             }
             const data = await response.json();
             setResults(data);
+            return data;
         } catch (error) {
-            console.error("Error al cargar encuentros:", error);
+            console.error("Error al cargar resultados:", error);
         }
     };
 
@@ -76,12 +83,12 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 body: JSON.stringify(formattedData),
             });
 
-            if (response?.ok) {
-                await response.json();
-                return response;
-            } else {
+            if (!response?.ok) {
                 throw new Error(`Error adding result: ${response.statusText}`);
             }
+            const data = await response.json();
+            setResults([...results, data]);
+            return response;
         } catch (error) {
             console.error('Error adding result:', error);
             throw error;
@@ -107,6 +114,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             return response;
         } catch (error) {
             console.error("Error al actualizar equipo:", error);
+            throw error;
         }
     };
 
@@ -117,7 +125,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 jornada: Number(updateData.jornada),
                 goles_local: Number(updateData.goles_local),
                 goles_visitante: Number(updateData.goles_visitante),
-                fecha: new Date(updateData.fecha).toISOString(), // Asegura que sea formato ISO
+                fecha: new Date(updateData.fecha)?.toISOString(), // Asegura que sea formato ISO
             };
 
             const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
@@ -128,14 +136,15 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 body: JSON.stringify(formattedData),
             });
             if (!response?.ok) {
-                throw new Error('Error al actualizar el encuentro');
+                throw new Error('Error al actualizar el resultado');
             }
 
-            const updatedEncuentro = await response.json();
-            setResults((prev) => prev.map((e) => (e._id === resultId ? updatedEncuentro : e)));
+            const updatedResult = await response.json();
+            await setResults((prev) => prev.map((e) => (e._id === resultId ? updatedResult : e)));
             return response;
         } catch (error) {
-            console.error("Error al actualizar encuentro:", error);
+            console.error("Error al actualizar resultado:", error);
+            throw error;
         }
     };
 
@@ -149,18 +158,20 @@ export const TeamsAndResultsProvider = ({ children }) => {
             });
 
             if (!response?.ok) {
-                throw new Error('Error al borrar el equipo');
+                throw new Error(`Error al borrar el equipo: ${response.statusText}`);
             }
 
             setTeams((prev) => prev.filter((e) => e._id !== teamId));
+            return response;
         } catch (error) {
             console.error("Error al borrar equipo:", error);
+            throw error;
         }
     };
 
-    const deleteResult = async (encuentroId) => {
+    const deleteResult = async (resultId) => {
         try {
-            const response = await fetch(`http://localhost:4000/encuentros/${encuentroId}`, {
+            const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -168,12 +179,14 @@ export const TeamsAndResultsProvider = ({ children }) => {
             });
 
             if (!response?.ok) {
-                throw new Error('Error al borrar el encuentro');
+                throw new Error(`Error al borrar el resultado: ${response.statusText}`);
             }
 
-            setResults((prev) => prev.filter((e) => e._id !== encuentroId));
+            setResults((prev) => prev.filter((e) => e._id !== resultId));
+            return response;
         } catch (error) {
-            console.error("Error al borrar encuentro:", error);
+            console.error("Error al borrar resultado:", error);
+            throw error;
         }
     };
 

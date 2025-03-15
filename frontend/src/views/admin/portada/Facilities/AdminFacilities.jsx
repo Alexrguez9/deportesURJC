@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
+import { toast } from "sonner";
 import "./AdminFacilities.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
-import { useAuth } from "../../../../context/AuthContext";
 import AdminModalFacilities from "../../../../components/adminModal/adminModalFacilities/AdminModalFacilities";
+import { useAuth } from "../../../../context/AuthContext";
 import BackButton from "../../../../components/backButton/BackButton";
 import Spinner from "../../../../components/spinner/Spinner";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
+import { getHours } from "../../../../utils/dates";
 
 const AdminFacilities = () => {
   const { isAdmin } = useAuth();
@@ -47,10 +49,16 @@ const AdminFacilities = () => {
 
   const handleDeleteFacility = async (facilityId) => {
     try {
-      await deleteFacility(facilityId);
+      const deleteRes = await deleteFacility(facilityId);
+      if (!deleteRes.ok) {
+        toast.error("Error al eliminar la instalación.");
+        return;
+      }
+      toast.success("Instalación eliminada correctamente");
       fetchFacilities();
     } catch (error) {
       console.error("Error al eliminar la instalación:", error);
+      toast.error("Error al eliminar la instalación.");
     }
   };
 
@@ -61,7 +69,7 @@ const AdminFacilities = () => {
   return (
     <div id="component-content">
       {isLoading && <Spinner />}
-      <React.Fragment>
+      <Fragment>
         {isModalOpen && (
           <AdminModalFacilities
             closeModal={closeModal}
@@ -74,7 +82,9 @@ const AdminFacilities = () => {
           <GoPlus onClick={() => openModal()} className="iconPlus" size="1.5em" />
         </div>
         <h1>Instalaciones</h1>
-        <p>Aquí puedes administrar las instalaciones disponibles en la web.</p>
+        <p>Aquí puedes administrar las instalaciones disponibles en la web.
+          <br />Los precios son por media hora.
+        </p>
         <section>
           <table>
             <thead>
@@ -82,7 +92,9 @@ const AdminFacilities = () => {
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Capacidad</th>
-                <th>Precio por 30 min</th>
+                <th>Horario inicio</th>
+                <th>Horario fin</th>
+                <th>Precio</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -92,6 +104,8 @@ const AdminFacilities = () => {
                   <td>{facility.nombre}</td>
                   <td>{facility.descripcion}</td>
                   <td>{facility.capacidad}</td>
+                  <td>{getHours(facility.horario.horarioInicio)}</td>
+                  <td>{getHours(facility.horario.horarioFin)}</td>
                   <td>{facility.precioPorMediaHora} €</td>
                   <td>
                     <GoPencil
@@ -108,7 +122,7 @@ const AdminFacilities = () => {
             </tbody>
           </table>
         </section>
-      </React.Fragment>
+      </Fragment>
     </div>
   );
 };

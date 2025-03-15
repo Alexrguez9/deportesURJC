@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './PaymentSimulation.css';
-import Spinner from '../spinner/Spinner';
+import PropTypes from 'prop-types';
 
 const PaymentSimulation = ({ externalPrice, onPayment }) => {
     const [formData, setFormData] = useState({
@@ -108,6 +108,11 @@ const PaymentSimulation = ({ externalPrice, onPayment }) => {
             <button type="submit" className="pay-button">Pagar</button>
         </form>
     );
+};
+
+PaymentSimulation.propTypes = {
+    externalPrice: PropTypes.number.isRequired,
+    onPayment: PropTypes.func.isRequired,
 };
 
 export default PaymentSimulation;

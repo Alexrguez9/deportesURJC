@@ -1,0 +1,43 @@
+name: CD - Docker Publish Workflow
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'release-candidate*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract release version
+        run: |
+          if [[ startsWith "$GITHUB_REF" "refs/tags/release-candidate-" ]]; then
+            # Triggered by release-candidate tag
+            ref=${GITHUB_REF#refs/tags/}
+            sanitized_ref=$(echo "$ref" | sed 's/\//-/g')
+            echo "RELEASE_NAME=$sanitized_ref" >> $GITHUB_ENV
+          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
+            # Triggered by push to main branch
+            echo "RELEASE_NAME=main-latest" >> $GITHUB_ENV # Tag fijo para main
+          else
+            echo "RELEASE_NAME=unknown-release" >> $GITHUB_ENV # Fallback, por si acaso (opcional)
+          fi
+
+      - name: Log in to DockerHub
+        run: |
+          docker login -u alexrguez9 -p ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push Docker image frontend
+        run: |
+          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.RELEASE_NAME }} ./frontend
+          docker push alexrguez9/deportes_urjc:frontend-${{ env.RELEASE_NAME }}
+
+      - name: Build and push Docker image backend
+        run: |
+          docker build -t alexrguez9/deportes_urjc:backend-${{ env.RELEASE_NAME }} ./backend
+          docker push alexrguez9/deportes_urjc:backend-${{ env.RELEASE_NAME }}

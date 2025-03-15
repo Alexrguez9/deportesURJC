@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { Toaster } from 'sonner'
 import './index.css'
 
 import { RouterProvider } from 'react-router-dom'
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <FacilitiesAndReservationsProvider>
         <TeamsAndResultsProvider>
           <RouterProvider router={router} />
+          <Toaster richColors />
         </TeamsAndResultsProvider>
       </FacilitiesAndReservationsProvider>
     </AuthProvider>

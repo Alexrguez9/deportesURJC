@@ -58,7 +58,7 @@ const UserSchema = new mongoose.Schema(
         required: false  // Opcional o hacer obligatorio
       }
     },
-    saldo: {
+    balance: {
       type: Number,
       default: 0
     },

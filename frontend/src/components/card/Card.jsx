@@ -1,12 +1,18 @@
-import React from 'react';
 import './Card.css';
+import PropTypes from 'prop-types';
 
-const Card = ({ img, description }) => {
+const Card = ({ className, img, description }) => {
   return (
-    <div className="card">
+    <div className={className ? `card ${className}` : 'card'}>
         <img src={img} alt="" className="card-img"/>
         <p>{description}</p>
     </div>
   );
 }
+
+Card.propTypes = {
+  className: PropTypes.string,
+  img: PropTypes.string,
+  description: PropTypes.string.isRequired,
+};
 export default Card;
