@@ -31,8 +31,6 @@ const RecargaMonedero = () => {
 
                     if (response.status === 200) {
                         toast.success(`¡Saldo de ${importe}€ añadido!`);
-                        console.log('Mi updateData', updatedUserData);
-                        console.log('Mi user', user);
                     } else {
                         console.error('Error al recargar el monedero:', response.data.message);
                         toast.error('Error al recargar el monedero. Inténtalo de nuevo más tarde.');

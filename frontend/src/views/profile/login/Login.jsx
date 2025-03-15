@@ -30,7 +30,12 @@ const Login = () => {
         formState: { errors: errorsLogin },
     } = useForm();
 
-    
+    useEffect(() => {
+        if (user) {
+            navigate("/profile");
+        }
+    }, [user, navigate]);
+
     useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name && errorsLogin.login) {
@@ -77,6 +82,7 @@ const Login = () => {
                     });
                 }
             } else {
+                /* istanbul ignore next */
                 logout();
             }
         } catch (error) {

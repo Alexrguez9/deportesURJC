@@ -19,7 +19,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     }, []);
 
     const getInstalacion = async (id) => {
-        const instAux =  instalaciones.find((instalacion) => instalacion._id === id);
+        const instAux =  await instalaciones.find((instalacion) => instalacion._id === id);
         return instAux;
     };
 
@@ -27,20 +27,16 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:4000/instalaciones');
             if (!response.ok) {
-                throw new Error('Error en el fetch de instalaciones');
-                
-            }
-
-            if (response.ok) {
-                const facilities = await response.json();
-                setInstalaciones(facilities);
-                return facilities;
-            } else {
                 console.error("Error al obtener la lista de instalaciones:", response.status);
                 return null;
             }
+
+            const facilities = await response.json();
+            setInstalaciones(facilities);
+            return facilities;
         } catch (error) {
-            console.error("Error al cargar instalaciones instalaciones:", error);
+            console.error("Error al cargar instalaciones:", error);
+            return null;
         }
     };
 
@@ -48,18 +44,16 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         try {
             const response = await fetch('http://localhost:4000/reservas');
             if (!response.ok) {
-                throw new Error('Error en el fetch de reservas');
-            }
-            if (response.ok) {
-                const reservas = await response.json();
-                setReservas(reservas);
-                return reservas;
-            } else {
                 console.error("Error al obtener la lista de reservas:", response.status);
-                return null; // Manejar el error según sea necesario
+                return null;
             }
+    
+            const reservas = await response.json();
+            setReservas(reservas);
+            return reservas;
         } catch (error) {
-            console.error("Error al cargar instalaciones reservas:", error);
+            console.error("Error al cargar reservas:", error);
+            return null;
         }
     };
 

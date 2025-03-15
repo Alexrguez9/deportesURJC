@@ -194,19 +194,17 @@ require("dotenv").config(); // Asegurar que se carguen las variables de entorno
 // Función para comprobar si el email es igual al ADMIN_EMAIL
 exports.checkIfAdmin = (req, res) => {
     try {
-        const { email } = req.body; // Recibir el email del usuario desde el frontend
+        const { email } = req.body;
 
         if (!email) {
             return res.status(400).json({ error: "Email es requerido" });
         }
 
-        const adminEmail = process.env.ADMIN_EMAIL?.replace(/['"]/g, ''); // Limpiar comillas del .env
         if (!adminEmail) {
             return res.status(500).json({ error: "ADMIN_EMAIL no está configurado en el servidor" });
         }
 
         const isAdmin = email === adminEmail;
-        console.log(`📩 Comparando email ${email} con admin: ${adminEmail} → Resultado: ${isAdmin}`);
 
         return res.json({ isAdmin });
     } catch (error) {

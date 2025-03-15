@@ -206,57 +206,57 @@ describe("AuthProvider", () => {
       });
     });
 
-  it("debería manejar errores de respuesta del servidor (status diferente de 409)", async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    it("debería manejar errores de respuesta del servidor (status diferente de 409)", async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockResolvedValueOnce({
-          ok: false,
-          status: 500,
-          statusText: "Internal Server Error",
+        ok: false,
+        status: 500,
+        statusText: "Internal Server Error",
       });
 
       const response = await authValues.addUser(
-          { email: "new@test.com", password: "123456" },
-          jest.fn()
+        { email: "new@test.com", password: "123456" },
+        jest.fn()
       );
 
       expect(response.status).toBe(500);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-          "Error en el fetch al back de registrarse:",
-          500
+        "Error en el fetch al back de registrarse:",
+        500
       );
       consoleErrorSpy.mockRestore();
-  });
+    });
 
-  it("debería manejar errores de red", async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    it("debería manejar errores de red", async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockRejectedValueOnce(new Error("Network error"));
 
       await authValues.addUser(
-          { email: "new@test.com", password: "123456" },
-          jest.fn()
+        { email: "new@test.com", password: "123456" },
+        jest.fn()
       );
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-          "Error2 al registrarse:",
-          new Error("Network error")
+        "Error2 al registrarse:",
+        new Error("Network error")
       );
       consoleErrorSpy.mockRestore();
-  });
+    });
 
-  it("debería llamar a navigate cuando el registro es exitoso y no hay usuario logueado", async () => {
+    it("debería llamar a navigate cuando el registro es exitoso y no hay usuario logueado", async () => {
       const navigateMock = jest.fn();
       fetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({ _id: "newUserId", email: "new@test.com" }),
+        ok: true,
+        json: async () => ({ _id: "newUserId", email: "new@test.com" }),
       });
 
       await authValues.addUser(
-          { email: "new@test.com", password: "123456" },
-          navigateMock
+        { email: "new@test.com", password: "123456" },
+        navigateMock
       );
 
       expect(navigateMock).toHaveBeenCalledWith("/");
-  });
+    });
   });
 
   describe("updateUser", () => {
@@ -585,16 +585,93 @@ describe("AuthProvider", () => {
   });
 
   describe("handleAdmin", () => {
-    it("debería asignar role 'admin' si el email contiene '@admin'", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("debería asignar role 'admin' si la API devuelve isAdmin: true", async () => {
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ isAdmin: true }),
+      });
+
       const data = { email: "test@admin.com" };
-      const result = authValues.handleAdmin(data);
+      let result;
+
+      await act(async () => {
+        result = await authValues.handleAdmin(data);
+      });
+
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:4000/users/check-admin",
+        expect.anything()
+      );
       expect(result.role).toBe("admin");
     });
 
-    it("debería asignar role 'user' si el email no contiene '@admin'", () => {
+    it("debería asignar role 'user' si la API devuelve isAdmin: false", async () => {
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ isAdmin: false }),
+      });
+
       const data = { email: "test@user.com" };
-      const result = authValues.handleAdmin(data);
+      let result;
+
+      await act(async () => {
+        result = await authValues.handleAdmin(data);
+      });
+
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:4000/users/check-admin",
+        expect.anything()
+      );
       expect(result.role).toBe("user");
+    });
+
+    it("debería manejar errores de respuesta del servidor asignando role 'user'", async () => {
+      fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => { });
+
+      const data = { email: "test@admin.com" };
+      let result;
+
+      await act(async () => {
+        result = await authValues.handleAdmin(data);
+      });
+
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:4000/users/check-admin",
+        expect.anything()
+      );
+      expect(result.role).toBe("user");
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("debería manejar errores de red asignando role 'user'", async () => {
+      fetch.mockRejectedValueOnce(new Error("Network Error"));
+
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => { });
+
+      const data = { email: "test@user.com" };
+      let result;
+
+      await act(async () => {
+        result = await authValues.handleAdmin(data);
+      });
+
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:4000/users/check-admin",
+        expect.anything()
+      );
+      expect(result.role).toBe("user");
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Error en handleAdmin:", expect.anything());
+      consoleErrorSpy.mockRestore();
     });
   });
 });

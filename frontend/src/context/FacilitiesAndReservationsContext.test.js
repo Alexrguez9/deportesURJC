@@ -1,6 +1,7 @@
 // FacilitiesAndReservationsContext.test.js
 import { render, waitFor, act } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../context/FacilitiesAndReservationsContext";
+import mockFacilitiesAndReservationsContext from "../utils/mocks";
 
 // Mock de fetch global para simular las llamadas a la API
 global.fetch = jest.fn();
@@ -88,6 +89,7 @@ describe("FacilitiesAndReservationsProvider", () => {
         });
 
         it("debería manejar errores de red al obtener instalaciones", async () => {
+            jest.clearAllMocks();
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn(); // Mock console.error
 
@@ -96,10 +98,33 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
 
             await waitFor(() => {
-                expect(fetch).toHaveBeenCalledTimes(3);
+                expect(fetch).toHaveBeenCalledTimes(1);
                 expect(contextValues.instalaciones).toEqual([]);
                 expect(console.error).toHaveBeenCalled();
             });
+        });
+
+        it("debería ejecutar el bloque 'else' si la API devuelve un estado incorrecto", async () => {
+            fetch.mockResolvedValueOnce({
+                ok: false,
+                status: 403,
+            });
+    
+            const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    
+            await act(async () => {
+                await contextValues.getAllFacilities();
+            });
+    
+            await waitFor(() => {
+                expect(fetch).toHaveBeenCalledTimes(3);
+                expect(consoleErrorSpy).toHaveBeenCalledWith(
+                    "Error al obtener la lista de instalaciones:", 403
+                );
+                expect(contextValues.instalaciones).toEqual([]);
+            });
+    
+            consoleErrorSpy.mockRestore();
         });
     });
 
@@ -158,6 +183,30 @@ describe("FacilitiesAndReservationsProvider", () => {
                 expect(contextValues.reservas).toEqual([]);
                 expect(console.error).toHaveBeenCalled();
             });
+        });
+
+        it("debería ejecutar el bloque 'else' si la API devuelve un estado incorrecto", async () => {
+            jest.clearAllMocks();
+            fetch.mockResolvedValueOnce({
+                ok: false,
+                status: 404,
+            });
+    
+            const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    
+            await act(async () => {
+                await contextValues.getAllReservations();
+            });
+    
+            await waitFor(() => {
+                expect(fetch).toHaveBeenCalledTimes(1);
+                expect(consoleErrorSpy).toHaveBeenCalledWith(
+                    "Error al obtener la lista de reservas:", 404
+                );
+                expect(contextValues.reservas).toEqual([]);
+            });
+    
+            consoleErrorSpy.mockRestore();
         });
     });
 
@@ -488,12 +537,50 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("getInstalacion", () => {
-
         it("debería retornar undefined si la instalación no se encuentra en el estado local", async () => {
             contextValues.instalaciones = [{ _id: "1", name: "Facility 1" }];
 
             const facility = await contextValues.getInstalacion("2");
 
+            expect(facility).toBeUndefined();
+        });
+
+        it("debería retornar la instalación correcta si existe en el estado local", async () => {
+            fetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => [
+                    { _id: "1", name: "Facility 1" },
+                    { _id: "2", name: "Facility 2" },
+                ],
+            });
+    
+            await act(async () => {
+                await contextValues.getAllFacilities();
+            });
+    
+            await waitFor(() => {
+                expect(contextValues.instalaciones).toEqual([
+                    { _id: "1", name: "Facility 1" },
+                    { _id: "2", name: "Facility 2" },
+                ]);
+            });
+    
+            await act(async () => {
+                const facility = await contextValues.getInstalacion("2");
+                expect(facility).toEqual({ _id: "2", name: "Facility 2" });
+            });
+        });
+    
+        it("debería retornar undefined si la instalación no se encuentra en el estado local", async () => {
+            jest.spyOn(contextValues, "getAllFacilities").mockImplementation(async () => {
+                contextValues.instalaciones = [{ _id: "1", name: "Facility 1" }];
+            });
+    
+            await act(async () => {
+                await contextValues.getAllFacilities();
+            });
+    
+            const facility = await contextValues.getInstalacion("2");
             expect(facility).toBeUndefined();
         });
     });

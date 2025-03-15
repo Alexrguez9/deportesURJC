@@ -22,10 +22,7 @@ export const mockAuthContext = {
     deleteUser: jest.fn().mockResolvedValue(true),
     isAdmin: jest.fn(() => mockAuthContext.user?.role === "admin"),
     isStudent: jest.fn(() => mockAuthContext.user?.role === "student"),
-    handleAdmin: jest.fn((user) => ({
-        ...user,
-        role: user.email.includes("@admin") ? "admin" : "user",
-    })),
+    handleAdmin: jest.fn().mockResolvedValue(true),
     setUser: jest.fn(),
 };
 
