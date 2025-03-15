@@ -1,18 +1,18 @@
 // functions.test.js
 
-import { getHours, getDateWithoutTime, getPrettyDate } from './dates';
+import { getHours, getDateWithoutTime, getPrettyDate, getMonthlyDateRange } from './dates';
 
 describe('getHours', () => {
-    it('debería retornar las horas y minutos en formato HH:MM', () => {
+    it('debería retornar las horas y minutos en formato HH:MM con ceros iniciales', () => {
         const date = '2024-07-28T10:30:00';
         expect(getHours(date)).toBe('10:30');
     });
 
-    it('debería retornar las horas y minutos correctamente para diferentes horas', () => {
-        expect(getHours('2024-07-28T09:15:00')).toBe('9:15');
+    it('debería retornar las horas y minutos correctamente para diferentes horas con ceros iniciales', () => {
+        expect(getHours('2024-07-28T09:15:00')).toBe('09:15');
         expect(getHours('2024-07-28T23:59:00')).toBe('23:59');
-        expect(getHours('2024-07-28T00:00:00')).toBe('0:0');
-        expect(getHours('2024-07-28T05:08:00')).toBe('5:8'); // Prueba con minutos de un solo dígito
+        expect(getHours('2024-07-28T00:00:00')).toBe('00:00');
+        expect(getHours('2024-07-28T05:08:00')).toBe('05:08'); // Prueba con minutos de un solo dígito
     });
 
     it('debería funcionar con diferentes formatos de fecha que new Date() soporta', () => {
@@ -20,13 +20,13 @@ describe('getHours', () => {
         expect(getHours('2024/07/28 16:20:00')).toBe('16:20');
     });
 
-    it('debería manejar correctamente las horas con un solo dígito', () => {
-        expect(getHours('2024-07-28T01:05:00')).toBe('1:5'); // Originalmente podría fallar si no se formatea correctamente
+    it('debería manejar correctamente las horas con un solo dígito añadiendo un cero inicial', () => {
+        expect(getHours('2024-07-28T01:05:00')).toBe('01:05'); // Ahora debería pasar con el formato correcto
     });
 });
 
 describe('getDateWithoutTime', () => {
-    it('debería retornar la fecha en formato YYYY-MM-DD', () => {
+    it('debería retornar la fecha en formato AAAA-MM-DD', () => {
         const date = '2024-07-28T10:30:00';
         expect(getDateWithoutTime(date)).toBe('2024-07-28');
     });
@@ -88,5 +88,30 @@ describe('getPrettyDate', () => {
         const dateStringUS = 'October 20, 2024 08:30:00'; // Formato US
         const expectedStringUS = new Date(dateStringUS).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(dateStringUS)).toBe(expectedStringUS);
+    });
+});
+
+describe('getMonthlyDateRange', () => {
+    it('debería retornar un rango de fechas para el usuario, con la fecha de fin siendo un mes después de la fecha de inicio', () => {
+        const mockUser = {}; // Un objeto de usuario simulado
+        const [startDate, endDate] = getMonthlyDateRange(mockUser);
+
+        expect(startDate).toBeDefined();
+        expect(endDate).toBeDefined();
+        expect(typeof startDate).toBe('string');
+        expect(typeof endDate).toBe('string');
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Verificar que la fecha de fin es exactamente un mes después de la fecha de inicio
+        const expectedEndDate = new Date(start);
+        expectedEndDate.setMonth(expectedEndDate.getMonth() + 1);
+        expect(end.toISOString()).toBe(expectedEndDate.toISOString());
+    });
+
+    it('debería retornar [null, null] si el usuario no está definido', () => {
+        expect(getMonthlyDateRange(null)).toEqual([null, null]);
+        expect(getMonthlyDateRange(undefined)).toEqual([null, null]);
     });
 });

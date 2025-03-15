@@ -29,8 +29,8 @@ describe("AdminUsers Component", () => {
         mockAuthContext.isAdmin.mockReturnValue(true); // Default to admin for most tests
         mockAuthContext.user = { name: "Admin" };
         mockAuthContext.getAllUsers.mockResolvedValue([ // Default user list
-            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, saldo: 10 },
-            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", alta: {}, saldo: 0 }
+            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, balance: 10 },
+            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", alta: {}, balance: 0 }
         ]);
         mockAuthContext.deleteUser.mockResolvedValue(true); // Mock successful delete by default
         sonner.toast.success.mockClear(); // Clear mock for success toast before each test
@@ -139,7 +139,7 @@ describe("AdminUsers Component", () => {
     describe('Altas column', () => {
         it("renders 'Sí' for gimnasio alta estado when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: true } }, saldo: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -149,10 +149,10 @@ describe("AdminUsers Component", () => {
 
         it("renders 'No' for gimnasio alta estado when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: false } }, saldo: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { gimnasio: {} }, saldo: 10 },
-                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: { gimnasio: null }, saldo: 10 },
-                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, saldo: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { gimnasio: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: { gimnasio: null }, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, balance: 10 },
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -162,7 +162,7 @@ describe("AdminUsers Component", () => {
 
         it("renders 'Sí' for atletismo alta estado when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: true } }, saldo: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -172,10 +172,10 @@ describe("AdminUsers Component", () => {
 
         it("renders 'No' for atletismo alta estado when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: false } }, saldo: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { atletismo: {} }, saldo: 10 },
-                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: null, saldo: 10 },
-                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, saldo: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { atletismo: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: null, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, balance: 10 },
             ]);
             render(<AdminUsers />);
             await waitFor(() => {

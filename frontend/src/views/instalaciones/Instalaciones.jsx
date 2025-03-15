@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useForm } from "react-hook-form";
 import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from '../../context/AuthContext';
 import './Instalaciones.css';
 import { sendEmail } from '../../utils/mails';
-import { useForm } from "react-hook-form";
+import { getHours } from "../../utils/dates";
 
 const Instalaciones = () => {
     const { user } = useAuth();
@@ -186,7 +187,6 @@ const Instalaciones = () => {
                 <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.
                 <br />Las reservas son de media hora en media hora.
             </p>
-                {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.precioPorMediaHora}€.</p>)}
 
             {user ?
                 <form onSubmit={handleSubmit(onSubmit)} className="form-reservar" data-testid="reservation-form">
@@ -210,7 +210,13 @@ const Instalaciones = () => {
                             </select>
                         </label>
                     </div>
-                    {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.nombre}: {instalacionCompleta.capacidad}</p>}
+                    <div>
+                        <>Horario de inicio: {instalacionCompleta.horario && instalacionCompleta.horario.horarioInicio ? getHours(instalacionCompleta.horario.horarioInicio) : 'No definido'}<br />
+                        Horario de fin: {instalacionCompleta.horario && instalacionCompleta.horario.horarioFin ? getHours(instalacionCompleta.horario.horarioFin) : 'No definido'}</>
+                        {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.precioPorMediaHora}€.</p>)}
+                        {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.nombre}: {instalacionCompleta.capacidad}</p>}
+                    </div>
+                    
                     {selectedInstalacionId ? (
                         <>
                                 <label>Fecha Inicio:</label>

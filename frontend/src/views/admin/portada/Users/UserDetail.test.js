@@ -34,7 +34,7 @@ describe("UserDetail Component", () => {
 
     it("fetches users and displays user details correctly when user is found", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: true, fechaInicio: '2024-01-01', fechaFin: '2024-12-31' }, atletismo: { estado: false } }, saldo: 50 };
+        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: true, fechaInicio: '2024-01-01', fechaFin: '2024-12-31' }, atletismo: { estado: false } }, balance: 50 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -62,14 +62,14 @@ describe("UserDetail Component", () => {
             expect(screen.getByText(`Alta Atletismo:`)).toBeInTheDocument();
             expect(screen.getByText("No")).toBeInTheDocument();
             expect(screen.getByText(`Saldo:`)).toBeInTheDocument();
-            expect(screen.getByText(`${mockUser.saldo} €`)).toBeInTheDocument();
+            expect(screen.getByText(`${mockUser.balance} €`)).toBeInTheDocument();
         });
     });
 
     it("displays 'Usuario no encontrado.' message when user is not found", async () => {
         useParams.mockReturnValue({ id: 'non-existent-id' });
         mockAuthContext.getAllUsers.mockResolvedValue([
-            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, saldo: 10 }
+            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, balance: 10 }
         ]);
 
         render(
@@ -100,7 +100,7 @@ describe("UserDetail Component", () => {
 
     it("displays 'No' when alta.gimnasio.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, saldo: 50 };
+        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 50 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -117,7 +117,7 @@ describe("UserDetail Component", () => {
 
     it("displays 'No' when alta.atletismo.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, saldo: 50 };
+        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, balance: 50 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -134,7 +134,7 @@ describe("UserDetail Component", () => {
 
     it("does not display GYM start and end dates if alta.gimnasio.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, saldo: 50 };
+        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 50 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -151,7 +151,7 @@ describe("UserDetail Component", () => {
 
     it("does not display Atletismo start and end dates if alta.atletismo.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, saldo: 50 };
+        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, balance: 50 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(

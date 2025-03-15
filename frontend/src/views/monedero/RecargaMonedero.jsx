@@ -22,7 +22,7 @@ const RecargaMonedero = () => {
             try {
                 // Actualiza el saldo del usuario
                 const updatedUserData = { ...user };
-                updatedUserData.saldo = user.saldo + Number(importe);
+                updatedUserData.balance = user.balance + Number(importe);
                 const response = await updateUser(user._id, updatedUserData);
 
 
@@ -31,8 +31,6 @@ const RecargaMonedero = () => {
 
                     if (response.status === 200) {
                         toast.success(`¡Saldo de ${importe}€ añadido!`);
-                        console.log('Mi updateData', updatedUserData);
-                        console.log('Mi user', user);
                     } else {
                         console.error('Error al recargar el monedero:', response.data.message);
                         toast.error('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
@@ -43,7 +41,7 @@ const RecargaMonedero = () => {
                         user.email, 
                         "Deportes URJC - Recarga de monedero con éxito",
                         `Hola ${user.name},\n\n` +
-                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.saldo - Number(importe)}.\n\n` +
+                        `Has recargado tu monedero con un importe de €${importe}.\nTu nuevo saldo es de €${user.balance - Number(importe)}.\n\n` +
                         `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                     );
                     
@@ -83,7 +81,7 @@ const RecargaMonedero = () => {
                     <h2>Datos de envío del justificante</h2>
                     <p><strong>Nombre:</strong> {user?.name}</p>
                     <p><strong>Correo:</strong> {user?.email}</p>
-                    <p><strong>Saldo actual:</strong> {user?.saldo} €</p>
+                    <p><strong>Saldo actual:</strong> {user?.balance} €</p>
                 </section>
                 </>
             )}

@@ -81,7 +81,7 @@ describe("AdminReservations Component", () => {
         });
 
         render(<AdminReservations />);
-        expect(document.querySelector(".spinner")).toBeInTheDocument();
+        await waitFor(() => expect(document.querySelector(".spinner")).toBeInTheDocument());
         await waitFor(() => expect(document.querySelector(".spinner")).not.toBeInTheDocument(), { timeout: 100 });
         expect(screen.getByText("Reservas")).toBeInTheDocument();
     });

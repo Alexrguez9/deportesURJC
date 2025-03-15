@@ -48,6 +48,10 @@ describe("AdminFacilities Component", () => {
                 descripcion: "Description 1",
                 capacidad: 10,
                 precioPorMediaHora: 25,
+                horario: {
+                    horarioInicio: "2024-07-15T08:00:00.000Z",
+                    horarioFin: "2024-07-15T22:00:00.000Z"
+                }
             },
             {
                 _id: "facility002",
@@ -55,6 +59,10 @@ describe("AdminFacilities Component", () => {
                 descripcion: "Description 2",
                 capacidad: 20,
                 precioPorMediaHora: 50,
+                horario: {
+                    horarioInicio: "2024-07-16T07:00:00.000Z",
+                    horarioFin: "2024-07-16T21:00:00.000Z"
+                }
             },
         ];
         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue(mockFacilitiesData);
@@ -67,6 +75,8 @@ describe("AdminFacilities Component", () => {
         expect(mockFacilitiesAndReservationsContext.getAllFacilities).toHaveBeenCalled();
         await waitFor(() => expect(screen.getByText("Facility 1")).toBeInTheDocument());
         expect(screen.getByText("Description 1")).toBeInTheDocument();
+        expect(screen.getByText("Horario inicio")).toBeInTheDocument();
+        expect(screen.getByText("Horario fin")).toBeInTheDocument();
     });
 
     it("shows loading spinner while fetching facilities", async () => {
@@ -79,7 +89,7 @@ describe("AdminFacilities Component", () => {
         });
 
         render(<AdminFacilities />);
-        expect(document.querySelector(".spinner")).toBeInTheDocument();
+        await waitFor(() => expect(document.querySelector(".spinner")).toBeInTheDocument());
         await waitFor(() => expect(document.querySelector(".spinner")).not.toBeInTheDocument(), { timeout: 1000 });
         expect(screen.getByText("Instalaciones")).toBeInTheDocument();
     });
@@ -168,11 +178,15 @@ describe("AdminFacilities Component", () => {
         expect(screen.getByText("Facility 1")).toBeInTheDocument();
         expect(screen.getByText("Description 1")).toBeInTheDocument();
         expect(screen.getByText("10")).toBeInTheDocument();
+        expect(screen.getByText("10:00")).toBeInTheDocument(); // Local time in Spain
+        expect(screen.getByText("00:00")).toBeInTheDocument();  // Local time in Spain
         expect(screen.getByText("25 €")).toBeInTheDocument();
 
         expect(screen.getByText("Facility 2")).toBeInTheDocument();
         expect(screen.getByText("Description 2")).toBeInTheDocument();
         expect(screen.getByText("20")).toBeInTheDocument();
+        expect(screen.getByText("09:00")).toBeInTheDocument(); // Local time in Spain
+        expect(screen.getByText("23:00")).toBeInTheDocument(); // Local time in Spain
         expect(screen.getByText("50 €")).toBeInTheDocument();
     });
 
@@ -186,5 +200,12 @@ describe("AdminFacilities Component", () => {
         useAuth.mockReturnValue(mockAuthContext);
         render(<AdminFacilities />);
         expect(mockFacilitiesAndReservationsContext.getAllFacilities).not.toHaveBeenCalled();
+    });
+
+    it("renders the paragraph about prices being per half hour", () => {
+        render(<AdminFacilities />);
+        expect(screen.getByText(/Aquí puedes administrar las instalaciones disponibles en la web\./i)).toBeInTheDocument();
+        // expect(screen.getByText((content) => content.includes("Aquí puedes administrar las instalaciones disponibles en la web."))).toBeInTheDocument();
+        expect(screen.getByText(/Los precios son por media hora\./i)).toBeInTheDocument();
     });
 });
