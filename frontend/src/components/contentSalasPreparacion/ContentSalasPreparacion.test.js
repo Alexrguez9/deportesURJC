@@ -9,7 +9,7 @@ jest.mock("react-router-dom", () => ({
 describe("ContentSalasPreparacion Component", () => {
     beforeEach(() => {
         render(<ContentSalasPreparacion />);
-        console.log("ContentSalasPreparacion rendered:", screen.debug());
+        // console.log("ContentSalasPreparacion rendered:", screen.debug());
     });
 
     it("renders the component without errors", () => {

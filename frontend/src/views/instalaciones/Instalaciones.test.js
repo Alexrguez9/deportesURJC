@@ -156,7 +156,7 @@ describe("Instalaciones Component", () => {
                     fireEvent.change(screen.getByRole('combobox', { name: /instalación/i }), { target: { value: '1' } });
                     const datePicker = screen.getByRole('textbox');
                     fireEvent.change(datePicker, { target: { value: new Date('2024-08-05T10:30') } });
-                    expect(datePicker).toHaveValue('Mon Aug 05 2024 10:30:00 GMT+0200 (hora de verano de Europa central)');
+                    expect(datePicker.value).toMatch(/^Mon Aug 05 2024 10:30:00 GMT\+0200/);
                 });
             });
 

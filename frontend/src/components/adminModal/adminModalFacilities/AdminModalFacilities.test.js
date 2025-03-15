@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import AdminModalFacilities from "./AdminModalFacilities";
+import AdminModalFacilities from "./AdminModalFacilities.jsx";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 import { mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
 import * as sonner from 'sonner';
