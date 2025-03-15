@@ -4,7 +4,7 @@ import "./AdminFacilities.css";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { useAuth } from "../../../../context/AuthContext";
-import AdminModalFacilities from "../../../../components/adminModal/adminModalFacilities/adminModalFacilities";
+import AdminModalFacilities from "../../../../components/adminModal/adminModalFacilities/AdminModalFacilities";
 import BackButton from "../../../../components/backButton/BackButton";
 import Spinner from "../../../../components/spinner/Spinner";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
