@@ -90,7 +90,7 @@ describe("Header Component", () => {
         expect(screen.getByText("Mi cuenta")).toBeInTheDocument();
         expect(screen.getByText("Mis reservas")).toBeInTheDocument();
         expect(screen.getByText("Mis abonos")).toBeInTheDocument();
-        expect(screen.getByText("Configuración")).toBeInTheDocument();
+        // expect(screen.getByText("Configuración")).toBeInTheDocument();
     });
     
     test("verifica la correcta ruta de los links", () => {

@@ -42,7 +42,7 @@ const MisAbonos = () => {
             <div className='content-mis-reservas'>
                 {user ? (
                     <Fragment>
-                        <div className="card">
+                        <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
                             <h2>GIMNASIO MENSUAL</h2>
                             {estadoGimnasio ? (
@@ -68,7 +68,7 @@ const MisAbonos = () => {
                             )}
                         </div>
 
-                        <div className="card">
+                        <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
                             <h2>ATLETISMO MENSUAL</h2>
                             {estadoAtletismo ? (

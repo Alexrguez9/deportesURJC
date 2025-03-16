@@ -83,7 +83,7 @@ describe("MisAbonos Component", () => {
         );
         expect(screen.getByText('GIMNASIO MENSUAL')).toBeInTheDocument();
         expect(screen.getByText('Abono activo')).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card-no-hover') })).toBeInTheDocument();
     });
 
     it("should display 'Abono inactivo' when not subscribed to Gimnasio", () => {
@@ -93,7 +93,7 @@ describe("MisAbonos Component", () => {
             </BrowserRouter>
         );
         expect(screen.getByText('GIMNASIO MENSUAL')).toBeInTheDocument();
-        const gimnasioCard = screen.getByText('GIMNASIO MENSUAL').closest('.card');
+        const gimnasioCard = screen.getByText('GIMNASIO MENSUAL').closest('.card-no-hover');
         expect(within(gimnasioCard).getByText('Abono inactivo')).toBeInTheDocument();
     });
 
@@ -108,8 +108,8 @@ describe("MisAbonos Component", () => {
             </BrowserRouter>
         );
         expect(screen.getByText('ATLETISMO MENSUAL')).toBeInTheDocument();
-        expect(screen.getByText('Abono activo', { container: screen.getByText('ATLETISMO MENSUAL').closest('.card') })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') })).toBeInTheDocument();
+        expect(screen.getByText('Abono activo', { container: screen.getByText('ATLETISMO MENSUAL').closest('.card-no-hover') })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card-no-hover') })).toBeInTheDocument();
     });
 
     it("should display 'Abono inactivo' when not subscribed to Atletismo", () => {
@@ -119,7 +119,7 @@ describe("MisAbonos Component", () => {
             </BrowserRouter>
         );
         expect(screen.getByText('ATLETISMO MENSUAL')).toBeInTheDocument();
-        const atletismoCard = screen.getByText('ATLETISMO MENSUAL').closest('.card');
+        const atletismoCard = screen.getByText('ATLETISMO MENSUAL').closest('.card-no-hover');
         expect(within(atletismoCard).getByText('Abono inactivo')).toBeInTheDocument();
     });
 
@@ -131,7 +131,7 @@ describe("MisAbonos Component", () => {
                 <MisAbonos />
             </BrowserRouter>
         );
-        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') });
+        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card-no-hover') });
         fireEvent.click(bajaButtonGimnasio);
 
         await waitFor(() => {
@@ -157,7 +157,7 @@ describe("MisAbonos Component", () => {
                 <MisAbonos />
             </BrowserRouter>
         );
-        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') });
+        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card-no-hover') });
         fireEvent.click(bajaButtonAtletismo);
 
         await waitFor(() => {
@@ -184,7 +184,7 @@ describe("MisAbonos Component", () => {
                 <MisAbonos />
             </BrowserRouter>
         );
-        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card') });
+        const bajaButtonGimnasio = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('GIMNASIO MENSUAL').closest('.card-no-hover') });
         fireEvent.click(bajaButtonGimnasio);
 
         await waitFor(() => {
@@ -202,7 +202,7 @@ describe("MisAbonos Component", () => {
                 <MisAbonos />
             </BrowserRouter>
         );
-        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card') });
+        const bajaButtonAtletismo = screen.getByRole('button', { name: /Darme de baja/i, container: screen.getByText('ATLETISMO MENSUAL').closest('.card-no-hover') });
         fireEvent.click(bajaButtonAtletismo);
 
         await waitFor(() => {

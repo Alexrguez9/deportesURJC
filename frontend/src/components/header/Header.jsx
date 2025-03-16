@@ -1,9 +1,12 @@
 import { IoMdArrowDropdown } from "react-icons/io";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Header.css';
 import logoURJCDeportes from '../../assets/logo_urjc_deportes.jpg';
-import { useAuth } from '../../context/AuthContext';
+import { FiUser } from "react-icons/fi";
+import { PiCalendarCheck, PiWallet } from "react-icons/pi";
+import { MdAdminPanelSettings } from "react-icons/md";
 
 const Header = () => {
     const { user, logout, isAdmin } = useAuth();
@@ -37,11 +40,24 @@ const Header = () => {
                             {user.name}<IoMdArrowDropdown />
                         </button>
                         <div className="dropdown-menu">
-                                <Link to="profile" className="dropdown-link">Mi cuenta</Link>
-                                <Link to="profile/mis-reservas" className="dropdown-link">Mis reservas</Link>
-                                <Link to="profile/mis-abonos" className="dropdown-link">Mis abonos</Link>
-                                <Link to="profile/settings" className="dropdown-link">Configuración</Link>
-                                {isAdmin() && <Link to="/admin-panel" className="dropdown-link">Panel Admin</Link> }
+                                <Link to="profile" className="dropdown-link">
+                                    <FiUser style={{ padding: '1rem',  }}/>
+                                    Mi cuenta
+                                </Link>
+                                <Link to="profile/mis-reservas" className="dropdown-link">
+                                    <PiCalendarCheck style={{ padding: '1rem' }}/>
+                                    Mis reservas
+                                </Link>
+                                <Link to="profile/mis-abonos" className="dropdown-link">
+                                    <PiWallet style={{ padding: '1rem' }}/>
+                                    Mis abonos</Link>
+                                {/* <Link to="profile/settings" className="dropdown-link">Configuración</Link> */}
+                                {isAdmin() && 
+                                    <Link to="/admin-panel" className="dropdown-link">
+                                        <MdAdminPanelSettings style={{ padding: '1rem' }}/>
+                                        Panel Admin
+                                    </Link>
+                                }
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
                         </div>
                     </div>
