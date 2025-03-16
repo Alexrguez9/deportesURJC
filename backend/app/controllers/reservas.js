@@ -11,7 +11,6 @@ exports.insertData = async (req, res) => {
     try {
         // destructuring de propiedades de la reserva
         const { userId, instalacionId, fechaInicio, fechaFin, precioTotal }  = req.body;
-        console.log('LOG RESEREVA EN BACK', req.body);
 
         // Validar los datos necesarios
         if (!userId || !instalacionId || !fechaInicio || !fechaFin) {
@@ -26,7 +25,6 @@ exports.insertData = async (req, res) => {
             fechaFin,
             precioTotal
         });
-        console.log('NewReserva: ', newReserva);
 
         // Guardar reserva en la base de datos
         const savedReserva = await newReserva.save();

@@ -29,15 +29,11 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, alta, balance } = req.body;
-        console.log('----REGISTER----');
-        console.log('---name:', name);
-        console.log('---email:', email);
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
         }
-        console.log('---existingUser:', existingUser);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
