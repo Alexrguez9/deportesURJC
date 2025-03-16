@@ -28,8 +28,8 @@ describe("MainLigasInternas Component", () => {
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
 
-        expect(links[0]).toHaveAttribute('href', 'encuentros');
-        expect(links[1]).toHaveAttribute('href', 'clasificaciones');
+        expect(links[0]).toHaveAttribute('href', '/ligas-internas/encuentros');
+        expect(links[1]).toHaveAttribute('href', '/ligas-internas/clasificaciones');
     });
 
     it("renders two Card components with correct 'description' and 'className' props", () => {
@@ -37,11 +37,11 @@ describe("MainLigasInternas Component", () => {
         expect(cards).toHaveLength(2);
 
         expect(cards[0]).toBeInTheDocument();
-        expect(cards[0]).toHaveClass("encuentros-card");
-        expect(screen.getByText("Consulta de encuentros Ligas Internas", { container: cards[0] })).toBeInTheDocument();
+        expect(cards[0]).toHaveClass("horizontal-card");
+        expect(screen.getByText("Encuentros", { container: cards[0] })).toBeInTheDocument();
 
         expect(cards[1]).toBeInTheDocument();
-        expect(cards[1]).toHaveClass("clasificaciones-card");
-        expect(screen.getByText("Consulta de clasificaciones Ligas Internas", { container: cards[1] })).toBeInTheDocument();
+        expect(cards[1]).toHaveClass("horizontal-card");
+        expect(screen.getByText("Clasificaciones", { container: cards[1] })).toBeInTheDocument();
     });
 });

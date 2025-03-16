@@ -49,7 +49,7 @@ const Alta = () => {
         }
     };
     
-    // TODO: hacer simulación de pasarela de pago
+    // TODO: hacer simulación de pasarela de pago para externos
 
     return (
         <div id="component-content">
@@ -57,7 +57,9 @@ const Alta = () => {
                 <BackButton />
             </div>
             <h1>Alta de sala de preparación física</h1>
-            <p>Bienvenido a la página de Alta de salas de preparación física URJC Deportes.</p>
+            <p>Bienvenido a la página de Alta de salas de preparación física URJC Deportes.
+            <br />Aquí podrás darte de alta en <strong>Gimnasio o Atletismo</strong> de la URJC.
+            </p>
             <section>
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
                     <option value="Gimnasio">Gimnasio</option>

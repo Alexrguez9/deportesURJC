@@ -177,6 +177,22 @@ button.navbar-button {
   padding: 2em;
 }
 
+.horizontal-card {
+  display: flex;
+  flex-direction: row;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  margin: 1rem;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 270px;
+}
+
+.horizontal-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
 #component-content{
   position: relative;
   text-align: center;
