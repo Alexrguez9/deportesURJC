@@ -23,11 +23,11 @@ const ContentSalasPreparacion = () => {
                             <p>Pago mensual abonos</p>
                         </div>
                     </Link>
-                    <Link to="/salas-preparacion/reservas-preparacion">
+                    {/* <Link to="/salas-preparacion/reservas-preparacion">
                         <div className='horizontal-card'>
                             <p>Reserva de espacio</p>
                         </div>
-                    </Link>
+                    </Link> */}
                 </div>
             </section>
         </>
