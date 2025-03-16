@@ -13,7 +13,7 @@ describe("Home Component", () => {
         expect(screen.getByText(/Bienvenido a la página de inicio de URJC Deportes/i)).toBeInTheDocument();
 
         expect(screen.getByRole("heading", { level: 2, name: /Ligas Internas/i })).toBeInTheDocument();
-        expect(screen.getByRole("heading", { level: 2, name: /Salas de preparación y gimnasio/i })).toBeInTheDocument();
+        expect(screen.getByRole("heading", { level: 2, name: /Salas de preparación/i })).toBeInTheDocument();
         expect(screen.getByRole("heading", { level: 2, name: /Instalaciones deportivas/i })).toBeInTheDocument();
     });
 
@@ -23,14 +23,13 @@ describe("Home Component", () => {
                 <Home />
             </BrowserRouter>
         );
-
         expect(screen.getByRole("heading", { level: 2, name: /Ligas Internas/i })).toBeInTheDocument();
 
-        const encuentrosLink = screen.getByRole("link", { name: /Consulta de encuentros Ligas Internas/i });
+        const encuentrosLink = screen.getByRole("link", { name: /encuentros/i });
         expect(encuentrosLink).toBeInTheDocument();
         expect(encuentrosLink.closest('a')).toHaveAttribute('href', '/ligas-internas/encuentros');
 
-        const clasificacionesLink = screen.getByRole("link", { name: /Consulta de clasificaciones Ligas Internas/i });
+        const clasificacionesLink = screen.getByRole("link", { name: /clasificaciones/i });
         expect(clasificacionesLink).toBeInTheDocument();
         expect(clasificacionesLink.closest('a')).toHaveAttribute('href', '/ligas-internas/clasificaciones');
     });
@@ -41,20 +40,19 @@ describe("Home Component", () => {
                 <Home />
             </BrowserRouter>
         );
+        expect(screen.getByRole("heading", { level: 2, name: /Salas de preparación/i })).toBeInTheDocument();
 
-        expect(screen.getByRole("heading", { level: 2, name: /Salas de preparación y gimnasio/i })).toBeInTheDocument();
-
-        const altaUsuariosLink = screen.getByRole("link", { name: /Alta de usuarios - Salas de preparación física/i });
+        const altaUsuariosLink = screen.getByRole("link", { name: /Altas en salas de preparación/i });
         expect(altaUsuariosLink).toBeInTheDocument();
         expect(altaUsuariosLink.closest('a')).toHaveAttribute('href', '/salas-preparacion/alta');
 
-        const pagoAbonoLink = screen.getByRole("link", { name: /Pago mensual Abono Gimnasio/i });
+        const pagoAbonoLink = screen.getByRole("link", { name: /Pago mensual abonos/i });
         expect(pagoAbonoLink).toBeInTheDocument();
         expect(pagoAbonoLink.closest('a')).toHaveAttribute('href', '/salas-preparacion/pago-abono');
 
-        const reservasPreparacionLink = screen.getByRole("link", { name: /Reserva de espacio - Salas de preparación física/i });
+        const reservasPreparacionLink = screen.getByRole("link", { name: /Reservas de instalaciones/i })
         expect(reservasPreparacionLink).toBeInTheDocument();
-        expect(reservasPreparacionLink.closest('a')).toHaveAttribute('href', '/salas-preparacion/reservas-preparacion');
+        expect(reservasPreparacionLink.closest('a')).toHaveAttribute('href', '/instalaciones');
     });
 
     it("renders 'Instalaciones deportivas' section with correct links", () => {
@@ -66,7 +64,7 @@ describe("Home Component", () => {
 
         expect(screen.getByRole("heading", { level: 2, name: /Instalaciones deportivas/i })).toBeInTheDocument();
 
-        const instalacionesLink = screen.getByRole("link", { name: /Reservas instalaciones deportivas URJC/i });
+        const instalacionesLink = screen.getByRole("link", { name: /Reservas de instalaciones/i });
         expect(instalacionesLink).toBeInTheDocument();
         expect(instalacionesLink.closest('a')).toHaveAttribute('href', '/instalaciones');
     });
@@ -78,15 +76,10 @@ describe("Home Component", () => {
             </BrowserRouter>
         );
 
-        expect(screen.getByRole("link", { name: /Consulta de encuentros Ligas Internas/i })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: /Consulta de clasificaciones Ligas Internas/i })).toBeInTheDocument();
-
-        expect(screen.getByRole("link", { name: /Alta de usuarios - Salas de preparación física/i })).toBeInTheDocument();
-
-        expect(screen.getByRole("link", { name: /Pago mensual Abono Gimnasio/i })).toBeInTheDocument();
-
-        expect(screen.getByRole("link", { name: /Reserva de espacio - Salas de preparación física/i })).toBeInTheDocument();
-
-        expect(screen.getByRole("link", { name: /Reservas instalaciones deportivas URJC/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /encuentros/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /clasificaciones/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Altas en salas de preparación/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Pago mensual abonos/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Reservas de instalaciones/i })).toBeInTheDocument();
     });
 });

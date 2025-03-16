@@ -1,24 +1,33 @@
 import { Link } from "react-router-dom";
-import Card from "../../components/card/Card";
+import { CgGym } from "react-icons/cg";
+import { PiWallet } from "react-icons/pi";
 
 const ContentSalasPreparacion = () => {
     return (
         <>
-            <h1>Salas y Gimnasio</h1>
-            <p>Bienvenido a la página de Salas y Gimnasio de URJC Deportes.<br></br>
-                Aquí podrás darte de alta en las salas de preparacion y hacer reservas en estas salas. 
-                Además, podrás recargar tu mensualidad.</p>
+            <h1>Salas de preparación</h1>
+            <p>Bienvenido a la página de Salas de preparación de URJC Deportes.
+            <br />Aquí podrás darte de alta en las salas de preparación (atletismo y gimnasio) y recargar tu mensualidad.
+            <br />Además, podrás reservar espacio.</p>
             <section>
                 <div className='ligas-internas'>
-                    <Link to="alta">
-                        <Card className="encuentros-card" description={"Alta de usuarios - Salas de preparación física"}/>
+                    <Link to="/salas-preparacion/alta">
+                        <div className='horizontal-card'>
+                            <CgGym style={{ padding: '1rem' }}/>
+                            <p>Altas en salas de preparación</p>
+                        </div>
                     </Link>
-                    <Link to="pago-abono">
-                        <Card className="home-card" description={"Pago mensual Abono"} />
+                    <Link to="/salas-preparacion/pago-abono">
+                        <div className='horizontal-card'>
+                            <PiWallet style={{ padding: '1rem' }}/>
+                            <p>Pago mensual abonos</p>
+                        </div>
                     </Link>
-                    <Link to="reservas-preparacion" >
-                        <Card className="clasificaciones-card" description={"Reserva de espacio - Salas de preparación física"} />
-                    </Link>
+                    {/* <Link to="/salas-preparacion/reservas-preparacion">
+                        <div className='horizontal-card'>
+                            <p>Reserva de espacio</p>
+                        </div>
+                    </Link> */}
                 </div>
             </section>
         </>

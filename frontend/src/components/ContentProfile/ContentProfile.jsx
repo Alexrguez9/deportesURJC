@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import Card from "../../components/card/Card";
 import './ContentProfile.css';
+import { PiCalendarCheck } from "react-icons/pi";
+import { FiUser } from "react-icons/fi";
 
 const ContentProfile = () => {
     return (
@@ -11,10 +12,16 @@ const ContentProfile = () => {
             <section>
                 <div className='ligas-internas'>
                     <Link to="consultar-perfil" >
-                        <Card className="clasificaciones-card"  description={"Consultar perfil"} />
+                        <div className='horizontal-card'>
+                            <FiUser style={{ padding: '1rem' }}/>
+                            <p>Consultar perfil</p>
+                        </div>
                     </Link>
                     <Link to="mis-reservas">
-                        <Card className="encuentros-card" description={"Mis reservas"}/>
+                        <div className='horizontal-card'>
+                            <PiCalendarCheck style={{ padding: '1rem' }}/>
+                            <p>Mis reservas</p>
+                        </div>
                     </Link>
                     
                 </div>

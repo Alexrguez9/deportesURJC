@@ -31,17 +31,4 @@ describe("ContentProfile Component", () => {
         expect(links[0]).toHaveAttribute('href', 'consultar-perfil');
         expect(links[1]).toHaveAttribute('href', 'mis-reservas');
     });
-
-    it("renders two Card components with correct 'description' and 'className' props", () => {
-        const cards = screen.getAllByRole('link').map(link => link.firstChild); // Get Card components from Links
-        expect(cards).toHaveLength(2);
-
-        expect(cards[0]).toBeInTheDocument();
-        expect(cards[0]).toHaveClass("clasificaciones-card");
-        expect(screen.getByText("Consultar perfil", { container: cards[0] })).toBeInTheDocument();
-
-        expect(cards[1]).toBeInTheDocument();
-        expect(cards[1]).toHaveClass("encuentros-card");
-        expect(screen.getByText("Mis reservas", { container: cards[1] })).toBeInTheDocument();
-    });
 });

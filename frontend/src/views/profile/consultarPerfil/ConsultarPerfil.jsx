@@ -73,7 +73,7 @@ const ConsultarPerfil = () => {
         <Fragment>
             <div className="profile-content">
                 <div id="profile-card">
-                    <div className="profile-card-content">
+                    <div className="card-no-hover">
                         <section>
                             <h2>Mi cuenta</h2>
                             <div className="centered-div profile-info">
