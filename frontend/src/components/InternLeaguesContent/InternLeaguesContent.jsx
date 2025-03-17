@@ -12,13 +12,13 @@ const MainLigasInternas = () => {
                 <div className='ligas-internas'>
                     <Link to="/ligas-internas/encuentros">
                         <div className='horizontal-card'>
-                            <MdEmojiEvents style={{ padding: '1rem' }}/>
+                            <MdEmojiEvents style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
                             <p>Encuentros</p>
                         </div>
                     </Link>
                     <Link to="/ligas-internas/clasificaciones">
                         <div className='horizontal-card'>
-                            <PiRankingLight style={{ padding: '1rem' }}/>
+                            <PiRankingLight style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
                             <p>Clasificaciones</p>
                         </div>
                     </Link>

@@ -13,13 +13,13 @@ const ContentSalasPreparacion = () => {
                 <div className='ligas-internas'>
                     <Link to="/salas-preparacion/alta">
                         <div className='horizontal-card'>
-                            <CgGym style={{ padding: '1rem' }}/>
-                            <p>Altas en salas de preparación</p>
+                            <CgGym style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
+                            <p>Altas</p>
                         </div>
                     </Link>
                     <Link to="/salas-preparacion/pago-abono">
                         <div className='horizontal-card'>
-                            <PiWallet style={{ padding: '1rem' }}/>
+                            <PiWallet style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
                             <p>Pago mensual abonos</p>
                         </div>
                     </Link>

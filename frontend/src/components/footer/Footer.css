@@ -9,10 +9,7 @@ footer {
     background-color: #242424;
     color:#ffffff
 }
-footer #footer-content{
-    border-bottom: 1px solid #ffffff;
-    padding-bottom: 1rem;
-}
+
 footer #legal{
     border-bottom: 1px solid #ffffff;
     padding-bottom: 1rem;
@@ -20,21 +17,23 @@ footer #legal{
 footer #footer-content {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
     justify-content: center;
     width: 100%;
     color: #ffffff;
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 1rem;
 }
 footer #footer-content > * {
     display: flex;
     flex-direction: column;
     margin: 1rem 1rem;
-    
 }
 
 footer #legal {
-    margin: 1rem;;
+    margin: 1rem;
+    display: flex;
     width: 100%;
+    justify-content: center;
 }
 footer #legal a {
     color: #ffffff;

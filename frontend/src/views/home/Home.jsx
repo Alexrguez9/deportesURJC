@@ -14,13 +14,13 @@ const Home = () => {
                 <div className='ligas-internas'>
                     <Link to="/ligas-internas/encuentros">
                         <div className='horizontal-card'>
-                            <MdEmojiEvents style={{ padding: '1rem' }}/>
+                            <MdEmojiEvents style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
                             <p>Encuentros</p>
                         </div>
                     </Link>
                     <Link to="/ligas-internas/clasificaciones">
                         <div className='horizontal-card'>
-                            <PiRankingLight style={{ padding: '1rem' }}/>
+                            <PiRankingLight style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
                             <p>Clasificaciones</p>
                         </div>
                     </Link>
@@ -30,13 +30,13 @@ const Home = () => {
                 <div className='salas-gimnasio'>
                     <Link to="/salas-preparacion/alta">
                         <div className='horizontal-card'>
-                            <CgGym style={{ padding: '1rem' }}/>
-                            <p>Altas en salas de preparación</p>
+                            <CgGym style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Altas</p>
                         </div>
                     </Link>
                     <Link to="/salas-preparacion/pago-abono">
                         <div className='horizontal-card'>
-                            <PiWallet style={{ padding: '1rem' }}/>
+                            <PiWallet style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
                             <p>Pago mensual abonos</p>
                         </div>
                     </Link>
@@ -46,8 +46,8 @@ const Home = () => {
                 <div className='instalaciones'>
                     <Link to="/instalaciones">
                         <div className='horizontal-card'>
-                            <PiCalendarCheck style={{ padding: '1rem' }}/>
-                            <p>Reservas de instalaciones</p>
+                            <PiCalendarCheck style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Reservas</p>
                         </div>
                     </Link>
                 </div>
