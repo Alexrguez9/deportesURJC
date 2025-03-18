@@ -9,7 +9,6 @@ import { PiCalendarCheck, PiWallet } from "react-icons/pi";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoMdArrowDropdown, IoMdClose } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { AiOutlineHome } from "react-icons/ai";
 
 const Header = () => {
     const { user, logout, isAdmin } = useAuth();
@@ -35,6 +34,17 @@ const Header = () => {
         setMenuOpen(!menuOpen);
     };
 
+    useEffect(() => {
+        if (menuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [menuOpen]);
+
     return (
         <header>
             <nav className="navbar">
@@ -53,10 +63,10 @@ const Header = () => {
                         <IoMdClose size={30} style={{color: 'white'}} />
                     </div>
                     <Link className="navbar-link" to="/" onClick={handleClick}>Inicio</Link>
-                    <Link className="navbar-link" to="/ligas-internas"  onClick={handleClick}>Ligas Internas</Link>
-                    <Link className="navbar-link" to="/salas-preparacion"  onClick={handleClick}>Salas y gimnasio</Link>
-                    <Link className="navbar-link" to="/instalaciones"  onClick={handleClick}>Instalaciones</Link>
-                    <Link className="navbar-link" to="/monedero"  onClick={handleClick}>Recargar monedero</Link>
+                    <Link className="navbar-link" to="/ligas-internas" onClick={handleClick}>Ligas Internas</Link>
+                    <Link className="navbar-link" to="/salas-preparacion" onClick={handleClick}>Salas y gimnasio</Link>
+                    <Link className="navbar-link" to="/instalaciones" onClick={handleClick}>Instalaciones</Link>
+                    <Link className="navbar-link" to="/monedero" onClick={handleClick}>Recargar monedero</Link>
 
                     {user ? (
                         <>

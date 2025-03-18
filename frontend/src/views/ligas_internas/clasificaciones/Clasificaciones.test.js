@@ -53,4 +53,12 @@ describe('Clasificaciones Component', () => {
     expect(screen.getByText('Equipo C')).toBeInTheDocument();
     expect(screen.queryByText('Equipo B')).not.toBeInTheDocument();
   });
+
+  it('displays message when no teams are available for selected sport', () => {
+    render(<Clasificaciones />);
+    const dropdown = screen.getByRole('combobox');
+    fireEvent.change(dropdown, { target: { value: 'Voleibol' } });
+    
+    expect(screen.getByText('No hay encuentros de Voleibol para mostrar')).toBeInTheDocument();
+  });
 });

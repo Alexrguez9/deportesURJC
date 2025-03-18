@@ -20,7 +20,7 @@ const Clasificaciones = () => {
         .sort((a, b) => b.points - a.points); // Sort by points in descending order
 
     return (
-        <div id="component-content">
+        <div id="component-content" className="content">
             <div className="back-button-div">
                 <BackButton />
             </div>
@@ -38,6 +38,8 @@ const Clasificaciones = () => {
                 <option value="Voleibol">Voleibol</option>
             </select>
 
+            {equiposFiltrados?.length === 0 ?
+                    <p>No hay encuentros de {filtroDeporte} para mostrar</p> :
             <table>
                 <thead>
                     <tr>
@@ -62,6 +64,7 @@ const Clasificaciones = () => {
                     ))}
                 </tbody>
             </table>
+            }
         </div>
     );
 };

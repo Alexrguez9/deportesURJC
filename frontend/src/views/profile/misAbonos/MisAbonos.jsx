@@ -39,9 +39,9 @@ const MisAbonos = () => {
     return (
         <div>
             <h1>Mis Abonos</h1>
-            <div className='content-mis-reservas'>
+            <div className='content-mis-abonos'>
                 {user ? (
-                    <Fragment>
+                    <div className="cards-container">
                         <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
                             <h2>GIMNASIO MENSUAL</h2>
@@ -93,7 +93,7 @@ const MisAbonos = () => {
                                 <p>Abono inactivo</p>
                             )}
                         </div>
-                    </Fragment>
+                    </div>
                 ): <p>Debes iniciar sesión para acceder a tus abonos</p>}
             </div>
         </div>
