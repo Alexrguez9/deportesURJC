@@ -26,18 +26,19 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
     };
 
     const onSubmit = async (data) => {
+        const { startDate, endDate } = getMonthlyDateRange(user);
         const formattedData = {
             ...data,
             alta: {
                 gimnasio: {
                     estado: data.gimnasio,
-                    fechaInicio: data.gimnasio ? getMonthlyDateRange(user)[0] : null,
-                    fechaFin: data.gimnasio ? getMonthlyDateRange(user)[1] : null
+                    fechaInicio: data.gimnasio ?startDate : null,
+                    fechaFin: data.gimnasio ? endDate : null
                 },
                 atletismo: {
                     estado: data.atletismo,
-                    fechaInicio: data.atletismo ? getMonthlyDateRange(user)[0] : null,
-                    fechaFin: data.atletismo ? getMonthlyDateRange(user)[1] : null
+                    fechaInicio: data.atletismo ?startDate : null,
+                    fechaFin: data.atletismo ? endDate : null
                 },
             },
         };

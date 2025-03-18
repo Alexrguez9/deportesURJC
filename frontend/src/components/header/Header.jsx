@@ -16,10 +16,8 @@ const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     
     const handleLogout = () => {
-        if (user) {
-            logout();
-            navigate('/'); // redirecciona a home
-        }
+        logout();
+        navigate('/'); // redirecciona a home
         handleClick();
     };
 
