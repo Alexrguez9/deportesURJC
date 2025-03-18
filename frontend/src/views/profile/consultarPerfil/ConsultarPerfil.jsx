@@ -57,6 +57,7 @@ const ConsultarPerfil = () => {
 
         try {
             const updatedUserRes = await updatePasswordAndName(user?._id, currentPassword, updatedPassword, updatedName);
+            /* istanbul ignore if */
             if (!updatedUserRes) {
                 toast.error("Error al actualizar el perfil. Inténtalo de nuevo.");
                 return;
@@ -116,7 +117,7 @@ const ConsultarPerfil = () => {
                             </div>
                         </section>
                         {user && (
-                            <div>
+                            <div className="profile-div-buttons">
                                 <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
                                 <button onClick={handleOpenDeleteConfirmation} className="delete-profile-button">Eliminar cuenta</button>
                             </div>

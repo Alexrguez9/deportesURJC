@@ -2,13 +2,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUsers from "./AdminModalUsers";
 import { useAuth } from "../../../context/AuthContext";
 import { mockAuthContext } from "../../../utils/mocks";
-import * as sonner from 'sonner'; // Import sonner to mock toast
+import * as sonner from 'sonner';
 
 jest.mock('../../../context/AuthContext', () => ({
     useAuth: jest.fn()
 }));
 
-jest.mock('sonner', () => ({ // Mock sonner module
+jest.mock('sonner', () => ({
     toast: {
         success: jest.fn(),
         error: jest.fn(),
@@ -21,8 +21,8 @@ describe("AdminModalUsers Component", () => {
     beforeEach(() => {
         useAuth.mockReturnValue(mockAuthContext);
         jest.clearAllMocks();
-        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
-        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -220,6 +220,47 @@ describe("AdminModalUsers Component", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             fireEvent.click(document.querySelector('#close-menu'));
             expect(mockCloseModal).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe("Error Handling", () => {
+        it("shows error message if an unexpected error occurs during form submission", async () => {
+            // Mocking the error case in onSubmit
+            mockAuthContext.addUser.mockRejectedValue(new Error("Unexpected error"));
+
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                expect(sonner.toast.error).toHaveBeenCalledWith("Ocurrió un error al procesar la solicitud.");
+            });
+        });
+    });
+
+    describe("Mocking getMonthlyDateRange function", () => {
+        it("tests the correct usage of getMonthlyDateRange function", async () => {
+            const mockDateRange = ['2025-03-01', '2025-03-31']; // Mock the return value for getMonthlyDateRange
+            jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockReturnValue(mockDateRange);
+
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                // Ensure that getMonthlyDateRange has been called
+                expect(require("../../../utils/dates").getMonthlyDateRange).toHaveBeenCalledTimes(1);
+            });
         });
     });
 });

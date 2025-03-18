@@ -8,22 +8,17 @@ const MisAbonos = () => {
     const { user, updateUser } = useAuth();
 
     const handleBaja = (instalacion) => async () => {
-        if(user) {
-            const updatedUserData  = { ...user };
-            if (instalacion === 'gimnasio') {
-                updatedUserData.alta.gimnasio = { estado: false, fechaInicio: null, fechaFin: null };
-            } else if (instalacion === 'atletismo') {
-                updatedUserData.alta.atletismo = { estado: false, fechaInicio: null, fechaFin: null};
-            }
-            try {
-                const response = await updateUser(user._id, updatedUserData );
-                if (response.status !== 200) {
-                    throw { status: { ok: false, error: 'Error al dar de baja. Inténtalo de nuevo más tarde' } };
-                }
-            } catch (error) {
-                console.error('Error al dar de baja:', error);
-                throw { status: { ok: false, error: 'Se ha producido un error al dar de baja. Inténtalo de nuevo más tarde.' } };
-            }
+        const updatedUserData  = { ...user };
+        if (instalacion === 'gimnasio') {
+            updatedUserData.alta.gimnasio = { estado: false, fechaInicio: null, fechaFin: null };
+        } else if (instalacion === 'atletismo') {
+            updatedUserData.alta.atletismo = { estado: false, fechaInicio: null, fechaFin: null};
+        }
+        try {
+            await updateUser(user._id, updatedUserData );
+        } catch (error) {
+            console.error('Error al dar de baja:', error);
+            throw { status: { ok: false, error: 'Se ha producido un error al dar de baja. Inténtalo de nuevo más tarde.' } };
         }
     }
 
@@ -39,9 +34,9 @@ const MisAbonos = () => {
     return (
         <div>
             <h1>Mis Abonos</h1>
-            <div className='content-mis-reservas'>
+            <div className='content-mis-abonos'>
                 {user ? (
-                    <Fragment>
+                    <div className="cards-container">
                         <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
                             <h2>GIMNASIO MENSUAL</h2>
@@ -93,7 +88,7 @@ const MisAbonos = () => {
                                 <p>Abono inactivo</p>
                             )}
                         </div>
-                    </Fragment>
+                    </div>
                 ): <p>Debes iniciar sesión para acceder a tus abonos</p>}
             </div>
         </div>

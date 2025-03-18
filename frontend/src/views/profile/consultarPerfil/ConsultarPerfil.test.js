@@ -83,12 +83,14 @@ describe("ConsultarPerfil Component", () => {
         render(<ConsultarPerfil />);
         const editButton = screen.getByRole("button", { name: /editar perfil/i });
         fireEvent.click(editButton);
+
         const nameInput = screen.getByLabelText(/nuevo nombre:/i);
         const actualPasswordInput = screen.getByLabelText(/contraseña actual:/i);
         const passwordInput = screen.getByLabelText(/nueva contraseña:/i);
         fireEvent.change(actualPasswordInput, { target: { value: 'actualPass' } });
         fireEvent.change(nameInput, { target: { value: 'Updated Name' } });
         fireEvent.change(passwordInput, { target: { value: 'updatedPass' } });
+
         const saveButton = screen.getByRole("button", { name: /guardar cambios/i });
         fireEvent.click(saveButton);
 

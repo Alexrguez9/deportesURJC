@@ -50,3 +50,74 @@
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
 }
 
+/* Añadimos una clase para hacer la tabla más flexible */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+    table-layout: fixed;
+}
+
+thead {
+    background-color: #f0f0f0;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+/* Hacemos la tabla "scrollable" para pantallas pequeñas */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    /* Estilos para pantallas pequeñas */
+    .top-buttons-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .iconPlus {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+
+    /* Ajustar la disposición de la tabla */
+    table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th, td {
+        padding: 8px;
+        min-width: 171px;
+    }
+
+    th {
+        font-size: 14px;
+        background-color: #f0f0f0;
+    }
+
+    td {
+        font-size: 12px;
+    }
+
+    /* Redimensionar los iconos de editar y eliminar */
+    .editPencil, .deleteTrash {
+        padding: 4px;
+        font-size: 18px;
+    }
+
+    .editPencil:hover, .deleteTrash:hover {
+        transform: scale(1.1);
+    }
+}

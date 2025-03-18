@@ -64,6 +64,17 @@ describe("Encuentros Component", () => {
         expect(screen.getByText(/Aquí puedes administrar los Encuentros/i)).toBeInTheDocument();
     });
 
+    it('renders the th Acciones for admin users', () => {
+        mockAuthContext.isAdmin.mockReturnValue(true);
+        render(
+            <BrowserRouter>
+                <Encuentros />
+            </BrowserRouter>
+        );
+
+        expect(screen.getByRole('columnheader', { name: /acciones/i })).toBeInTheDocument();
+    });
+
     it("renders the 'add' button for admin users", () => {
         mockAuthContext.user = { _id: "123", email: "test@admin.es", role: "admin" };
         mockAuthContext.isAdmin.mockReturnValue(true);
@@ -117,7 +128,10 @@ describe("Encuentros Component", () => {
     });
 
     it("filters results by sport", async () => {
-        mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-sala', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }];
+        mockTeamsAndResultsContext.results = [
+            { _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-sala', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' },
+            { _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'F7 local', equipo_visitante: 'F7 visitor' },
+        ];
         mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
         render(
@@ -127,8 +141,8 @@ describe("Encuentros Component", () => {
         );
         fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-sala' } });
         await waitFor(() => {
-
-        expect(screen.queryByRole('cell', { name: /Fútbol-sala/i })).toBeInTheDocument();
+            expect(screen.getByText('Local Team')).toBeInTheDocument();
+            expect(screen.queryByText('F7 local')).not.toBeInTheDocument();
         });
     });
 
@@ -176,7 +190,7 @@ describe("Encuentros Component", () => {
             </BrowserRouter>
         );
         await waitFor(() => {
-        const editButton = screen.getByRole('cell', { name: 'Fútbol-7' }).closest('tr').querySelector('.editPencil');
+        const editButton = document.querySelector('.editPencil');
         fireEvent.click(editButton);
         });
         await waitFor(() => {
@@ -199,8 +213,8 @@ describe("Encuentros Component", () => {
                 </BrowserRouter>
             );
 
-            await waitFor(() => screen.getByRole('cell', { name: 'Fútbol-7' }));
-            const deleteButton = screen.getByRole('cell', { name: 'Fútbol-7' }).closest('tr').querySelector('.deleteTrash');
+            await waitFor(() => expect(screen.getByText('Local Team')).toBeInTheDocument());
+            const deleteButton = document.querySelector('.deleteTrash');
             fireEvent.click(deleteButton);
 
             await waitFor(async () => {
@@ -226,8 +240,8 @@ describe("Encuentros Component", () => {
                 </BrowserRouter>
             );
 
-            await waitFor(() => screen.getByRole('cell', { name: 'Fútbol-7' }));
-            const deleteButton = screen.getByRole('cell', { name: 'Fútbol-7' }).closest('tr').querySelector('.deleteTrash');
+            await waitFor(() => expect(screen.getByText('Local Team')).toBeInTheDocument());
+            const deleteButton = document.querySelector('.deleteTrash');
             fireEvent.click(deleteButton);
 
             await waitFor(async () => {
@@ -253,8 +267,10 @@ describe("Encuentros Component", () => {
                 </BrowserRouter>
             );
 
-            await waitFor(() => screen.getByRole('cell', { name: 'Fútbol-7' }));
-            const deleteButton = screen.getByRole('cell', { name: 'Fútbol-7' }).closest('tr').querySelector('.deleteTrash');
+            await waitFor(() => {
+                expect(screen.getByText('Local Team')).toBeInTheDocument();
+            });
+            const deleteButton = document.querySelector('.deleteTrash');
             fireEvent.click(deleteButton);
 
             await waitFor(async () => {

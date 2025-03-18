@@ -181,7 +181,7 @@ const Instalaciones = () => {
     };
 
     return (
-        <div>
+        <div className="content">
             <h1>Instalaciones</h1>
             <p>Selecciona una instalación y una fecha para reservar.
                 <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.

@@ -1,7 +1,7 @@
 import {
     useState,
     useEffect,
-    Fragment 
+    Fragment
 } from "react";
 import { toast } from "sonner";
 import "./Encuentros.css";
@@ -26,8 +26,8 @@ const Encuentros = () => {
             await fetchResults();
         }
         fetchData();
-   }, []);
-   
+    }, []);
+
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
     };
@@ -82,12 +82,12 @@ const Encuentros = () => {
 
     return (
         <div id="component-content">
-            {isModalOpen &&(
-                <ResultsAdminModal closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewResult={isNewResult}  />
+            {isModalOpen && (
+                <ResultsAdminModal closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewResult={isNewResult} />
             )}
             <div className="top-buttons-content">
                 <BackButton />
-                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em' data-testid="add-button"/>}
+                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em' data-testid="add-button" />}
             </div>
             <h1>Encuentros</h1>
             {!isAdmin() ? (
@@ -96,48 +96,50 @@ const Encuentros = () => {
                 <Fragment>
                     <p>Aquí puedes administrar los Encuentros de la Liga Interna de URJC Deportes.</p>
                     <p>Si quieres añadir un encuentro, la idea es escoger de los equipos que hay actualmente.
-                    <br/>Si necesitas crear un nuevo equipo lo puedes hacer desde el adminPanel.</p>
+                        <br />Si necesitas crear un nuevo equipo lo puedes hacer desde el adminPanel.</p>
                 </Fragment>
             )}
-            <section>
+            <section className="table-responsive">
                 <select value={filtroDeporte} onChange={handleDeporteChange}>
                     <option value="Fútbol-7">Fútbol-7</option>
                     <option value="Fútbol-sala">Fútbol-sala</option>
                     <option value="Básket 3x3">Básket 3x3</option>
                     <option value="Voleibol">Voleibol</option>
                 </select>
-                { filteredResults?.length === 0 ? 
+
+                {filteredResults?.length === 0 ?
                     <p>No hay resultados de {filtroDeporte} para mostrar</p> :
                     <table>
                         <thead>
                             <tr>
-                                <th>Deporte</th>
                                 <th>Jornada</th>
                                 <th>Equipo local</th>
                                 <th>Goles local</th>
-                                <th></th>
                                 <th>Goles visitante</th>
                                 <th>Equipo visitante</th>
-                                <th>Fecha</th>
+                                <th  style={{ minWidth: '170px' }}>Fecha</th>
                                 <th>Lugar</th>
+                                {isAdmin() && <th>Acciones</th>}
                             </tr>
                         </thead>
                         <tbody>
                             {filteredResults?.map((results) => (
                                 <tr key={results._id}>
-                                    <td>{results.sport}</td>
                                     <td>{results.jornada}</td>
                                     <td>{results.equipo_local}</td>
                                     <td>{results.goles_local}</td>
-                                    <td>-</td>
                                     <td>{results.goles_visitante}</td>
                                     <td>{results.equipo_visitante}</td>
                                     <td>{getPrettyDate(results.fecha)}</td>
                                     <td>{results.lugar}</td>
-                                    <td>
-                                        {isAdmin() && <GoPencil onClick={() => openModal(results)} className="editPencil" />}
-                                        {isAdmin() && <MdOutlineDelete onClick={() => handleDeleteResult(results._id)} className="deleteTrash" />}
-                                    </td>
+                                    {isAdmin() && (
+                                        <td>
+                                            <>
+                                                <GoPencil onClick={() => openModal(results)} className="editPencil" />
+                                                <MdOutlineDelete onClick={() => handleDeleteResult(results._id)} className="deleteTrash" />
+                                            </>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

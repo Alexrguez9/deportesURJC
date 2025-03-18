@@ -52,7 +52,7 @@ const Alta = () => {
     // TODO: hacer simulación de pasarela de pago para externos
 
     return (
-        <div id="component-content">
+        <div id="component-content" className="content">
             <div className="back-button-div">
                 <BackButton />
             </div>

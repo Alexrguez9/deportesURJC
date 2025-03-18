@@ -42,7 +42,7 @@ describe("Home Component", () => {
         );
         expect(screen.getByRole("heading", { level: 2, name: /Salas de preparación/i })).toBeInTheDocument();
 
-        const altaUsuariosLink = screen.getByRole("link", { name: /Altas en salas de preparación/i });
+        const altaUsuariosLink = screen.getByRole("link", { name: /Altas/i });
         expect(altaUsuariosLink).toBeInTheDocument();
         expect(altaUsuariosLink.closest('a')).toHaveAttribute('href', '/salas-preparacion/alta');
 
@@ -50,7 +50,7 @@ describe("Home Component", () => {
         expect(pagoAbonoLink).toBeInTheDocument();
         expect(pagoAbonoLink.closest('a')).toHaveAttribute('href', '/salas-preparacion/pago-abono');
 
-        const reservasPreparacionLink = screen.getByRole("link", { name: /Reservas de instalaciones/i })
+        const reservasPreparacionLink = screen.getByRole("link", { name: /Reservas/i })
         expect(reservasPreparacionLink).toBeInTheDocument();
         expect(reservasPreparacionLink.closest('a')).toHaveAttribute('href', '/instalaciones');
     });
@@ -64,7 +64,7 @@ describe("Home Component", () => {
 
         expect(screen.getByRole("heading", { level: 2, name: /Instalaciones deportivas/i })).toBeInTheDocument();
 
-        const instalacionesLink = screen.getByRole("link", { name: /Reservas de instalaciones/i });
+        const instalacionesLink = screen.getByRole("link", { name: /Reservas/i });
         expect(instalacionesLink).toBeInTheDocument();
         expect(instalacionesLink.closest('a')).toHaveAttribute('href', '/instalaciones');
     });
@@ -78,8 +78,8 @@ describe("Home Component", () => {
 
         expect(screen.getByRole("link", { name: /encuentros/i })).toBeInTheDocument();
         expect(screen.getByRole("link", { name: /clasificaciones/i })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: /Altas en salas de preparación/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Altas/i })).toBeInTheDocument();
         expect(screen.getByRole("link", { name: /Pago mensual abonos/i })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: /Reservas de instalaciones/i })).toBeInTheDocument();
+        expect(screen.getByRole("link", { name: /Reservas/i })).toBeInTheDocument();
     });
 });

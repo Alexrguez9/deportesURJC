@@ -52,6 +52,7 @@ const MisReservas = () => {
                                         <th>Fecha inicio</th>
                                         <th>Fecha fin</th>
                                         <th>Precio total</th>
+                                        <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>

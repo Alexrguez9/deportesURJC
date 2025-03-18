@@ -59,7 +59,7 @@ const RecargaMonedero = () => {
     };
 
     return (
-        <div id="recarga-monedero-content">
+        <div id="recarga-monedero-content" className="content">
             <h1>Recarga de monedero</h1>
             <p>Bienvenido a la página de recarga de monedero de URJC Deportes.</p>
 
