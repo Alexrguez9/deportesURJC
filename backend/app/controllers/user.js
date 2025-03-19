@@ -118,10 +118,6 @@ exports.updateOne = async (req, res) => {
         const { id } = req.params;
         const body = req.body;
 
-        if (body.password) {
-            body.password = await bcrypt.hash(body.password, 10);
-        }
-
         const updatedUser = await User.findOneAndUpdate({ _id: id }, { $set: body }, { new: true });
 
         if (!updatedUser) {
