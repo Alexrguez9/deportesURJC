@@ -1,4 +1,4 @@
-name: CD - Docker Publish Workflow
+name: CD - Docker Publish
 
 on:
   push:
