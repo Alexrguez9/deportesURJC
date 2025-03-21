@@ -119,7 +119,7 @@ const Encuentros = () => {
                                 <th>Equipo visitante</th>
                                 <th  style={{ minWidth: '170px' }}>Fecha</th>
                                 <th>Lugar</th>
-                                {isAdmin && <th>Acciones</th>}
+                                {isAdmin() && <th>Acciones</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -132,7 +132,7 @@ const Encuentros = () => {
                                     <td>{results.equipo_visitante}</td>
                                     <td>{getPrettyDate(results.fecha)}</td>
                                     <td>{results.lugar}</td>
-                                    {isAdmin && (
+                                    {isAdmin() && (
                                         <td>
                                             <>
                                                 <GoPencil onClick={() => openModal(results)} className="editPencil" />

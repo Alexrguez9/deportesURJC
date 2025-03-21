@@ -10,7 +10,7 @@ const ContentAdminPanel = () => {
 
     return (
         <Fragment>
-            {user && isAdmin ? (
+            {user && isAdmin() ? (
                 <div id="component-content">
                     <div className="view-header">
                         <BackButton />

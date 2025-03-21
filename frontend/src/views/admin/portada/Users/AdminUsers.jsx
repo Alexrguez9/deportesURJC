@@ -57,7 +57,7 @@ const AdminUsers = () => {
 
     const handleDeleteUser = async (userId) => {
         /* istanbul ignore if*/
-        if (!isAdmin) {
+        if (!isAdmin()) {
             toast.error("No tienes permisos para eliminar usuarios");
             return;
         }
@@ -74,14 +74,14 @@ const AdminUsers = () => {
     return (
         <div id="component-content">
             { isLoading && <Spinner />}
-            {isAdmin ? (
+            {isAdmin() ? (
                 <Fragment>
                      {isModalOpen &&(
                         <AdminModalUsers closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewUser={isNewUser}  />
                     )}
                     <div className="top-buttons-content">
                         <BackButton />
-                        {user && isAdmin && (
+                        {user && isAdmin() && (
                             <GoPlus onClick={() => openModal()} className="iconPlus" size="1.5em" />
                         )}
                     </div>

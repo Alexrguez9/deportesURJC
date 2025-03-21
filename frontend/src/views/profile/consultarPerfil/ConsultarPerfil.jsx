@@ -81,7 +81,7 @@ const ConsultarPerfil = () => {
                                 <p>Nombre: {user?.name}</p>
                                 <p>Email: {user?.email}</p>
                                 <p>Saldo: {user?.balance} €</p>
-                                {isAdmin && <p>Role: {user?.role}</p>}
+                                {isAdmin() && <p>Role: {user?.role}</p>}
                             {editMode ? (
                                 <div className="centered-div">
                                     <label>

@@ -72,14 +72,14 @@ const AdminTeams = () => {
 
     return (
         <div id="component-content">
-            {isAdmin ? (
+            {isAdmin() ? (
                 <Fragment>
                     {isModalOpen &&(
                         <AdminModalTeams closeModal={closeModal} isOpen={isModalOpen} popupData={popupData} isNewTeam={isNewTeam}  />
                     )}
                     <div className="top-buttons-content">
                         <BackButton />
-                        {user && isAdmin && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em'/>}
+                        {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em'/>}
                     </div>
                     <h1>Equipos</h1>
                     <p>
