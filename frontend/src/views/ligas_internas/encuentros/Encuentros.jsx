@@ -87,10 +87,10 @@ const Encuentros = () => {
             )}
             <div className="top-buttons-content">
                 <BackButton />
-                {user && isAdmin() && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em' data-testid="add-button" />}
+                {user && isAdmin && <GoPlus onClick={() => openModal()} className="iconPlus" size='1.5em' data-testid="add-button" />}
             </div>
             <h1>Encuentros</h1>
-            {!isAdmin() ? (
+            {!isAdmin ? (
                 <p>Bienvenido a la página de Encuentros de la Liga Interna de URJC Deportes.</p>
             ) : (
                 <Fragment>
@@ -119,7 +119,7 @@ const Encuentros = () => {
                                 <th>Equipo visitante</th>
                                 <th  style={{ minWidth: '170px' }}>Fecha</th>
                                 <th>Lugar</th>
-                                {isAdmin() && <th>Acciones</th>}
+                                {isAdmin && <th>Acciones</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -132,7 +132,7 @@ const Encuentros = () => {
                                     <td>{results.equipo_visitante}</td>
                                     <td>{getPrettyDate(results.fecha)}</td>
                                     <td>{results.lugar}</td>
-                                    {isAdmin() && (
+                                    {isAdmin && (
                                         <td>
                                             <>
                                                 <GoPencil onClick={() => openModal(results)} className="editPencil" />

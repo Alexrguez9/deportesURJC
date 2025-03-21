@@ -83,7 +83,7 @@ const Header = () => {
                                         <PiWallet style={{ padding: '1rem' }} />
                                         Mis abonos
                                     </Link>
-                                    {isAdmin() && 
+                                    {isAdmin && 
                                         <Link className="navbar-link" to="/admin-panel" onClick={toggleMenu}>
                                             <MdAdminPanelSettings style={{ padding: '1rem' }} />
                                             Panel Admin
@@ -111,7 +111,7 @@ const Header = () => {
                                                 <PiWallet style={{ padding: '1rem' }} />
                                                 Mis abonos
                                             </Link>
-                                            {isAdmin() && 
+                                            {isAdmin && 
                                                 <Link to="/admin-panel" className="dropdown-link">
                                                     <MdAdminPanelSettings style={{ padding: '1rem' }} />
                                                     Panel Admin

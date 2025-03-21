@@ -33,7 +33,7 @@ const AdminReservations = () => {
   };
 
   useEffect(() => {
-    if (isAdmin()) fetchReservations();
+    if (isAdmin) fetchReservations();
   }, []);
 
   const openModal = (reservation) => {
@@ -62,7 +62,7 @@ const AdminReservations = () => {
     }
   };
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return <AccessDenied />;
   }
 

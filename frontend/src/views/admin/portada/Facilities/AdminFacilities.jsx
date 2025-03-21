@@ -31,7 +31,7 @@ const AdminFacilities = () => {
   };
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isAdmin) {
       fetchFacilities();
     }
   }, []);
@@ -62,7 +62,7 @@ const AdminFacilities = () => {
     }
   };
 
-  if (!isAdmin()) {
+  if (!isAdmin) {
     return <AccessDenied />;
   }
 

@@ -2,7 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 // const jwt = require('jsonwebtoken');
 
-// Obtener data de users
+// Obtain all users
 exports.getData = async (req, res) => {
     try {
         const userData = await User.find();
@@ -13,7 +13,7 @@ exports.getData = async (req, res) => {
     }
 };
 
-// Obtener un usuario por su id
+// Obtain one user by id
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params;
@@ -25,7 +25,7 @@ exports.getOne = async (req, res) => {
     }
 };
 
-// Registrar un nuevo usuario
+// Register a new user
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, alta, balance } = req.body;
@@ -59,14 +59,13 @@ exports.register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser); // Incluimos el _id
+        res.status(201).json(savedUser);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });
     }
 };
 
-// Iniciar sesión
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -101,7 +100,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// Cerrar sesión
 exports.logout = async (req, res) => {
     try {
         req.session.destroy();
@@ -112,7 +110,7 @@ exports.logout = async (req, res) => {
     }
 };
 
-// Actualizar un usuario
+// Update an user
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
@@ -164,7 +162,7 @@ exports.updatePasswordAndName = async (req, res) => {
     }
 };
 
-// Eliminar un usuario
+// Delete an user
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
@@ -181,12 +179,13 @@ exports.deleteOne = async (req, res) => {
     }
 };
 
-require("dotenv").config(); // Asegurar que se carguen las variables de entorno
+require("dotenv").config(); // Import dotenv to use environment variables
 
-// Función para comprobar si el email es igual al ADMIN_EMAIL
+// Function to verify if email is equal to ADMIN_EMAIL from .env
 exports.checkIfAdmin = (req, res) => {
     try {
         const { email } = req.body;
+        const adminEmail = process.env.ADMIN_EMAIL;
 
         if (!email) {
             return res.status(400).json({ error: "Email es requerido" });
