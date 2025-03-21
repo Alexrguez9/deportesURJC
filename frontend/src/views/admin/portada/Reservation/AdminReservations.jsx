@@ -11,6 +11,7 @@ import BackButton from "../../../../components/backButton/BackButton";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
 import Spinner from "../../../../components/spinner/Spinner";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
+import { getPrettyDate } from "../../../../utils/dates";
 
 const AdminReservations = () => {
   const { isAdmin } = useAuth();
@@ -33,7 +34,7 @@ const AdminReservations = () => {
   };
 
   useEffect(() => {
-    if (isAdmin) fetchReservations();
+    if (isAdmin()) fetchReservations();
   }, []);
 
   const openModal = (reservation) => {
@@ -62,22 +63,9 @@ const AdminReservations = () => {
     }
   };
 
-  if (!isAdmin) {
+  if (!isAdmin()) {
     return <AccessDenied />;
   }
-
-  const formatDate = (dateString) => {
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date)) {
-        return "Invalid Date";
-      }
-      return date.toISOString().replace("T", " ").slice(0, 16);
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Invalid Date";
-    }
-  };
 
   return (
     <div id="component-content">
@@ -113,8 +101,8 @@ const AdminReservations = () => {
                         <tr key={reservation?._id}>
                             <td>{reservation?.userId}</td>
                             <td>{reservation?.instalacionId}</td>
-                            <td>{formatDate(reservation?.fechaInicio)}</td>
-                            <td>{formatDate(reservation?.fechaFin)}</td>
+                            <td>{getPrettyDate(reservation?.fechaInicio)}</td>
+                            <td>{getPrettyDate(reservation?.fechaFin)}</td>
                             <td>{reservation?.precioTotal} €</td>
                             <td>
                             <GoPencil

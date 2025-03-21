@@ -74,7 +74,6 @@ ResultadosSchema.pre('save', function (next) {
             if (isNaN(fecha.getTime())) {
                 throw new Error('La fecha no es válida.');
             }
-            this.fecha = fecha.toISOString().split('T')[0];
         }
 
         if (this.hora) {

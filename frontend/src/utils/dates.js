@@ -1,12 +1,8 @@
-export const getHours = (date) => {
-    const dateObject = new Date(date);
-    let hours = dateObject.getHours();
-    let minutes = dateObject.getMinutes();
-
-    // Añadimos 0 para que queden con el formato 0X:X0
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-
+export const getHoursAndMinutes = (date) => {
+    if (!date) return
+    const dateObject = new Date(date).toISOString();
+    const hours = dateObject.split('T')[1].split(':')[0];
+    const minutes = dateObject.split('T')[1].split(':')[1];
     return `${hours}:${minutes}`;
 };
 

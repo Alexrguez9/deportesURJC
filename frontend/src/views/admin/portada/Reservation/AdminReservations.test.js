@@ -180,14 +180,14 @@ describe("AdminReservations Component", () => {
         await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
         expect(screen.getByText("user1")).toBeInTheDocument();
         expect(screen.getByText("instalacion1")).toBeInTheDocument();
-        expect(screen.getByText("2024-01-01 10:00")).toBeInTheDocument();
-        expect(screen.getByText("2024-01-01 11:00")).toBeInTheDocument();
+        expect(screen.getByText("1 de enero de 2024, 11:00")).toBeInTheDocument(); // Date in Spanish format
+        expect(screen.getByText("1 de enero de 2024, 12:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("50 €")).toBeInTheDocument();
 
         expect(screen.getByText("user2")).toBeInTheDocument();
         expect(screen.getByText("instalacion2")).toBeInTheDocument();
-        expect(screen.getByText("2024-01-02 13:00")).toBeInTheDocument();
-        expect(screen.getByText("2024-01-02 14:00")).toBeInTheDocument();
+        expect(screen.getByText("2 de enero de 2024, 14:00")).toBeInTheDocument(); // Date in Spanish format
+        expect(screen.getByText("2 de enero de 2024, 15:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("100 €")).toBeInTheDocument();
     });
 

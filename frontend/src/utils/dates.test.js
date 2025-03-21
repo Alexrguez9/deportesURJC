@@ -1,27 +1,33 @@
 // functions.test.js
 
-import { getHours, getDateWithoutTime, getPrettyDate, getMonthlyDateRange } from './dates';
+import { getHoursAndMinutes, getDateWithoutTime, getPrettyDate, getMonthlyDateRange } from './dates';
 
-describe('getHours', () => {
+// Dates in getHoursAndMinutes are in UTC, so we need to adjust them to Spain time in tests
+describe('getHoursAndMinutes', () => {
     it('debería retornar las horas y minutos en formato HH:MM con ceros iniciales', () => {
         const date = '2024-07-28T10:30:00';
-        expect(getHours(date)).toBe('10:30');
+        expect(getHoursAndMinutes(date)).toBe('08:30');
     });
 
     it('debería retornar las horas y minutos correctamente para diferentes horas con ceros iniciales', () => {
-        expect(getHours('2024-07-28T09:15:00')).toBe('09:15');
-        expect(getHours('2024-07-28T23:59:00')).toBe('23:59');
-        expect(getHours('2024-07-28T00:00:00')).toBe('00:00');
-        expect(getHours('2024-07-28T05:08:00')).toBe('05:08'); // Prueba con minutos de un solo dígito
+        expect(getHoursAndMinutes('2024-07-28T09:15:00')).toBe('07:15');
+        expect(getHoursAndMinutes('2024-07-28T23:59:00')).toBe('21:59');
+        expect(getHoursAndMinutes('2024-07-28T00:00:00')).toBe('22:00');
+        expect(getHoursAndMinutes('2024-07-28T05:08:00')).toBe('03:08');
     });
 
     it('debería funcionar con diferentes formatos de fecha que new Date() soporta', () => {
-        expect(getHours('July 28, 2024 14:45:00')).toBe('14:45');
-        expect(getHours('2024/07/28 16:20:00')).toBe('16:20');
+        expect(getHoursAndMinutes('July 28, 2024 14:45:00')).toBe('12:45');
+        expect(getHoursAndMinutes('2024/07/28 16:20:00')).toBe('14:20');
     });
 
     it('debería manejar correctamente las horas con un solo dígito añadiendo un cero inicial', () => {
-        expect(getHours('2024-07-28T01:05:00')).toBe('01:05'); // Ahora debería pasar con el formato correcto
+        expect(getHoursAndMinutes('2024-07-28T01:05:00')).toBe('23:05');
+    });
+
+    it('debería retornar undefined si la fecha es null o undefined', () => {
+        expect(getHoursAndMinutes(null)).toBeUndefined();
+        expect(getHoursAndMinutes(undefined)).toBeUndefined();
     });
 });
 
