@@ -54,4 +54,5 @@ export const mockTeamsAndResultsContext = {
     updateResult: jest.fn().mockResolvedValue({ ok: true }),
     deleteTeam: jest.fn().mockResolvedValue(true),
     deleteResult: jest.fn().mockResolvedValue(true),
+    updateResultsWithNewTeamName: jest.fn().mockResolvedValue({ ok: true }),
 };

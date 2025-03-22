@@ -25,6 +25,7 @@ const mockTeamsAndResultsContext = {
     teams: [],
     addTeam: jest.fn(),
     updateTeam: jest.fn(),
+    updateResultsWithNewTeamName: jest.fn().mockResolvedValue({ ok: true }),
 };
 
 describe("AdminModalTeams Component", () => {
@@ -206,6 +207,37 @@ describe("AdminModalTeams Component", () => {
                 expect(toast.error).toHaveBeenCalledWith('Ocurrió un error al procesar la solicitud.');
             });
         });
+
+        it("llama a updateResultsWithNewTeamName si el nombre del equipo ha cambiado", async () => {
+            mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
+        
+            mockTeamsAndResultsContext.updateTeam.mockResolvedValue({ ok: true });
+            mockTeamsAndResultsContext.updateResultsWithNewTeamName.mockResolvedValue({ ok: true });
+        
+            const popupData = {
+                _id: 'team123',
+                sport: 'Fútbol-7',
+                name: 'Equipo Antiguo',
+                points: 20,
+                results: {
+                    partidos_ganados: 3,
+                    partidos_perdidos: 1,
+                    partidos_empatados: 2
+                }
+            };
+        
+            render(<AdminModalTeams closeModal={mockCloseModal} isNewTeam={false} popupData={popupData} />);
+        
+            fireEvent.change(screen.getByLabelText(/Nombre del equipo:/i), { target: { value: 'Equipo Nuevo' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
+            await waitFor(() => {
+                expect(mockTeamsAndResultsContext.updateTeam).toHaveBeenCalledWith('team123', expect.anything());
+                expect(mockTeamsAndResultsContext.updateResultsWithNewTeamName).toHaveBeenCalledWith('team123', 'Equipo Nuevo');
+                expect(toast.success).toHaveBeenCalledWith('Equipo actualizado correctamente');
+            });
+        });
+        
     });
 
     describe("Modal Close Functionality", () => {

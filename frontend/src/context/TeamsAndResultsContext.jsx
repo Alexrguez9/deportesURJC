@@ -193,10 +193,11 @@ export const TeamsAndResultsProvider = ({ children }) => {
     const updateResultsWithNewTeamName = async (teamId, newTeamName) => {
         try {
             const response = await fetch(`http://localhost:4000/resultados/byTeam/${teamId}`);
-            const resultados = await response.json();
             if (!response?.ok) {
                 throw new Error('Error al cargar los resultados');
             }
+            const resultados = await response.json();
+
             // Actualiza el nombre en todos los resultados donde el equipo aparece
             for (const resultado of resultados) {
                 const isLocal = resultado.equipo_local_id === teamId;
