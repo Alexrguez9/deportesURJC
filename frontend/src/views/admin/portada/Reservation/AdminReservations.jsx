@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from "react";
 import { toast } from 'sonner';
 import "./AdminReservations.css";
+import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
 import { GoPencil, GoPlus } from "react-icons/go";
 import { MdOutlineDelete } from "react-icons/md";
 import { IoPersonOutline } from "react-icons/io5";
@@ -103,7 +104,16 @@ const AdminReservations = () => {
                             <td>{reservation?.instalacionId}</td>
                             <td>{getPrettyDate(reservation?.fechaInicio)}</td>
                             <td>{getPrettyDate(reservation?.fechaFin)}</td>
-                            <td>{reservation?.precioTotal} €</td>
+                            <td>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {reservation?.precioTotal} €
+                                  {reservation?.isPaid ? (
+                                      <MdAttachMoney title="Pagado" style={{ marginLeft: '0.5rem', color: 'green', width: '1.5em', height: '1.5em' }} />
+                                  ) : (
+                                      <MdMoneyOff title="Pendiente de pago" style={{ marginLeft: '0.5rem', color: 'red', width: '1.5em', height: '1.5em' }} />
+                                  )}
+                              </div>
+                            </td>
                             <td>
                             <GoPencil
                                 onClick={() => openModal(reservation)}

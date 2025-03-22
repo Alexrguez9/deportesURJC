@@ -23,7 +23,11 @@ const reservasSchema = new mongoose.Schema({
   precioTotal: {
     type: Number,
     required: true
-  }
+  },
+  isPaid: {
+    type: Boolean,
+    default: false
+  },
 });
 
 // Middleware para calcular el precio total antes de guardar

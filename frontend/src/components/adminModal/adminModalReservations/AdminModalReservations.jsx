@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
+import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import "./AdminModalReservations.css";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
@@ -13,7 +14,7 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
     return new Date(date).toISOString().slice(0, 16).replace("Z", ""); // Eliminar "Z" para evitar UTC
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: popupData
       ? {
         ...popupData,
@@ -26,6 +27,7 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
         fechaInicio: "",
         fechaFin: "",
         precioTotal: 0,
+        isPaid: false,
       },
   });
 
@@ -124,6 +126,20 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
               )}
             </label>
           </div>
+          <div className="input-container">
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexDirection: 'column' }}>
+            <input type="checkbox" {...register("isPaid")} aria-label="isPaid" />
+            {/* Opcional: Icono visual */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span>Reserva pagada</span>
+              {watch("isPaid") ? (
+                <MdAttachMoney title="Pagado" color="green" style={{ marginLeft: '0.5rem', width: '1.5em', height: '1.5em'  }} />
+              ) : (
+                <MdMoneyOff title="Pendiente de pago" color="red" style={{ marginLeft: '0.5rem', width: '1.5em', height: '1.5em'  }}/>
+              )}
+            </div>
+          </label>
+        </div>
         </div>
         <div>
           <button type="submit" className="button-light">Guardar</button>
@@ -143,6 +159,7 @@ AdminModalReservations.propTypes = {
     fechaInicio: PropTypes.string,
     fechaFin: PropTypes.string,
     precioTotal: PropTypes.number,
+    isPaid: PropTypes.bool,
   }),
 };
 

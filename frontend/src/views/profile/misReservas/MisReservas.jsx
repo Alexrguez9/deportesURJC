@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import './MisReservas.css';
+import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 import { getPrettyDate } from '../../../utils/dates';
@@ -61,7 +62,16 @@ const MisReservas = () => {
                                             <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
                                             <td>{getPrettyDate(reserva.fechaInicio)}</td>
                                             <td>{getPrettyDate(reserva.fechaFin)}</td>
-                                            <td>{reserva.precioTotal} €</td>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    {reserva.precioTotal} €
+                                                    {reserva.isPaid ? (
+                                                        <MdAttachMoney title="Pagado" style={{ marginLeft: '0.5rem', color: 'green', width: '1.5em', height: '1.5em' }} />
+                                                    ) : (
+                                                        <MdMoneyOff title="Pendiente de pago" style={{ marginLeft: '0.5rem', color: 'red', width: '1.5em', height: '1.5em' }} />
+                                                    )}
+                                                </div>
+                                            </td>
                                             <td>
                                                 <button onClick={() => handleRemoveReserva(reserva._id)} className='delete-button'>
                                                     Eliminar reserva

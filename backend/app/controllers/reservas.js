@@ -1,32 +1,29 @@
 const model = require('../models/Reservas');
 
-// obtener data de reservas
+// Get all data from Reservas
 exports.getData = async (req, res) => {
     const reservasData = await model.find();
     res.json(reservasData);
 }
 
-// insertar data en reservas
+// Add new reservation
 exports.insertData = async (req, res) => {
     try {
-        // destructuring de propiedades de la reserva
-        const { userId, instalacionId, fechaInicio, fechaFin, precioTotal }  = req.body;
+        const { userId, instalacionId, fechaInicio, fechaFin, precioTotal, isPaid }  = req.body;
 
-        // Validar los datos necesarios
         if (!userId || !instalacionId || !fechaInicio || !fechaFin) {
             return res.status(400).json({ error: 'Todos los campos son requeridos' });
         }
 
-        // Crear nueva reserva
         const newReserva = new model({
             userId,
             instalacionId,
             fechaInicio,
             fechaFin,
-            precioTotal
+            precioTotal,
+            isPaid
         });
 
-        // Guardar reserva en la base de datos
         const savedReserva = await newReserva.save();
         res.status(201).json(savedReserva);
 
@@ -36,14 +33,13 @@ exports.insertData = async (req, res) => {
     }
 };
 
-// editar una reserva
+// Update a reservation
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
         const updatedReserva = await model.updateOne({ _id: id }, { $set: body });
 
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
         if (updatedReserva.matchedCount === 0) {
             res.status(404).json({ message: 'No se encontró la reserva para actualizar' });
         } else {
@@ -55,13 +51,12 @@ exports.updateOne = async (req, res) => {
     }
 }
 
-// eliminar una reserva
+// Delete a reservation
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
         const deletedReserva = await model.deleteOne({ _id: id });
         
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
         if (deletedReserva.deletedCount === 0) {
             res.status(404).json({ message: 'No se encontró la reserva para eliminar' });
         } else {

@@ -28,8 +28,22 @@ describe("MisReservas Component", () => {
         mockAuthContext.user = { _id: '123', name: 'Test User' };
         mockFacilitiesAndReservationsContext.instalaciones = [{ _id: '1', nombre: 'Gimnasio' }, { _id: '2', nombre: 'Pista Atletismo' }];
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([
-            { _id: 'res1', userId: '123', instalacionId: '1', fechaInicio: new Date('2024-07-15T10:00:00.000Z'), fechaFin: new Date('2024-07-15T11:00:00.000Z'), precioTotal: 15 },
-            { _id: 'res2', userId: '123', instalacionId: '2', fechaInicio: new Date('2024-07-20T15:00:00.000Z'), fechaFin: new Date('2024-07-20T16:00:00.000Z'), precioTotal: 20 }
+            { _id: 'res1',
+                userId: '123',
+                instalacionId: '1',
+                fechaInicio: new Date('2024-07-15T10:00:00.000Z'),
+                fechaFin: new Date('2024-07-15T11:00:00.000Z'),
+                precioTotal: 15,
+                isPaid: true
+            },
+            { _id: 'res2',
+                userId: '123',
+                instalacionId: '2',
+                fechaInicio: new Date('2024-07-20T15:00:00.000Z'), 
+                fechaFin: new Date('2024-07-20T16:00:00.000Z'),
+                precioTotal: 20,
+                isPaid: false
+             }
         ]);
         mockFacilitiesAndReservationsContext.deleteReservation = jest.fn().mockImplementation(async () => {
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -88,8 +102,15 @@ describe("MisReservas Component", () => {
     });
 
     it("updates reservation list after successful deletion", async () => {
-        mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([
-            { _id: 'res2', userId: '123', instalacionId: '2', fechaInicio: new Date('2024-07-20T15:00:00.000Z'), fechaFin: new Date('2024-07-20T16:00:00.000Z'), precioTotal: 20 }
+        mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([{
+                _id: 'res2',
+                userId: '123',
+                instalacionId: '2',
+                fechaInicio: new Date('2024-07-20T15:00:00.000Z'),
+                fechaFin: new Date('2024-07-20T16:00:00.000Z'),
+                precioTotal: 20,
+                isPaid: true
+            }
         ]);
         render(<MisReservas />);
         let deleteButtons;
