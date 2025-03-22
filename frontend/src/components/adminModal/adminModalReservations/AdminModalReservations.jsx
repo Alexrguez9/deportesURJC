@@ -30,14 +30,12 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
   });
 
   const onSubmit = async (data) => {
-    console.log('---adminmodalreservations data---', data);
     try {
       const reservationData = {
         ...data,
         fechaInicio: new Date(data.fechaInicio).toISOString(),
         fechaFin: new Date(data.fechaFin).toISOString(),
       };
-      console.log('---adminmodalreservations reservationData---', reservationData);
 
       if (popupData?._id) {
         const updateRes = await updateReservation(popupData._id, reservationData);

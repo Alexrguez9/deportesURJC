@@ -93,11 +93,14 @@ describe("AdminModalUsers Component", () => {
 
         it("shows error message for empty Email field", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Test User' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
             await waitFor(() => {
                 expect(screen.getByText(/Por favor, introduce el email/i)).toBeInTheDocument();
             });
         });
+        
 
         it("shows error message for empty Password field when isNewUser is true", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);

@@ -1,4 +1,10 @@
-import { getHoursAndMinutes, getDateWithoutTime, getPrettyDate, getMonthlyDateRange, validateHours } from './dates';
+import {
+    getHoursAndMinutes,
+    getDateWithoutTime,
+    getPrettyDate,
+    getMonthlyDateRange,
+    validateHours
+} from './dates';
 
 // Dates in getHoursAndMinutes are in UTC, so we need to adjust them to Spain time in tests
 describe('getHoursAndMinutes', () => {
@@ -98,7 +104,7 @@ describe('getPrettyDate', () => {
 describe('getMonthlyDateRange', () => {
     it('should return a date range for the user, with the end date being one month after the start date', () => {
         const mockUser = {};
-        const [startDate, endDate] = getMonthlyDateRange(mockUser);
+        const {startDate, endDate} = getMonthlyDateRange(mockUser);
 
         expect(startDate).toBeDefined();
         expect(endDate).toBeDefined();

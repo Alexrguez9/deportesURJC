@@ -21,7 +21,10 @@ export const getMonthlyDateRange = (user) => {
         const fechaInicio = new Date();
         const fechaFin = new Date(fechaInicio);
         fechaFin.setMonth(fechaFin.getMonth() + 1); // Un mes de alta
-        return [fechaInicio.toISOString(), fechaFin.toISOString()];
+        return {
+            startDate: fechaInicio.toISOString(),
+            endDate: fechaFin.toISOString()
+        };
     }
     return [null, null];
 };
