@@ -25,3 +25,15 @@ export const getMonthlyDateRange = (user) => {
     }
     return [null, null];
 };
+
+export const validateHours = (date, minTime, maxTime) => {
+    const hours = date.getHours();
+    if (hours < minTime.getHours() || hours > maxTime.getHours()) {
+        return false;
+    } else if (hours === minTime.getHours() && date.getMinutes() < minTime.getMinutes()) {
+        return false;
+    } else if (hours === maxTime.getHours() && date.getMinutes() > maxTime.getMinutes()) {
+        return false;
+    }
+    return true;
+};

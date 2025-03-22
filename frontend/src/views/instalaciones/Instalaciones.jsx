@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import './Instalaciones.css';
 import { sendEmail } from '../../utils/mails';
 import { getHoursAndMinutes } from "../../utils/dates";
+import { validateHours } from "../../utils/dates";
 
 const Instalaciones = () => {
     const { user } = useAuth();
@@ -82,8 +83,7 @@ const Instalaciones = () => {
         startTime.setHours(startTime.getUTCHours());
         return startTime;
     };
-    
-      
+
     const getMaxTime = async () => {
         if (!selectedInstalacionId) {
             /* istanbul ignore next */ 
@@ -117,7 +117,12 @@ const Instalaciones = () => {
     };
     /* istanbul ignore next */
     const handleReservation = async (data) => {
-        // e.preventDefault();
+
+        if (!validateHours(startDate, minTime, maxTime)) {
+            toast.error('La hora seleccionada está fuera del horario de la instalación. Por favor, selecciona otra hora.');
+            return;
+        }
+
         await obtenerInstalacionCompleta(data.facilityId);
 
         /* istanbul ignore next */
@@ -231,7 +236,7 @@ const Instalaciones = () => {
                                     timeFormat="HH:mm"
                                     timeIntervals={30}
                                     timeCaption="time"
-                                    dateFormat="d MMMM, yyyy - h:mm aa"
+                                    dateFormat="d MMMM, yyyy - HH:mm"
                                     minTime={ minTime }
                                     maxTime={ maxTime}
                                     minDate={new Date()}
