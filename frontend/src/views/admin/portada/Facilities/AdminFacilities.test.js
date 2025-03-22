@@ -178,15 +178,15 @@ describe("AdminFacilities Component", () => {
         expect(screen.getByText("Facility 1")).toBeInTheDocument();
         expect(screen.getByText("Description 1")).toBeInTheDocument();
         expect(screen.getByText("10")).toBeInTheDocument();
-        expect(screen.getByText("10:00")).toBeInTheDocument(); // Local time in Spain
-        expect(screen.getByText("00:00")).toBeInTheDocument();  // Local time in Spain
+        expect(screen.getByText("08:00")).toBeInTheDocument(); // Local time in Spain
+        expect(screen.getByText("22:00")).toBeInTheDocument();  // Local time in Spain
         expect(screen.getByText("25 €")).toBeInTheDocument();
 
         expect(screen.getByText("Facility 2")).toBeInTheDocument();
         expect(screen.getByText("Description 2")).toBeInTheDocument();
         expect(screen.getByText("20")).toBeInTheDocument();
-        expect(screen.getByText("09:00")).toBeInTheDocument(); // Local time in Spain
-        expect(screen.getByText("23:00")).toBeInTheDocument(); // Local time in Spain
+        expect(screen.getByText("07:00")).toBeInTheDocument(); // Local time in Spain
+        expect(screen.getByText("21:00")).toBeInTheDocument(); // Local time in Spain
         expect(screen.getByText("50 €")).toBeInTheDocument();
     });
 

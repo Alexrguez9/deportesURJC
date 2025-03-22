@@ -33,8 +33,8 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
     try {
       const reservationData = {
         ...data,
-        fechaInicio: new Date(data.fechaInicio + "Z"), // Agregar "Z" para conservar la zona horaria local
-        fechaFin: new Date(data.fechaFin + "Z"),
+        fechaInicio: new Date(data.fechaInicio).toISOString(),
+        fechaFin: new Date(data.fechaFin).toISOString(),
       };
 
       if (popupData?._id) {

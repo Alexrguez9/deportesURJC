@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from "react-hook-form";
-import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useFacilitiesAndReservations } from '../../context/FacilitiesAndReservationsContext';
 import { useAuth } from '../../context/AuthContext';
 import './Instalaciones.css';
 import { sendEmail } from '../../utils/mails';
-import { getHours } from "../../utils/dates";
+import { getHoursAndMinutes, validateHours } from "../../utils/dates";
 
 const Instalaciones = () => {
     const { user } = useAuth();
@@ -79,11 +79,10 @@ const Instalaciones = () => {
             return new Date();
         }
     
-        startTime.setHours(startTime.getHours() - 2); // Ajuste UTC+2
+        startTime.setHours(startTime.getUTCHours());
         return startTime;
     };
-    
-      
+
     const getMaxTime = async () => {
         if (!selectedInstalacionId) {
             /* istanbul ignore next */ 
@@ -92,10 +91,10 @@ const Instalaciones = () => {
             const inst = await getInstalacion(selectedInstalacionId);
 
             const startTime = new Date(inst?.horario?.horarioFin);
-            let hours = startTime.getHours();
-            let minutes = startTime.getMinutes();
+            let hours = startTime.getUTCHours();
+            let minutes = startTime.getUTCMinutes();
 
-            // Si acaba a y 30, la hora máxima para reservar es media hora antes
+            // If it ends at 30 o'clock, the maximum time to book is half an hour before.
             if ( minutes == 30 ){
                 minutes = 0;
             } else if (minutes == 0){
@@ -103,10 +102,9 @@ const Instalaciones = () => {
                 hours = hours - 1;
             }
 
-            const maxTime = new Date();
-            maxTime.setHours(hours-2, minutes, 0); // Ajuste UTC+2
-        
-            return maxTime;
+            startTime.setHours(hours, minutes, 0);
+
+            return startTime;
         } else {
             /* istanbul ignore next */ 
             return new Date(); 
@@ -116,9 +114,14 @@ const Instalaciones = () => {
     const onSubmit =  (data) => {
         handleReservation(data);
     };
-
+    /* istanbul ignore next */
     const handleReservation = async (data) => {
-        // e.preventDefault();
+
+        if (!validateHours(startDate, minTime, maxTime)) {
+            toast.error('La hora seleccionada está fuera del horario de la instalación. Por favor, selecciona otra hora.');
+            return;
+        }
+
         await obtenerInstalacionCompleta(data.facilityId);
 
         /* istanbul ignore next */
@@ -161,6 +164,7 @@ const Instalaciones = () => {
                             `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
                             `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                         );
+                        toast.success('Correo de confirmación enviado a: ' + user.email);
                         return { success: true };
                     }
                 } catch (error) {
@@ -211,8 +215,8 @@ const Instalaciones = () => {
                         </label>
                     </div>
                     <div>
-                        <>Horario de inicio: {instalacionCompleta.horario && instalacionCompleta.horario.horarioInicio ? getHours(instalacionCompleta.horario.horarioInicio) : 'No definido'}<br />
-                        Horario de fin: {instalacionCompleta.horario && instalacionCompleta.horario.horarioFin ? getHours(instalacionCompleta.horario.horarioFin) : 'No definido'}</>
+                        <>Horario de inicio: {instalacionCompleta.horario && instalacionCompleta.horario.horarioInicio ? getHoursAndMinutes(instalacionCompleta.horario.horarioInicio) : 'No definido'}<br />
+                        Horario de fin: {instalacionCompleta.horario && instalacionCompleta.horario.horarioFin ? getHoursAndMinutes(instalacionCompleta.horario.horarioFin) : 'No definido'}</>
                         {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.precioPorMediaHora}€.</p>)}
                         {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.nombre}: {instalacionCompleta.capacidad}</p>}
                     </div>
@@ -231,7 +235,7 @@ const Instalaciones = () => {
                                     timeFormat="HH:mm"
                                     timeIntervals={30}
                                     timeCaption="time"
-                                    dateFormat="d MMMM, yyyy - h:mm aa"
+                                    dateFormat="d MMMM, yyyy - HH:mm"
                                     minTime={ minTime }
                                     maxTime={ maxTime}
                                     minDate={new Date()}

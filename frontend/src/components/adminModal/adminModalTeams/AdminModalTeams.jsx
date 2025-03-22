@@ -7,7 +7,7 @@ import "./AdminModalTeams.css";
 import { useForm } from "react-hook-form";
 
 const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
-    const { addTeam, updateTeam } = useTeamsAndResults();
+    const { addTeam, updateTeam, updateResultsWithNewTeamName  } = useTeamsAndResults();
 
     const {
         register,
@@ -47,11 +47,19 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                 toast.success('Equipo añadido correctamente');
                 closeModal();
             } else {
+                const oldTeamName = popupData.name;
+                const newTeamName = data.name;
+
                 const updateRes = await updateTeam(popupData._id, formattedData);
                 if (!updateRes?.ok) {
                     toast.error('Error actualizando el equipo');
                     return;
                 }
+
+                if (oldTeamName !== newTeamName) {
+                    await updateResultsWithNewTeamName(popupData._id, newTeamName);
+                }
+
                 toast.success('Equipo actualizado correctamente');
                 closeModal();
             }

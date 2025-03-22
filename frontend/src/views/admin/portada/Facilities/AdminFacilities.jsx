@@ -9,7 +9,7 @@ import BackButton from "../../../../components/backButton/BackButton";
 import Spinner from "../../../../components/spinner/Spinner";
 import AccessDenied from "../../../../components/accessDenied/AccessDenied";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
-import { getHours } from "../../../../utils/dates";
+import { getHoursAndMinutes } from "../../../../utils/dates";
 
 const AdminFacilities = () => {
   const { isAdmin } = useAuth();
@@ -104,8 +104,8 @@ const AdminFacilities = () => {
                   <td>{facility.nombre}</td>
                   <td>{facility.descripcion}</td>
                   <td>{facility.capacidad}</td>
-                  <td>{getHours(facility.horario.horarioInicio)}</td>
-                  <td>{getHours(facility.horario.horarioFin)}</td>
+                  <td>{getHoursAndMinutes(facility?.horario?.horarioInicio)}</td>
+                  <td>{getHoursAndMinutes(facility?.horario?.horarioFin)}</td>
                   <td>{facility.precioPorMediaHora} €</td>
                   <td>
                     <GoPencil

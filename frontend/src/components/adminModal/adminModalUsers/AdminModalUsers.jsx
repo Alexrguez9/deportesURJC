@@ -1,13 +1,13 @@
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../context/AuthContext";
-import "./AdminModalUsers.css";
 import PropTypes from "prop-types";
 import { toast } from 'sonner';
 import { getMonthlyDateRange } from "../../../utils/dates";
+import { useAuth } from "../../../context/AuthContext";
+import "./AdminModalUsers.css";
 
 const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
-    const { user, addUser, updateUser, handleAdmin } = useAuth();
+    const { addUser, updateUser } = useAuth();
 
     const {
         register,
@@ -26,29 +26,29 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
     };
 
     const onSubmit = async (data) => {
-        const { startDate, endDate } = getMonthlyDateRange(user);
+        const { startDate, endDate } = await getMonthlyDateRange(data);
         const formattedData = {
             ...data,
             alta: {
                 gimnasio: {
                     estado: data.gimnasio,
-                    fechaInicio: data.gimnasio ?startDate : null,
+                    fechaInicio: data.gimnasio ? startDate : null,
                     fechaFin: data.gimnasio ? endDate : null
                 },
                 atletismo: {
                     estado: data.atletismo,
-                    fechaInicio: data.atletismo ?startDate : null,
+                    fechaInicio: data.atletismo ? startDate : null,
                     fechaFin: data.atletismo ? endDate : null
                 },
             },
         };
+        // Delete props not in alta object
         delete formattedData.gimnasio;
         delete formattedData.atletismo;
 
         try {
             if (isNewUser) {
-                const updatedData = handleAdmin(formattedData);
-                const res = await addUser(updatedData);
+                const res = await addUser(formattedData);
                 if (res.status === 409) {
                     toast.error('El correo ya está registrado. Por favor, usa uno diferente.');
                     return;

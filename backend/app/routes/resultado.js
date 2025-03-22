@@ -4,19 +4,21 @@ const controller = require('../controllers/resultado')
 const router = express.Router()
 const path = 'resultados'
 
-// Ruta GET resultados
 router.get(`/${path}`, controller.getData);
 
-// Ruta GET result by id
+// Get one result by id
 router.get(`/${path}/:id`, controller.getOne);
 
-// Ruta POST resultado
+// Add new result
 router.post(`/${path}`, controller.insertData);
 
-// Ruta PUT resultado
+// Update result by id
 router.put(`/${path}/:id`, controller.updateOne);
 
-// Ruta DELETE resultado
+// Delete result by id
 router.delete(`/${path}/:id`, controller.deleteOne);
+
+// Get results by team id
+router.get(`/${path}/byTeam/:teamId`, controller.getByTeamId);
 
 module.exports = router;

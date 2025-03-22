@@ -541,4 +541,87 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
     });
+
+    describe("updateResultsWithNewTeamName", () => {
+        it("debería actualizar el nombre del equipo en los resultados relacionados", async () => {
+            const teamId = "1";
+            const newTeamName = "Nuevo Nombre Equipo";
+    
+            const mockResultados = [
+                {
+                    _id: "res1",
+                    equipo_local_id: "1",
+                    equipo_local: "Viejo Nombre",
+                    equipo_visitante: "Otro Equipo",
+                    goles_local: 2,
+                    goles_visitante: 1,
+                    jornada: 1,
+                    fecha: "2024-01-01T00:00:00.000Z",
+                },
+                {
+                    _id: "res2",
+                    equipo_visitante_id: "1",
+                    equipo_local: "Otro",
+                    equipo_visitante: "Viejo Nombre",
+                    goles_local: 1,
+                    goles_visitante: 3,
+                    jornada: 2,
+                    fecha: "2024-01-02T00:00:00.000Z",
+                }
+            ];
+    
+            fetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockResultados,
+            });
+    
+            fetch.mockResolvedValueOnce({ ok: true }); // PUT res1
+            fetch.mockResolvedValueOnce({ ok: true }); // PUT res2
+    
+            fetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockResultados,
+            });
+    
+            await act(async () => {
+                await contextValues.updateResultsWithNewTeamName(teamId, newTeamName);
+            });
+    
+            await waitFor(() => {
+                expect(fetch).toHaveBeenCalledWith(`http://localhost:4000/resultados/byTeam/${teamId}`);
+                expect(fetch).toHaveBeenCalledWith(
+                    `http://localhost:4000/resultados/res1`,
+                    expect.objectContaining({
+                        method: "PUT",
+                        body: expect.stringContaining(newTeamName),
+                    })
+                );
+                expect(fetch).toHaveBeenCalledWith(
+                    `http://localhost:4000/resultados/res2`,
+                    expect.objectContaining({
+                        method: "PUT",
+                        body: expect.stringContaining(newTeamName),
+                    })
+                );
+            });
+        });
+    
+        it("debería manejar errores al actualizar nombres en resultados", async () => {
+            const teamId = "1";
+            fetch.mockResolvedValueOnce({
+                ok: false,
+                status: 500,
+            });
+            console.error = jest.fn();
+    
+            await act(async () => {
+                await contextValues.updateResultsWithNewTeamName(teamId, "Nuevo");
+            });
+    
+            await waitFor(() => {
+                expect(console.error).toHaveBeenCalled();
+            });
+        });
+    });
+    
 });
