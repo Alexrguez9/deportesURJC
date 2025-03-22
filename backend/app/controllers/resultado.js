@@ -198,3 +198,19 @@ exports.deleteOne = async (req, res) => {
         res.status(500).json({ error: 'Error al eliminar resultado', message: error.message });
     }
 };
+
+// Obtains all results by team id
+exports.getByTeamId = async (req, res) => {
+    try {
+        const { teamId } = req.params;
+        const resultados = await model.find({
+            $or: [
+                { equipo_local_id: teamId },
+                { equipo_visitante_id: teamId }
+            ]
+        });
+        res.json(resultados);
+    } catch (error) {
+        res.status(500).json({ error: 'Error al obtener resultados por equipo', message: error.message });
+    }
+};

@@ -190,6 +190,35 @@ export const TeamsAndResultsProvider = ({ children }) => {
         }
     };
 
+    const updateResultsWithNewTeamName = async (teamId, newTeamName) => {
+        try {
+            const response = await fetch(`http://localhost:4000/resultados/byTeam/${teamId}`);
+            const resultados = await response.json();
+            if (!response?.ok) {
+                throw new Error('Error al cargar los resultados');
+            }
+            // Actualiza el nombre en todos los resultados donde el equipo aparece
+            for (const resultado of resultados) {
+                const isLocal = resultado.equipo_local_id === teamId;
+                const updatedFields = isLocal ? { equipo_local: newTeamName } : { equipo_visitante: newTeamName };
+    
+                await fetch(`http://localhost:4000/resultados/${resultado._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ...resultado, ...updatedFields }),
+                });
+            }
+    
+            // Refresca resultados locales del contexto
+            await fetchResults();
+            return response;
+        } catch (error) {
+            console.error("Error al actualizar nombres en resultados:", error);
+        }
+    };
+
     return (
         <TeamsAndResultsContext.Provider value={{ 
             teams, 
@@ -202,6 +231,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
             updateResult,
             deleteTeam,
             deleteResult,
+            updateResultsWithNewTeamName,
         }}>
             {children}
         </TeamsAndResultsContext.Provider>
