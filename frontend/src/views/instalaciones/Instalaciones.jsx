@@ -29,6 +29,7 @@ const Instalaciones = () => {
             fechaInicio: '',
             fechaFin: '',
             precioTotal: instalacionCompleta?.precioPorMediaHora || 0,
+            isPaid: false,
         });
 
     //TODO: optimizar las llamadas a getInstalacion (3 veces: en obtenerInstalacionCompleta, getMinTime y getMaxTime)
@@ -141,6 +142,7 @@ const Instalaciones = () => {
             fechaInicio: startDate,
             fechaFin: endDate,
             precioTotal: instalacionCompleta?.precioPorMediaHora,
+            isPaid: false,
         };
 
         const numReservas = await contarReservasPorFranjaHoraria(selectedInstalacionId, startDate);

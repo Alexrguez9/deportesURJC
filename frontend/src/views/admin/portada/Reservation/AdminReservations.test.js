@@ -49,6 +49,7 @@ describe("AdminReservations Component", () => {
                 fechaInicio: '2024-01-01T10:00:00.000Z',
                 fechaFin: '2024-01-01T11:00:00.000Z',
                 precioTotal: 50,
+                isPaid: true,
             },
             {
                 _id: "002",
@@ -57,6 +58,7 @@ describe("AdminReservations Component", () => {
                 fechaInicio: '2024-01-02T13:00:00.000Z',
                 fechaFin: '2024-01-02T14:00:00.000Z',
                 precioTotal: 100,
+                isPaid: false,
             },
         ];
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(mockReservationsData);
