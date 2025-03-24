@@ -63,7 +63,7 @@ const UserDetail = () => {
                 </>
                 )}
                 <div>
-                <strong>Alta Atletismo:</strong> <span>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</span>
+                    <strong>Alta Atletismo:</strong> <span>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</span>
                 </div>
                 {user.alta?.atletismo?.estado && (
                 <>
@@ -76,7 +76,33 @@ const UserDetail = () => {
                 </>
                 )}
                 <div>
-                <strong>Saldo:</strong> <span>{user.balance} €</span>
+                    <strong>Suscripción GYM:</strong> <span>{user?.subscription?.gimnasio?.estado ? "Sí" : "No"}</span>
+                </div>
+                {user.subscription?.gimnasio?.estado && (
+                <>
+                    <div>
+                    <strong>Inicio GYM:</strong> <span>{user?.subscription?.gimnasio?.fechaInicio}</span>
+                    </div>
+                    <div>
+                    <strong>Fin GYM:</strong> <span>{user?.subscription?.gimnasio?.fechaFin}</span>
+                    </div>
+                </>
+                )}
+                <div>
+                    <strong>Suscripción Atletismo:</strong> <span>{user?.subscription?.atletismo?.estado ? "Sí" : "No"}</span>
+                </div>
+                {user.subscription?.atletismo?.estado && (
+                <>
+                    <div>
+                    <strong>Inicio Atletismo:</strong> <span>{user?.subscription?.atletismo?.fechaInicio}</span>
+                    </div>
+                    <div>
+                    <strong>Fin Atletismo:</strong> <span>{user?.subscription?.atletismo?.fechaFin}</span>
+                    </div>
+                </>
+                )}
+                <div>
+                    <strong>Saldo:</strong> <span>{user.balance} €</span>
                 </div>
             </div>
         </div>

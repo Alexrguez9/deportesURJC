@@ -44,6 +44,7 @@ const AdminUsers = () => {
             return;
         }
         const newPopupData = { ...user };
+        console.log('---newPopupData---', newPopupData);
         setPopupData(newPopupData);
         setIsModalOpen(true);
     };
@@ -98,6 +99,8 @@ const AdminUsers = () => {
                                     <th>Rol</th>
                                     <th>Alta GYM</th>
                                     <th>Alta Atletismo</th>
+                                    <th>Suscripción GYM</th>
+                                    <th>Suscripción Atletismo</th>
                                     <th>Saldo</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -110,6 +113,8 @@ const AdminUsers = () => {
                                         <td>{userInList?.role}</td>
                                         <td>{userInList?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
                                         <td>{userInList?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.subscription?.gimnasio?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.subscription?.atletismo?.estado ? "Sí" : "No"}</td>
                                         <td>{userInList?.balance} €</td>
                                         <td className="actions">
                                             <GoPencil onClick={() => openModal(userInList)} className="editPencil" />

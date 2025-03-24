@@ -21,42 +21,62 @@ const UserSchema = new mongoose.Schema(
       gimnasio: {
         estado: {
           type: Boolean,
-          default: false  // Falso hasta que el usuario se de de alta
+          default: false
         },
         fechaInicio: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         },
         fechaFin: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false 
         }
       },
       atletismo: {
         estado: {
           type: Boolean,
-          default: false  // Falso hasta que el usuario se de de alta
+          default: false
         },
         fechaInicio: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         },
         fechaFin: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         }
       },
      
     },
-    abono_renovado: {
-      fechaInicio: {
-        type: Date,
-        required: false  // Opcional o hacer obligatorio
+    subscription: {
+      gimnasio: {
+        estado: {
+          type: Boolean,
+          default: false
+        },
+        fechaInicio: {
+          type: Date,
+          required: false
+        },
+        fechaFin: {
+          type: Date,
+          required: false
+        },
       },
-      fechaFin: {
-        type: Date,
-        required: false  // Opcional o hacer obligatorio
-      }
+      atletismo: {
+        estado: {
+          type: Boolean,
+          default: false
+        },
+        fechaInicio: {
+          type: Date,
+          required: false
+        },
+        fechaFin: {
+          type: Date,
+          required: false
+        }
+      },
     },
     balance: {
       type: Number,
@@ -70,7 +90,7 @@ const UserSchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-    timestamps: true // Crea automáticamente los campos 'createdAt' y 'updatedAt' en BBDD
+    timestamps: true // Create automatically the fields createdAt and updatedAt in BBDD
   }
 );
 

@@ -7,8 +7,10 @@ export const getHoursAndMinutes = (date) => {
 };
 
 export const getDateWithoutTime = (date) => {
-    const dateObject = new Date(date);
-    return dateObject.toISOString().split('T')[0];
+    if (!date) return
+    let dateObject = new Date(date);
+    dateObject =  dateObject.toISOString().split('T')[0];
+    return dateObject;
 }
 
 export const getPrettyDate = (date) => {
@@ -26,7 +28,7 @@ export const getMonthlyDateRange = (user) => {
             endDate: fechaFin.toISOString()
         };
     }
-    return [null, null];
+    return {startDate: null, endDate: null};
 };
 
 export const validateHours = (date, minTime, maxTime) => {
@@ -40,3 +42,5 @@ export const validateHours = (date, minTime, maxTime) => {
     }
     return true;
 };
+
+export const infinityDate = new Date(8640000000000000).toISOString();

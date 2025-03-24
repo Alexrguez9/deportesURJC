@@ -2,7 +2,7 @@ import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 import { toast } from 'sonner';
-import { getMonthlyDateRange } from "../../../utils/dates";
+import { getMonthlyDateRange, infinityDate } from "../../../utils/dates";
 import { useAuth } from "../../../context/AuthContext";
 import "./AdminModalUsers.css";
 
@@ -21,8 +21,10 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
         password: "",
         role: popupData?.role || "user",
         balance: popupData?.balance || 0,
-        gimnasio: popupData?.alta?.gimnasio?.estado || false,
-        atletismo: popupData?.alta?.atletismo?.estado || false,
+        alta_gimnasio: popupData?.alta?.gimnasio?.estado || false,
+        alta_atletismo: popupData?.alta?.atletismo?.estado || false,
+        subs_gimnasio: popupData?.subscription?.gimnasio?.estado || false,
+        subs_atletismo: popupData?.subscription?.atletismo?.estado || false,
     };
 
     const onSubmit = async (data) => {
@@ -31,20 +33,34 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
             ...data,
             alta: {
                 gimnasio: {
-                    estado: data.gimnasio,
-                    fechaInicio: data.gimnasio ? startDate : null,
-                    fechaFin: data.gimnasio ? endDate : null
+                    estado: data.alta_gimnasio,
+                    fechaInicio: data.alta_gimnasio ? startDate : null,
+                    fechaFin: data.alta_gimnasio ? infinityDate : null
                 },
                 atletismo: {
-                    estado: data.atletismo,
-                    fechaInicio: data.atletismo ? startDate : null,
-                    fechaFin: data.atletismo ? endDate : null
+                    estado: data.alta_atletismo,
+                    fechaInicio: data.alta_atletismo ? startDate : null,
+                    fechaFin: data.alta_atletismo ? infinityDate : null
+                },
+            },
+            subscription: {
+                gimnasio: {
+                    estado: data.subs_gimnasio,
+                    fechaInicio: data.subs_gimnasio ? startDate : null,
+                    fechaFin: data.subs_gimnasio ? endDate : null
+                },
+                atletismo: {
+                    estado: data.subs_atletismo,
+                    fechaInicio: data.subs_atletismo ? startDate : null,
+                    fechaFin: data.subs_atletismo ? endDate : null
                 },
             },
         };
         // Delete props not in alta object
-        delete formattedData.gimnasio;
-        delete formattedData.atletismo;
+        delete formattedData.alta_gimnasio;
+        delete formattedData.alta_atletismo;
+        delete formattedData.subs_gimnasio;
+        delete formattedData.subs_atletismo;
 
         try {
             if (isNewUser) {
@@ -152,21 +168,41 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
                     </div>
                     <div className="input-container">
                         <label>
-                            Gimnasio:
+                            Alta gimnasio:
                             <input
                                 type="checkbox"
-                                {...register("gimnasio")}
-                                defaultChecked={initialValues.gimnasio}
+                                {...register("alta_gimnasio")}
+                                defaultChecked={initialValues.alta_gimnasio}
                             />
                         </label>
                     </div>
                     <div className="input-container">
                         <label>
-                            Atletismo:
+                            Alta atletismo:
                             <input
                                 type="checkbox"
-                                {...register("atletismo")}
-                                defaultChecked={initialValues.atletismo}
+                                {...register("alta_atletismo")}
+                                defaultChecked={initialValues.alta_atletismo}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Suscripción gimnasio:
+                            <input
+                                type="checkbox"
+                                {...register("subs_gimnasio")}
+                                defaultChecked={initialValues.subs_gimnasio}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Suscripción atletismo:
+                            <input
+                                type="checkbox"
+                                {...register("subs_atletismo")}
+                                defaultChecked={initialValues.subs_atletismo}
                             />
                         </label>
                     </div>
@@ -187,6 +223,14 @@ AdminModalUsers.propTypes = {
         role: PropTypes.string,
         balance: PropTypes.number,
         alta: PropTypes.shape({
+            gimnasio: PropTypes.shape({
+                estado: PropTypes.bool,
+            }),
+            atletismo: PropTypes.shape({
+                estado: PropTypes.bool,
+            }),
+        }),
+        subscription: PropTypes.shape({
             gimnasio: PropTypes.shape({
                 estado: PropTypes.bool,
             }),

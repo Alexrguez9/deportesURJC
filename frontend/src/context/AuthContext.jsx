@@ -235,11 +235,23 @@ export const AuthProvider = ({ children }) => {
             return { ...data, role: "user" }; // Si hay error de red, asignamos "user"
         }
     };
-    
-    
 
     return (
-        <AuthContext.Provider value={{ user, setUser, getAllUsers, login, logout, isAuthenticated, addUser, updateUser, deleteUser, isAdmin, isStudent, handleAdmin, updatePasswordAndName }}>
+        <AuthContext.Provider value={{
+            user,
+            setUser,
+            getAllUsers,
+            login,
+            logout,
+            isAuthenticated,
+            addUser,
+            updateUser,
+            deleteUser,
+            isAdmin,
+            isStudent,
+            handleAdmin,
+            updatePasswordAndName
+        }}>
         {children}
         </AuthContext.Provider>
     );

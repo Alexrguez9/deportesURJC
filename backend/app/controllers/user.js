@@ -1,12 +1,19 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const { cleanExpiredSubscriptions } = require('../utils/subscription');
 // const jwt = require('jsonwebtoken');
 
 // Obtain all users
 exports.getData = async (req, res) => {
     try {
-        const userData = await User.find();
-        res.json(userData);
+        let users = await User.find();
+
+        const updatedUsers = await Promise.all(users.map(async (user) => {
+            const updated = cleanExpiredSubscriptions(user);
+            return updated.save();
+        }));
+
+        res.json(updatedUsers);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener los datos de los usuarios', message: error.message });
@@ -17,7 +24,14 @@ exports.getData = async (req, res) => {
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+        let user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        user = cleanExpiredSubscriptions(user);
+        await user.save();
+
         res.json(user);
     } catch (error) {
         console.error(error);
@@ -53,7 +67,18 @@ exports.register = async (req, res) => {
                   fechaFin: alta?.atletismo.fechaFin || null,
                 },
             },
-            abono_renovado: false,
+            subscription: {
+                gimnasio: {
+                  estado: alta?.gimnasio.estado || null,
+                  fechaInicio: alta?.gimnasio.fechaInicio || null,
+                  fechaFin: alta?.gimnasio.fechaFin || null,
+                },
+                atletismo: {
+                  estado: alta?.atletismo.estado || null,
+                  fechaInicio: alta?.atletismo.fechaInicio || null,
+                  fechaFin: alta?.atletismo.fechaFin || null,
+                },
+            },
             balance: balance || 0,
             role: role || 'user',
         });
@@ -69,7 +94,7 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         
         if (!user) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -81,6 +106,9 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
+        user = cleanExpiredSubscriptions(user);
+        await user.save();
+
         // TODO: const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
 
         res.json({
@@ -88,7 +116,7 @@ exports.login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 estado_alta: user.estado_alta,
-                abono_renovado: user.abono_renovado,
+                subscription: user.subscription,
                 alta: user.alta,
                 balance: user.balance,
                 role: user.role,
