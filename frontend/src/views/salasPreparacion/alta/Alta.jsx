@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
 import './Alta.css';
 import BackButton from "../../../components/backButton/BackButton";
-import { getMonthlyDateRange } from "../../../utils/dates";
+import { getMonthlyDateRange, infinityDate } from "../../../utils/dates";
 
 const Alta = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
@@ -28,13 +28,12 @@ const Alta = () => {
             if (filtroDeporte === 'Gimnasio' && user.alta.gimnasio.estado) {
                 throw { status: { ok: false, error: 'Ya estás dado de alta en gimnasio' } };
             }
-
-            const [initDate, endDate] = getMonthlyDateRange(user);
+            const { startDate, endDate } = getMonthlyDateRange(user);
             const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
-                updatedUserData.alta.gimnasio = { estado: true, fechaInicio: initDate, fechaFin: endDate };
+                updatedUserData.alta.gimnasio = { estado: true, fechaInicio: startDate, fechaFin: infinityDate };
             } else if (filtroDeporte === 'Atletismo') {
-                updatedUserData.alta.atletismo = { estado: true, fechaInicio: initDate, fechaFin: endDate};
+                updatedUserData.alta.atletismo = { estado: true, fechaInicio: startDate, fechaFin: infinityDate };
             } else {
                 throw { status: { ok: false, error: 'Escoja una opción válida por favor.' } };
             }

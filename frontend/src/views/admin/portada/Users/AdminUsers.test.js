@@ -3,7 +3,7 @@ import AdminUsers from "./AdminUsers";
 import { useAuth } from "../../../../context/AuthContext";
 import { mockAuthContext } from "../../../../utils/mocks";
 import { useNavigate } from "react-router-dom";
-import * as sonner from 'sonner'; // Import sonner to mock toast
+import * as sonner from 'sonner';
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -15,7 +15,7 @@ jest.mock("../../../../context/AuthContext", () => ({
     useAuth: jest.fn()
 }));
 
-jest.mock('sonner', () => ({ // Mock sonner module
+jest.mock('sonner', () => ({
     toast: {
         success: jest.fn(),
         error: jest.fn(),
@@ -26,15 +26,15 @@ describe("AdminUsers Component", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         useAuth.mockReturnValue(mockAuthContext);
-        mockAuthContext.isAdmin.mockReturnValue(true); // Default to admin for most tests
+        mockAuthContext.isAdmin.mockReturnValue(true);
         mockAuthContext.user = { name: "Admin" };
-        mockAuthContext.getAllUsers.mockResolvedValue([ // Default user list
-            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, balance: 10 },
-            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", alta: {}, balance: 0 }
+        mockAuthContext.getAllUsers.mockResolvedValue([
+            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, subscription: { gimnasio: { estado: true }, atletismo: { estado: false } }, balance: 10 },
+            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", alta: {}, subscription: { gimnasio: { estado: false }, atletismo: { estado: true } }, balance: 0 }
         ]);
-        mockAuthContext.deleteUser.mockResolvedValue(true); // Mock successful delete by default
-        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
-        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
+        mockAuthContext.deleteUser.mockResolvedValue(true);
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
     });
 
     it("renders correctly for admin users and fetches users on mount", async () => {
@@ -58,7 +58,7 @@ describe("AdminUsers Component", () => {
         render(<AdminUsers />);
         const addButton = document.querySelector(".iconPlus");
         fireEvent.click(addButton);
-        expect(screen.getByRole("heading", { name: /añadir usuario/i })).toBeInTheDocument(); // Assuming modal has this heading
+        expect(screen.getByRole("heading", { name: /añadir usuario/i })).toBeInTheDocument();
     });
 
     it("opens modal to edit user when pencil icon is clicked", async () => {
@@ -66,7 +66,7 @@ describe("AdminUsers Component", () => {
         await waitFor(() => {
             const editButton = document.querySelector(".editPencil");
             fireEvent.click(editButton);
-            expect(screen.getByRole("heading", { name: /editar usuario/i })).toBeInTheDocument(); // Assuming modal has this heading
+            expect(screen.getByRole("heading", { name: /editar usuario/i })).toBeInTheDocument();
         });
     });
 
@@ -136,6 +136,21 @@ describe("AdminUsers Component", () => {
         expect(screen.queryByRole("table")).not.toBeInTheDocument();
     });
 
+    it("handles error when fetching users fails", async () => {
+        const mockError = new Error("Failed to fetch users");
+        mockAuthContext.getAllUsers.mockRejectedValue(mockError);
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+        render(<AdminUsers />);
+
+        await waitFor(() => {
+            expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Error al obtener la lista de usuarios:", mockError);
+        });
+
+        consoleErrorSpy.mockRestore();
+    });
+
     describe('Altas column', () => {
         it("renders 'Sí' for gimnasio alta estado when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
@@ -184,18 +199,52 @@ describe("AdminUsers Component", () => {
         });
     });
 
-    it("handles error when fetching users fails", async () => {
-        const mockError = new Error("Failed to fetch users");
-        mockAuthContext.getAllUsers.mockRejectedValue(mockError);
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-        render(<AdminUsers />);
-
-        await waitFor(() => {
-            expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Error al obtener la lista de usuarios:", mockError);
+    describe('Suscripciones column', () => {
+        it("renders 'Sí' for gimnasio subscription estado when true", async () => {
+            mockAuthContext.getAllUsers.mockResolvedValue([
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gimnasio: { estado: true } }, balance: 10 }
+            ]);
+            render(<AdminUsers />);
+            await waitFor(() => {
+                expect(screen.getByText("Sí")).toBeInTheDocument();
+            });
         });
-
-        consoleErrorSpy.mockRestore();
+    
+        it("renders 'No' for gimnasio subscription estado when false or undefined", async () => {
+            mockAuthContext.getAllUsers.mockResolvedValue([
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gimnasio: { estado: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { gimnasio: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", subscription: null, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", subscription: {}, balance: 10 },
+            ]);
+            render(<AdminUsers />);
+            await waitFor(() => {
+                expect(screen.getAllByText("No").length).toBeGreaterThanOrEqual(4);
+            });
+        });
+    
+        it("renders 'Sí' for atletismo subscription estado when true", async () => {
+            mockAuthContext.getAllUsers.mockResolvedValue([
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { atletismo: { estado: true } }, balance: 10 }
+            ]);
+            render(<AdminUsers />);
+            await waitFor(() => {
+                expect(screen.getByText("Sí")).toBeInTheDocument();
+            });
+        });
+    
+        it("renders 'No' for atletismo subscription estado when false or undefined", async () => {
+            mockAuthContext.getAllUsers.mockResolvedValue([
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { atletismo: { estado: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { atletismo: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", subscription: null, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", subscription: {}, balance: 10 },
+            ]);
+            render(<AdminUsers />);
+            await waitFor(() => {
+                expect(screen.getAllByText("No").length).toBeGreaterThanOrEqual(4);
+            });
+        });
     });
+    
 });

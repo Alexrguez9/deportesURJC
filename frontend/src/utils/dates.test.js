@@ -3,7 +3,8 @@ import {
     getDateWithoutTime,
     getPrettyDate,
     getMonthlyDateRange,
-    validateHours
+    validateHours,
+    infinityDate,
 } from './dates';
 
 // Dates in getHoursAndMinutes are in UTC, so we need to adjust them to Spain time in tests
@@ -50,6 +51,11 @@ describe('getDateWithoutTime', () => {
         expect(getDateWithoutTime('2024-01-01T12:00:00')).toBe('2024-01-01'); // Start of year
         expect(getDateWithoutTime('2024-12-31T12:00:00')).toBe('2024-12-31'); // End of year
         expect(getDateWithoutTime('2024-02-29T12:00:00')).toBe('2024-02-29'); // Leap year
+    });
+
+    it('should return undefined if date is null or undefined', () => {
+        expect(getDateWithoutTime(null)).toBeUndefined();
+        expect(getDateWithoutTime(undefined)).toBeUndefined();
     });
 });
 
@@ -120,8 +126,8 @@ describe('getMonthlyDateRange', () => {
     });
 
     it('should return [null, null] if the user is not defined', () => {
-        expect(getMonthlyDateRange(null)).toEqual([null, null]);
-        expect(getMonthlyDateRange(undefined)).toEqual([null, null]);
+        expect(getMonthlyDateRange(null)).toStrictEqual({startDate: null, endDate: null});
+        expect(getMonthlyDateRange(undefined)).toStrictEqual({startDate: null, endDate: null});
     });
 });
 
@@ -174,3 +180,16 @@ describe('validateHours', () => {
         expect(validateHours(date, minTime, maxTime)).toBe(true);
     });
 });
+
+describe('infinityDate', () => {
+  it('should equal the maximum valid ISO date', () => {
+    expect(infinityDate).toBe(new Date(8640000000000000).toISOString());
+  });
+
+  it('should represent a date in the year 275760 or later', () => {
+    const dateObj = new Date(infinityDate);
+    expect(dateObj instanceof Date && !isNaN(dateObj)).toBe(true);
+    expect(dateObj.getFullYear()).toBeGreaterThanOrEqual(275760);
+  });
+});
+

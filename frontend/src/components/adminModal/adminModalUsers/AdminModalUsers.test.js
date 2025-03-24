@@ -43,8 +43,10 @@ describe("AdminModalUsers Component", () => {
             expect(screen.getByLabelText(/Contraseña:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Rol:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Saldo:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Atletismo:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta atletismo/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
@@ -55,8 +57,10 @@ describe("AdminModalUsers Component", () => {
             expect(screen.queryByLabelText(/Contraseña:/i)).not.toBeInTheDocument(); // Password field should not be present in edit mode
             expect(screen.getByLabelText(/Rol:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Saldo:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Atletismo:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta atletismo/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
@@ -70,15 +74,22 @@ describe("AdminModalUsers Component", () => {
                 alta: {
                     gimnasio: { estado: true },
                     atletismo: { estado: false }
+                },
+                subscription: {
+                    gimnasio: { estado: true },
+                    atletismo: { estado: false }
                 }
             };
+            
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={popupData} />);
             expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.name);
             expect(screen.getByLabelText(/Email:/i)).toHaveValue(popupData.email);
             expect(screen.getByLabelText(/Rol:/i)).toHaveValue(popupData.role);
             expect(screen.getByLabelText(/Saldo:/i)).toHaveValue(popupData.balance);
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeChecked();
-            expect(screen.getByLabelText(/Atletismo:/i)).not.toBeChecked();
+            expect(screen.getByLabelText(/Alta Gimnasio:/i)).toBeChecked();
+            expect(screen.getByLabelText(/Alta Atletismo:/i)).not.toBeChecked();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeChecked();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).not.toBeChecked();
         });
     });
 
@@ -127,6 +138,69 @@ describe("AdminModalUsers Component", () => {
                 expect(screen.getByText(/El saldo no puede ser negativo/i)).toBeInTheDocument();
             });
         });
+
+        it("calls addUser with formatted alta and subscription data", async () => {
+            const mockDateRange = {
+                startDate: '2025-01-01T00:00:00.000Z',
+                endDate: '2025-02-01T00:00:00.000Z'
+            };
+            const infinity = require("../../../utils/dates").infinityDate;
+            jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockResolvedValue(mockDateRange);
+        
+            const userData = {
+                name: 'New User',
+                email: 'newuser@example.com',
+                password: 'password123',
+                role: 'user',
+                balance: 20,
+                alta_gimnasio: true,
+                alta_atletismo: false,
+                subs_gimnasio: true,
+                subs_atletismo: true,
+            };
+        
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+        
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: userData.name } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: userData.email } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: userData.password } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: userData.role } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: String(userData.balance) } });
+            fireEvent.click(screen.getByLabelText(/Alta gimnasio/i));
+            fireEvent.click(screen.getByLabelText(/Suscripción gimnasio/i));
+            fireEvent.click(screen.getByLabelText(/Suscripción atletismo/i));
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
+            await waitFor(() => {
+                expect(mockAuthContext.addUser).toHaveBeenCalledWith(expect.objectContaining({
+                    alta: {
+                        gimnasio: {
+                            estado: true,
+                            fechaInicio: mockDateRange.startDate,
+                            fechaFin: infinity
+                        },
+                        atletismo: {
+                            estado: false,
+                            fechaInicio: null,
+                            fechaFin: null
+                        }
+                    },
+                    subscription: {
+                        gimnasio: {
+                            estado: true,
+                            fechaInicio: mockDateRange.startDate,
+                            fechaFin: mockDateRange.endDate
+                        },
+                        atletismo: {
+                            estado: true,
+                            fechaInicio: mockDateRange.startDate,
+                            fechaFin: mockDateRange.endDate
+                        }
+                    }
+                }));
+            });
+        });
+        
     });
 
     describe("Form Submission and API Calls", () => {

@@ -28,13 +28,27 @@ describe("UserDetail Component", () => {
             </BrowserRouter>
         );
         await waitFor(() => {
-            expect(screen.getByRole('progressbar')).toBeInTheDocument(); // Use getByRole('progressbar')
+            expect(screen.getByRole('progressbar')).toBeInTheDocument();
         });
     });
 
-    it("fetches users and displays user details correctly when user is found", async () => {
+    it("fetches and displays full user details correctly including subscriptions", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: true, fechaInicio: '2024-01-01', fechaFin: '2024-12-31' }, atletismo: { estado: false } }, balance: 50 };
+        const mockUser = {
+            _id: "1",
+            name: "Test User",
+            email: "test@user.com",
+            role: "user",
+            alta: {
+                gimnasio: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2024-12-31" },
+                atletismo: { estado: false }
+            },
+            subscription: {
+                gimnasio: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2025-01-01" },
+                atletismo: { estado: false }
+            },
+            balance: 42
+        };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -45,32 +59,43 @@ describe("UserDetail Component", () => {
 
         await waitFor(() => {
             expect(screen.getByText("Detalles del Usuario")).toBeInTheDocument();
-            expect(screen.getByText(`ID:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser._id)).toBeInTheDocument();
-            expect(screen.getByText(`Nombre:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser.name)).toBeInTheDocument();
-            expect(screen.getByText(`Email:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser.email)).toBeInTheDocument();
-            expect(screen.getByText(`Rol:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser.role)).toBeInTheDocument();
-            expect(screen.getByText(`Alta GYM:`)).toBeInTheDocument();
-            expect(screen.getByText("Sí")).toBeInTheDocument();
-            expect(screen.getByText(`Inicio GYM:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser.alta.gimnasio.fechaInicio)).toBeInTheDocument();
-            expect(screen.getByText(`Fin GYM:`)).toBeInTheDocument();
-            expect(screen.getByText(mockUser.alta.gimnasio.fechaFin)).toBeInTheDocument();
-            expect(screen.getByText(`Alta Atletismo:`)).toBeInTheDocument();
-            expect(screen.getByText("No")).toBeInTheDocument();
-            expect(screen.getByText(`Saldo:`)).toBeInTheDocument();
-            expect(screen.getByText(`${mockUser.balance} €`)).toBeInTheDocument();
+        
+            expect(screen.getByText("ID:").nextElementSibling).toHaveTextContent(mockUser._id);
+            expect(screen.getByText("Nombre:").nextElementSibling).toHaveTextContent(mockUser.name);
+            expect(screen.getByText("Email:").nextElementSibling).toHaveTextContent(mockUser.email);
+            expect(screen.getByText("Rol:").nextElementSibling).toHaveTextContent(mockUser.role);
+        
+            expect(screen.getByText("Alta GYM:").nextElementSibling).toHaveTextContent("Sí");
+
+            const allInicioGYM = screen.getAllByText("Inicio GYM:");
+            expect(allInicioGYM[0].nextElementSibling).toHaveTextContent(mockUser.alta.gimnasio.fechaInicio);
+            expect(allInicioGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gimnasio.fechaInicio);
+
+            expect(screen.getByText("Alta Atletismo:").nextElementSibling).toHaveTextContent("No");
+
+            const allFinGYM = screen.getAllByText("Fin GYM:");
+            expect(allFinGYM[0].nextElementSibling).toHaveTextContent(mockUser.alta.gimnasio.fechaFin);
+            expect(allFinGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gimnasio.fechaFin);
+        
+            expect(screen.getByText("Saldo:").nextElementSibling).toHaveTextContent(`${mockUser.balance} €`);
         });
+        
     });
 
-    it("displays 'Usuario no encontrado.' message when user is not found", async () => {
-        useParams.mockReturnValue({ id: 'non-existent-id' });
-        mockAuthContext.getAllUsers.mockResolvedValue([
-            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, balance: 10 }
-        ]);
+    it("does not show subscription dates if estado is false", async () => {
+        useParams.mockReturnValue({ id: '1' });
+        const mockUser = {
+            _id: "1",
+            name: "Test User",
+            email: "test@user.com",
+            role: "user",
+            subscription: {
+                gimnasio: { estado: false },
+                atletismo: { estado: false }
+            },
+            balance: 50
+        };
+        mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
             <BrowserRouter>
@@ -79,12 +104,18 @@ describe("UserDetail Component", () => {
         );
 
         await waitFor(() => {
-            expect(screen.getByText("Usuario no encontrado.")).toBeInTheDocument();
+            expect(screen.getByText("Suscripción GYM:")).toBeInTheDocument();
+            expect(screen.queryByText("Inicio GYM:")).not.toBeInTheDocument();
+            expect(screen.queryByText("Fin GYM:")).not.toBeInTheDocument();
+
+            expect(screen.getByText("Suscripción Atletismo:")).toBeInTheDocument();
+            expect(screen.queryByText("Inicio Atletismo:")).not.toBeInTheDocument();
+            expect(screen.queryByText("Fin Atletismo:")).not.toBeInTheDocument();
         });
     });
 
-    it("displays 'Usuario no encontrado.' message when getAllUsers returns empty array", async () => {
-        useParams.mockReturnValue({ id: '1' });
+    it("displays 'Usuario no encontrado.' when user is not found", async () => {
+        useParams.mockReturnValue({ id: 'non-existent' });
         mockAuthContext.getAllUsers.mockResolvedValue([]);
 
         render(
@@ -98,9 +129,10 @@ describe("UserDetail Component", () => {
         });
     });
 
+    // Ya existentes pero siguen siendo válidos:
     it("displays 'No' when alta.gimnasio.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 50 };
+        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -110,14 +142,14 @@ describe("UserDetail Component", () => {
         );
 
         await waitFor(() => {
-            const altaGymLabel = screen.getByText(`Alta GYM:`);
-            expect(altaGymLabel.nextElementSibling).toHaveTextContent("No"); // Using nextElementSibling to get specific 'No'
+            const label = screen.getByText("Alta GYM:");
+            expect(label.nextElementSibling).toHaveTextContent("No");
         });
     });
 
-    it("displays 'No' when alta.atletismo.estado is false", async () => {
+    it("does not display GYM start/end dates if alta.gimnasio.estado is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, balance: 50 };
+        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -127,15 +159,23 @@ describe("UserDetail Component", () => {
         );
 
         await waitFor(() => {
-            const altaAtletismoLabel = screen.getByText(`Alta Atletismo:`);
-            expect(altaAtletismoLabel.nextElementSibling).toHaveTextContent("No"); // Using nextElementSibling to get specific 'No'
+            expect(screen.queryByText("Inicio GYM:")).not.toBeInTheDocument();
+            expect(screen.queryByText("Fin GYM:")).not.toBeInTheDocument();
         });
     });
 
-    it("does not display GYM start and end dates if alta.gimnasio.estado is false", async () => {
+    it('displays "Sí" when subscription.atletismo.estado is true', async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 50 };
-        mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
+        const mockUser = [{
+            _id: "1",
+            name: "Test",
+            email: "test@user.com",
+            role: "user",
+            alta: { gimnasio: { estado: false }, atletismo: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2024-12-31" } },
+            subscription: { atletismo: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2025-01-01" } },
+            balance: 10
+        }];
+        mockAuthContext.getAllUsers.mockResolvedValue(mockUser);
 
         render(
             <BrowserRouter>
@@ -144,25 +184,8 @@ describe("UserDetail Component", () => {
         );
 
         await waitFor(() => {
-            expect(screen.queryByText(`Inicio GYM:`)).not.toBeInTheDocument();
-            expect(screen.queryByText(`Fin GYM:`)).not.toBeInTheDocument();
-        });
-    });
-
-    it("does not display Atletismo start and end dates if alta.atletismo.estado is false", async () => {
-        useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test User", email: "test@user.com", role: "user", alta: { atletismo: { estado: false } }, balance: 50 };
-        mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
-
-        render(
-            <BrowserRouter>
-                <UserDetail />
-            </BrowserRouter>
-        );
-
-        await waitFor(() => {
-            expect(screen.queryByText(`Inicio Atletismo:`)).not.toBeInTheDocument();
-            expect(screen.queryByText(`Fin Atletismo:`)).not.toBeInTheDocument();
+            const label = screen.getByText("Alta Atletismo:");
+            expect(label.nextElementSibling).toHaveTextContent("Sí");
         });
     });
 });

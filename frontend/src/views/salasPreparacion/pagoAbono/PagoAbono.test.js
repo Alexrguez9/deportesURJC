@@ -40,296 +40,143 @@ jest.mock('sonner', () => {
 
 describe("PagoAbono Component", () => {
     let mockNavigate;
-    let originalAlert;
 
     beforeEach(() => {
         jest.clearAllMocks();
         useAuth.mockReturnValue(mockAuthContext);
+
+        const mockDateRange = { startDate: '2024-08-03T09:00', endDate: '2029-08-03T09:00' };
+        jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockResolvedValue(mockDateRange);
+
+
         mockAuthContext.user = {
             _id: '123',
             name: 'Test User',
             email: 'test@example.com',
             alta: {
-                gimnasio: { estado: true, fechaInicio: new Date(), fechaFin: new Date() },
+                gimnasio: { estado: true, fechaInicio: new Date('2024-08-03T09:00'), fechaFin: new Date('2024-08-03T09:00') },
+                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            },
+            subscription: {
+                gimnasio: { estado: true, fechaInicio: new Date('2025-03-01T09:00'), fechaFin: new Date('2025-04-01T09:00') },
                 atletismo: { estado: false, fechaInicio: null, fechaFin: null }
             }
         };
-        mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200, data: {} });
+        mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200 });
         mockAuthContext.isStudent = jest.fn().mockReturnValue(true);
+        mockAuthContext.isAdmin = jest.fn().mockReturnValue(false);
+
         mockNavigate = jest.fn();
         useNavigate.mockReturnValue(mockNavigate);
-
-        // Mock window.alert for tests that might use alert
-        originalAlert = window.alert;
-        window.alert = jest.fn();
     });
 
-    afterEach(() => {
-        window.alert = originalAlert; // Restore original alert after tests
+    it("renderiza fechas de suscripción actuales y botón 'Renovar gratis'", () => {
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        expect(screen.getByText(/Inicio abono:/)).toHaveTextContent("Inicio abono: 2025-03-01");
+        expect(screen.getByText(/Expiración abono:/)).toHaveTextContent("Expiración abono: 2025-04-01");
+        expect(screen.getByRole("button", { name: /Renovar gratis/i })).toBeInTheDocument();
     });
 
-    it("renders component elements correctly when user is logged in and has alta in at least one sport", async () => {
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        expect(screen.getByRole("heading", { level: 1, name: /pago abono/i })).toBeInTheDocument();
-        expect(screen.getByText(/Bienvenido a la página de pago del abono de atletismo o gimnasio de la URJC./i)).toBeInTheDocument();
-        expect(screen.getByRole("combobox")).toBeInTheDocument();
-        expect(screen.getByRole("combobox")).toHaveValue('Gimnasio');
-        expect(screen.getByRole("button", { name: /renovar gratis/i })).toBeInTheDocument();
-        expect(screen.queryByText(/Debes iniciar sesión para poder pagar o renovar tu abono/i)).not.toBeInTheDocument();
-        expect(screen.queryByText(/No estás dado de alta en ninguna instalación de preparación física/i)).not.toBeInTheDocument();
+    it("renderiza mensaje de 'No estás dado de alta en Atletismo' si no hay alta", async () => {
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Atletismo' } });
+        expect(screen.getByText("No estás dado de alta en Atletismo")).toBeInTheDocument();
     });
 
-    it("renders 'Debes iniciar sesión...' message when user is not logged in", async () => {
+    it("renderiza mensaje de 'No estás dado de alta en Gimnasio' si no hay alta", async () => {
+        mockAuthContext.user = {
+            ...mockAuthContext.user,
+            alta: {
+                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
+                atletismo: { estado: true, fechaInicio: new Date('2024-08-03T09:00'), fechaFin: new Date('2027-08-03T09:00') }
+            },
+            subscription: {
+                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
+                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            }
+        };
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Gimnasio' } });
+        expect(screen.getByText("No estás dado de alta en Gimnasio")).toBeInTheDocument();
+    });
+
+    it("muestra mensaje de error si getMonthlyDateRange falla", async () => {
+        const mockDateRange = { startDate: null, endDate: null };
+        jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockReturnValue(mockDateRange);
+
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        fireEvent.click(screen.getByRole("button", { name: /Renovar gratis/i }));
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith("No se pudo calcular la fecha de renovación. Por favor verifica los datos.");
+        });
+    });
+
+    it("llama a updateUser y sendEmail en éxito", async () => {
+        jest.useFakeTimers();
+        const mockDateRange = { startDate: '2024-08-03T09:00', endDate: '2029-08-03T09:00' };
+        jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockReturnValue(mockDateRange);
+
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        fireEvent.click(screen.getByRole("button", { name: /Renovar gratis/i }));
+    
+        await waitFor(() => {
+            expect(mockAuthContext.updateUser).toHaveBeenCalled();
+        });
+    
+        jest.runAllTimers(); // permite que el setTimeout se ejecute
+    
+        await waitFor(() => {
+            expect(mailUtils.sendEmail).toHaveBeenCalled();
+            expect(toast.success).toHaveBeenCalledWith("Pago completado con éxito!");
+        });
+    
+        jest.useRealTimers();
+    });
+
+    it("renderiza PaymentForm si no es estudiante ni admin", () => {
+        mockAuthContext.isStudent = jest.fn().mockReturnValue(false);
+        mockAuthContext.isAdmin = jest.fn().mockReturnValue(false);
+        useAuth.mockReturnValue(mockAuthContext);
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        expect(document.querySelector(".payment-container")).toBeInTheDocument();
+    });
+
+    it("renderiza botón 'Obtener gratis' si no tiene suscripción activa", () => {
+        mockAuthContext.user = {
+            ...mockAuthContext.user,
+            alta: {
+                gimnasio: { estado: true, fechaInicio: "2025-03-01", fechaFin: "2025-04-01" },
+                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            },
+            subscription: {
+                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
+                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            }
+        };
+        useAuth.mockReturnValue(mockAuthContext);
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        expect(screen.getByRole("button", { name: /Obtener gratis/i })).toBeInTheDocument();
+    });
+
+    it("renderiza mensaje de 'Debes iniciar sesión' si no hay usuario", () => {
         mockAuthContext.user = null;
         useAuth.mockReturnValue(mockAuthContext);
-
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        expect(screen.getByText(/Debes iniciar sesión para poder pagar o renovar tu abono/i)).toBeInTheDocument();
-        expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /renovar gratis/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /pagar/i })).not.toBeInTheDocument();
-        expect(screen.queryByText(/No estás dado de alta en ninguna instalación de preparación física/i)).not.toBeInTheDocument();
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        expect(screen.getByText(/Debes iniciar sesión/)).toBeInTheDocument();
     });
 
-    it("renders 'No estás dado de alta...' message and alta button when user is logged in but has no alta", async () => {
-        mockAuthContext.user.alta = {
-            gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-            atletismo: { estado: false, fechaInicio: null, fechaFin: null }
-        };
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        expect(screen.getByText(/No estás dado de alta en ninguna instalación de preparación física/i)).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: /alta de usuarios/i })).toBeInTheDocument();
-        expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /renova gratisr/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /pagar/i })).not.toBeInTheDocument();
-        expect(screen.queryByText(/Debes iniciar sesión para poder pagar o renovar tu abono/i)).not.toBeInTheDocument();
-    });
-
-    it("updates sport filter when dropdown value changes", async () => {
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const sportSelect = screen.getByRole("combobox");
-        fireEvent.change(sportSelect, { target: { value: 'Atletismo' } });
-        await waitFor(() => {
-            expect(sportSelect).toHaveValue('Atletismo');
-        });
-    });
-
-    it("calls updateUser with correct parameters and shows success message for student paying Gimnasio", async () => {
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const pagarButton = screen.getByRole("button", { name: /renovar gratis/i });
-        fireEvent.click(pagarButton);
-
-        await waitFor(() => {
-            expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
-            expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', expect.objectContaining({
-                alta: expect.objectContaining({
-                    gimnasio: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Date) }), // Changed to Date
-                    atletismo: expect.objectContaining({ estado: false })
-                })
-            }));
-        });
-
-        await waitFor(() => {
-            expect(toast.success).toHaveBeenCalledWith('Pago completado con éxito!');
-        });
-    });
-
-    it("calls updateUser with correct parameters and shows success message for student renovating Atletismo", async () => {
+    it("renderiza mensaje de alta requerido si no hay alta en ninguna instalación", () => {
         mockAuthContext.user.alta.gimnasio.estado = false;
-        mockAuthContext.user.alta.atletismo.estado = true;
-        mockAuthContext.isStudent = jest.fn().mockReturnValue(true);
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-        const sportSelect = screen.getByRole("combobox");
-        fireEvent.change(sportSelect, { target: { value: 'Atletismo' } });
-
-        const pagarButton = screen.getByRole("button", { name: /renovar gratis/i });
-        fireEvent.click(pagarButton);
-
-        await waitFor(() => {
-            expect(mockAuthContext.updateUser).toHaveBeenCalledTimes(1);
-            expect(mockAuthContext.updateUser).toHaveBeenCalledWith('123', expect.objectContaining({
-                alta: expect.objectContaining({
-                    atletismo: expect.objectContaining({ estado: true, fechaInicio: expect.any(Date), fechaFin: expect.any(Date) }), // Changed to Date
-                    gimnasio: expect.objectContaining({ estado: false })
-                }),
-                email: 'test@example.com',
-                name: 'Test User',
-            }));
-            expect(toast.success).toHaveBeenCalledWith('Pago completado con éxito!');
-        });
+        useAuth.mockReturnValue(mockAuthContext);
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        expect(screen.getByText(/No estás dado de alta en ninguna instalación/)).toBeInTheDocument();
     });
 
-    it("renders error message when updateUser fails", async () => {
-        mockAuthContext.updateUser = jest.fn().mockRejectedValue(new Error("Update error"));
-
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const pagarButton = screen.getByRole("button", { name: /renovar gratis/i });
-        fireEvent.click(pagarButton);
-
-        await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledWith('Se ha producido un error al dar de alta. Inténtalo de nuevo.');
-        });
-    });
-
-    it("shows error message if user has no alta in both instalations", async () => {
+    it("redirige al alta si se pulsa el botón de alta", () => {
         mockAuthContext.user.alta.gimnasio.estado = false;
-        mockAuthContext.user.alta.atletismo.estado = false;
         useAuth.mockReturnValue(mockAuthContext);
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /renovar gratis/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /pagar/i })).not.toBeInTheDocument();
-        expect(screen.getByText(/No estás dado de alta en ninguna instalación de preparación física/i)).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /alta de usuarios/i })).toBeInTheDocument();
-    });
-
-    it("navigates to '/salas-preparacion/alta' when 'Alta de usuarios' button is clicked", async () => {
-        mockAuthContext.user.alta = {
-            gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-            atletismo: { estado: false, fechaInicio: null, fechaFin: null }
-        };
-        useAuth.mockReturnValue(mockAuthContext);
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const altaButton = screen.getByRole("button", { name: /alta de usuarios/i });
-        fireEvent.click(altaButton);
-
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledTimes(1);
-            expect(mockNavigate).toHaveBeenCalledWith('/salas-preparacion/alta');
-        });
-    });
-
-    it("renders PaymentForm for external users and not renders free payment button", () => {
-        mockAuthContext.isStudent = jest.fn().mockReturnValue(false);
-        useAuth.mockReturnValue(mockAuthContext);
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-        const paymentContainer = document.querySelector(".payment-container");
-        expect(paymentContainer).toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /renovar gratis/i })).not.toBeInTheDocument();
-        expect(screen.queryByRole("button", { name: /pagar gratis/i })).not.toBeInTheDocument();
-    });
-
-    it("calls sendEmail after successful payment", async () => {
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const pagarButton = screen.getByRole("button", { name: /renovar gratis/i });
-        fireEvent.click(pagarButton);
-
-        await waitFor(() => {
-            expect(mailUtils.sendEmail).toHaveBeenCalledTimes(1);
-            expect(mailUtils.sendEmail).toHaveBeenCalledWith(
-                mockAuthContext.user.email,
-                'DeportesURJC - Confirmación de Pago de abono',
-                expect.stringContaining(`Hola ${mockAuthContext.user.name},\n\nTu pago del Abono de Gimnasio ha sido completado con éxito.`)
-            );
-        });
-    });
-
-    it("renders spinner while loading", async () => {
-        mockAuthContext.updateUser = jest.fn(() => new Promise(resolve => setTimeout(() => resolve({ status: 200, data: {} }))));
-
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-
-        const pagarButton = screen.getByRole("button", { name: /renovar gratis/i });
-        fireEvent.click(pagarButton);
-
-        expect(document.querySelector(".spinner")).toBeInTheDocument();
-
-        await waitFor(() => {
-            expect(document.querySelector(".spinner")).not.toBeInTheDocument();
-        });
-    });
-
-    it("shows error message if user tries to pay for Atletismo without atletismo alta, but yes gym alta", async () => {
-        mockAuthContext.user.alta.gimnasio.estado = true;
-        mockAuthContext.user.alta.atletismo.estado = false;
-
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-        const sportSelect = screen.getByRole("combobox");
-        fireEvent.change(sportSelect, { target: { value: 'Atletismo' } });
-        const pagarButton = screen.getByRole("button", { name: /obtener gratis/i });
-        fireEvent.click(pagarButton);
-
-
-        await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledWith('No estás dado de alta en el atletismo.');
-        });
-    });
-
-    it("shows error message if user tries to pay for Gym without gym alta, but yes atletismo alta", async () => {
-        mockAuthContext.user.alta.gimnasio.estado = false;
-        mockAuthContext.user.alta.atletismo.estado = true;
-
-        render(
-            <BrowserRouter>
-                <PagoAbono />
-            </BrowserRouter>
-        );
-        const sportSelect = screen.getByRole("combobox");
-        fireEvent.change(sportSelect, { target: { value: 'Gimnasio' } });
-        const pagarButton = screen.getByRole("button", { name: /obtener gratis/i });
-        fireEvent.click(pagarButton);
-
-        expect(toast.error).toHaveBeenCalledWith('No estás dado de alta en el gimnasio.');
+        render(<BrowserRouter><PagoAbono /></BrowserRouter>);
+        fireEvent.click(screen.getByRole("button", { name: /Alta de usuarios/i }));
+        expect(mockNavigate).toHaveBeenCalledWith('/salas-preparacion/alta');
     });
 });

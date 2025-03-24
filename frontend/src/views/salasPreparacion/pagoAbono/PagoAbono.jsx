@@ -8,23 +8,16 @@ import { studentsPricesMessage, externalPrice } from './CONSTANTS';
 import BackButton from '../../../components/backButton/BackButton';
 import Spinner from '../../../components/spinner/Spinner';
 import { toast } from 'sonner';
+import { getDateWithoutTime, getMonthlyDateRange } from "../../../utils/dates";
 
 const PagoAbono = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
-    const { user, updateUser, isStudent } = useAuth();
+    const { user, updateUser, isStudent, isAdmin } = useAuth();
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
 
-    const calculateNewDate = () => {
-        if (user) {
-            const fechaInicio = new Date();
-            const fechaFin = new Date();
-            fechaFin.setDate(fechaFin.getDate() + 30); // Suma 30 días
-
-            return [fechaInicio, fechaFin];
-        }
-        return [null, null];
-    };
+    const altaGymState = user?.alta?.gimnasio?.estado;
+    const altaAtletismoState = user?.alta?.atletismo?.estado;
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
@@ -32,16 +25,11 @@ const PagoAbono = () => {
 
     const handlePago = async () => {
         setIsLoading(true);
+        console.log('---isLoading---', isLoading);
         if (user) {
-            /* istanbul ignore if */
-            if (!user?.alta?.gimnasio?.estado && !user?.alta?.atletismo?.estado) {
-                toast.error('No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).');
-                setIsLoading(false);
-                return;
-            }
+            const {startDate, endDate} = getMonthlyDateRange(user);
 
-            const [fechaInicio, fechaFin] = calculateNewDate();
-            if (!fechaInicio || !fechaFin) {
+            if (!startDate || !endDate) {
                 toast.error('No se pudo calcular la fecha de renovación. Por favor verifica los datos.');
                 setIsLoading(false);
                 return;
@@ -50,19 +38,9 @@ const PagoAbono = () => {
             const updateData = { ...user };
             /* istanbul ignore else */
             if (filtroDeporte === 'Gimnasio') {
-                if (!user?.alta?.gimnasio?.estado) {
-                    toast.error('No estás dado de alta en el gimnasio.');
-                    setIsLoading(false);
-                    return;
-                }
-                updateData.alta.gimnasio = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
+                updateData.subscription.gimnasio = { estado: true, fechaInicio: startDate, fechaFin: endDate };
             } else if (filtroDeporte === 'Atletismo') {
-                if (!user?.alta?.atletismo?.estado) {
-                    toast.error('No estás dado de alta en el atletismo.');
-                    setIsLoading(false);
-                    return;
-                }
-                updateData.alta.atletismo = { estado: true, fechaInicio: fechaInicio, fechaFin: fechaFin };
+                updateData.subscription.atletismo = { estado: true, fechaInicio: startDate, fechaFin: endDate };
             }else {
                 toast.error('Escoge Gimnasio o Atletismo por favor.');
                 setIsLoading(false);
@@ -109,22 +87,29 @@ const PagoAbono = () => {
                 <br />Coste del abono: <b> {isStudent() ? studentsPricesMessage : externalPrice + '€'} </b>
             </p>
             {user ? (
-                (user?.alta?.gimnasio?.estado || user?.alta?.atletismo?.estado) ? (
+                ( altaGymState || altaAtletismoState ) ? (
                     <section>
                         <select value={filtroDeporte} onChange={handleDeporteChange}>
                             <option value="Gimnasio">Gimnasio</option>
                             <option value="Atletismo">Atletismo</option>
                         </select>
-                        <div className="centered-div button-alta">
-                            {!isStudent() && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />}
-                            {isStudent() && (
-                                user?.alta?.[filtroDeporte.toLowerCase()]?.estado ? (
-                                    <button onClick={handlePago}>Renovar gratis</button>
-                                ) : (
-                                    <button onClick={handlePago}>Obtener gratis</button>
+                        {filtroDeporte === 'Gimnasio' && !altaGymState || filtroDeporte === 'Atletismo' && !altaAtletismoState
+                            ? <p>No estás dado de alta en {filtroDeporte}</p>
+                            :
+                            <div className="centered-div button-alta">
+                                <p>Inicio abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gimnasio?.fechaInicio) : getDateWithoutTime(user?.subscription?.atletismo?.fechaInicio) }
+                                <br />Expiración abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gimnasio?.fechaFin) : getDateWithoutTime(user?.subscription?.atletismo?.fechaFin) }</p>
+                                {isStudent() || isAdmin() ? (
+                                    user?.subscription?.[filtroDeporte.toLowerCase()]?.estado ? (
+                                        <button onClick={handlePago}>Renovar gratis</button>
+                                    ) : (
+                                        <button onClick={handlePago}>Obtener gratis</button>
+                                    )
                                 )
-                            )}
-                        </div>
+                                    : <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />
+                                }
+                            </div>
+                        }
                         {isLoading && <Spinner />}
                     </section>
                 ) : (
