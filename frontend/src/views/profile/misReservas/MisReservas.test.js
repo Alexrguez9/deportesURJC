@@ -26,22 +26,22 @@ describe("MisReservas Component", () => {
         useAuth.mockReturnValue(mockAuthContext);
         useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
         mockAuthContext.user = { _id: '123', name: 'Test User' };
-        mockFacilitiesAndReservationsContext.instalaciones = [{ _id: '1', nombre: 'Gimnasio' }, { _id: '2', nombre: 'Pista Atletismo' }];
+        mockFacilitiesAndReservationsContext.instalaciones = [{ _id: '1', name: 'Gimnasio' }, { _id: '2', name: 'Pista Atletismo' }];
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([
             { _id: 'res1',
                 userId: '123',
-                instalacionId: '1',
-                fechaInicio: new Date('2024-07-15T10:00:00.000Z'),
-                fechaFin: new Date('2024-07-15T11:00:00.000Z'),
-                precioTotal: 15,
+                facilityId: '1',
+                initDate: new Date('2024-07-15T10:00:00.000Z'),
+                endDate: new Date('2024-07-15T11:00:00.000Z'),
+                totalPrice: 15,
                 isPaid: true
             },
             { _id: 'res2',
                 userId: '123',
-                instalacionId: '2',
-                fechaInicio: new Date('2024-07-20T15:00:00.000Z'), 
-                fechaFin: new Date('2024-07-20T16:00:00.000Z'),
-                precioTotal: 20,
+                facilityId: '2',
+                initDate: new Date('2024-07-20T15:00:00.000Z'), 
+                endDate: new Date('2024-07-20T16:00:00.000Z'),
+                totalPrice: 20,
                 isPaid: false
              }
         ]);
@@ -105,10 +105,10 @@ describe("MisReservas Component", () => {
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([{
                 _id: 'res2',
                 userId: '123',
-                instalacionId: '2',
-                fechaInicio: new Date('2024-07-20T15:00:00.000Z'),
-                fechaFin: new Date('2024-07-20T16:00:00.000Z'),
-                precioTotal: 20,
+                facilityId: '2',
+                initDate: new Date('2024-07-20T15:00:00.000Z'),
+                endDate: new Date('2024-07-20T16:00:00.000Z'),
+                totalPrice: 20,
                 isPaid: true
             }
         ]);

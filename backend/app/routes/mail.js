@@ -2,10 +2,9 @@ const express = require('express');
 const router = express.Router();
 const initMails = require('../../config/mails');
 
-// Inicializa la funcionalidad de mails
 const { sendEmail } = initMails();
 
-// Ruta para enviar correos
+// Route to send an email
 router.post('/send-email', async (req, res) => {
     const { to, subject, message } = req.body;
 
@@ -17,14 +16,13 @@ router.post('/send-email', async (req, res) => {
     }
 
     try {
-        const response = await sendEmail(to, subject, message); // TODO: Asegúrate de que esta función esté correctamente configurada
+        const response = await sendEmail(to, subject, message);
         res.status(200).json({ message: 'Correo enviado con éxito' });
         console.log('Correo enviado con éxito:', response);
     } catch (error) {
-        console.error('Error al enviar el correo:', error); // Log detallado del error
+        console.error('Error al enviar el correo:', error);
         res.status(500).json({ message: 'Error al enviar el correo', error: error.message });
     }
 });
-
 
 module.exports = router;

@@ -38,12 +38,12 @@ describe("FacilitiesAndReservationsContext", () => {
 
     it("should get all reservations", async () => {
         const reservations = await facilitiesReservationsValues.getAllReservations();
-        expect(reservations).toEqual([{ _id: '1', instalacionId: '1' }]);
+        expect(reservations).toEqual([{ _id: '1', facilityId: '1' }]);
         expect(mockFacilitiesAndReservationsContext.getAllReservations).toHaveBeenCalled();
     });
 
     it("should add a new reservation", async () => {
-        const response = await facilitiesReservationsValues.addReservation({ instalacionId: '1', fechaInicio: testDate });
+        const response = await facilitiesReservationsValues.addReservation({ facilityId: '1', initDate: testDate });
         expect(response.ok).toBe(true);
         expect(mockFacilitiesAndReservationsContext.addReservation).toHaveBeenCalled();
     });
@@ -55,9 +55,9 @@ describe("FacilitiesAndReservationsContext", () => {
     });
 
     it("should update a reservation", async () => {
-        const response = await facilitiesReservationsValues.updateReservation('1', { instalacionId: '2', fechaInicio: testDate });
+        const response = await facilitiesReservationsValues.updateReservation('1', { facilityId: '2', initDate: testDate });
         expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.updateReservation).toHaveBeenCalledWith('1', { instalacionId: '2', fechaInicio: testDate });
+        expect(mockFacilitiesAndReservationsContext.updateReservation).toHaveBeenCalledWith('1', { facilityId: '2', initDate: testDate });
     });
 
     it("should update a facility", async () => {
@@ -79,10 +79,10 @@ describe("FacilitiesAndReservationsContext", () => {
     });
 
     it("should count reservations by time slot", async () => {
-        const fechaInicio = testDate;
-        const count = await facilitiesReservationsValues.contarReservasPorFranjaHoraria('1', fechaInicio);
+        const initDate = testDate;
+        const count = await facilitiesReservationsValues.contarReservasPorFranjaHoraria('1', initDate);
         expect(count).toBe(2);
-        expect(mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria).toHaveBeenCalledWith('1', fechaInicio);
+        expect(mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria).toHaveBeenCalledWith('1', initDate);
     });
 });
 

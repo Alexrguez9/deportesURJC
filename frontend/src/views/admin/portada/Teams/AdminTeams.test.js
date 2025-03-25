@@ -44,14 +44,14 @@ describe("AdminTeams Component", () => {
                 _id: "001",
                 sport: "Fútbol-7",
                 name: "Equipo A",
-                results: { partidos_ganados: 3, partidos_perdidos: 1, partidos_empatados: 2 },
+                results: { wins: 3, losses: 1, draws: 2 },
                 points: 11,
             },
             {
                 _id: "002",
                 sport: "Baloncesto",
                 name: "Equipo B",
-                results: { partidos_ganados: 2, partidos_perdidos: 2, partidos_empatados: 1 },
+                results: { wins: 2, losses: 2, draws: 1 },
                 points: 7,
             },
         ];

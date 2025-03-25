@@ -16,8 +16,8 @@ const PagoAbono = () => {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
 
-    const altaGymState = user?.alta?.gimnasio?.estado;
-    const altaAtletismoState = user?.alta?.atletismo?.estado;
+    const registrationGymState = user?.registration?.gym?.isActive;
+    const registrationAthleticsState = user?.registration?.athletics?.isActive;
 
     const handleDeporteChange = (event) => {
         setFiltroDeporte(event.target.value);
@@ -25,7 +25,6 @@ const PagoAbono = () => {
 
     const handlePago = async () => {
         setIsLoading(true);
-        console.log('---isLoading---', isLoading);
         if (user) {
             const {startDate, endDate} = getMonthlyDateRange(user);
 
@@ -38,9 +37,9 @@ const PagoAbono = () => {
             const updateData = { ...user };
             /* istanbul ignore else */
             if (filtroDeporte === 'Gimnasio') {
-                updateData.subscription.gimnasio = { estado: true, fechaInicio: startDate, fechaFin: endDate };
+                updateData.subscription.gym = { isActive: true, initDate: startDate, endDate: endDate };
             } else if (filtroDeporte === 'Atletismo') {
-                updateData.subscription.atletismo = { estado: true, fechaInicio: startDate, fechaFin: endDate };
+                updateData.subscription.athletics = { isActive: true, initDate: startDate, endDate: endDate };
             }else {
                 toast.error('Escoge Gimnasio o Atletismo por favor.');
                 setIsLoading(false);
@@ -72,10 +71,15 @@ const PagoAbono = () => {
         }
     };
 
-    const handleAlta = () => {
+    const handleRegistration = () => {
         navigate('/salas-preparacion/alta');
     };
 
+    const translate = (filtroDeporte) => {
+        return filtroDeporte === 'Gimnasio' ? 'gym' : 'athletics';
+    };
+    console.log('---user?.subscription?.gym?.isActive---', user?.subscription?.gym?.isActive);
+    console.log('---user?.subscription?.athletics?.isActive---', user?.subscription?.athletics?.isActive);
     return (
         <div id="component-content" className="content">
             <div className="back-button-div">
@@ -87,20 +91,20 @@ const PagoAbono = () => {
                 <br />Coste del abono: <b> {isStudent() ? studentsPricesMessage : externalPrice + '€'} </b>
             </p>
             {user ? (
-                ( altaGymState || altaAtletismoState ) ? (
+                ( registrationGymState || registrationAthleticsState ) ? (
                     <section>
                         <select value={filtroDeporte} onChange={handleDeporteChange}>
                             <option value="Gimnasio">Gimnasio</option>
                             <option value="Atletismo">Atletismo</option>
                         </select>
-                        {filtroDeporte === 'Gimnasio' && !altaGymState || filtroDeporte === 'Atletismo' && !altaAtletismoState
+                        {filtroDeporte === 'Gimnasio' && !registrationGymState || filtroDeporte === 'Atletismo' && !registrationAthleticsState
                             ? <p>No estás dado de alta en {filtroDeporte}</p>
                             :
                             <div className="centered-div button-alta">
-                                <p>Inicio abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gimnasio?.fechaInicio) : getDateWithoutTime(user?.subscription?.atletismo?.fechaInicio) }
-                                <br />Expiración abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gimnasio?.fechaFin) : getDateWithoutTime(user?.subscription?.atletismo?.fechaFin) }</p>
+                                <p>Inicio abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gym?.initDate) : getDateWithoutTime(user?.subscription?.athletics?.initDate) }
+                                <br />Expiración abono: { filtroDeporte === 'Gimnasio' ? getDateWithoutTime(user?.subscription?.gym?.endDate) : getDateWithoutTime(user?.subscription?.athletics?.endDate) }</p>
                                 {isStudent() || isAdmin() ? (
-                                    user?.subscription?.[filtroDeporte.toLowerCase()]?.estado ? (
+                                    user?.subscription?.[translate(filtroDeporte)]?.isActive ? (
                                         <button onClick={handlePago}>Renovar gratis</button>
                                     ) : (
                                         <button onClick={handlePago}>Obtener gratis</button>
@@ -117,7 +121,7 @@ const PagoAbono = () => {
                         <p className="text-error">
                             No estás dado de alta en ninguna instalación de preparación física (gimnasio o atletismo).
                         </p>
-                        <button onClick={handleAlta}>Alta de usuarios</button>
+                        <button onClick={handleRegistration}>Alta de usuarios</button>
                     </div>
                 )
             ) : (

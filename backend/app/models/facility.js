@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
-// Esquema de Intalación
 const instalacionSchema = new mongoose.Schema({
-    nombre: {
+    name: {
       type: String,
       required: true
     },
@@ -10,31 +9,30 @@ const instalacionSchema = new mongoose.Schema({
       type: Boolean,
       required: true
     },
-    descripcion: {
+    description: {
       type: String,
       required: true
     },
-    horario: {
-      horarioInicio: {
+    schedule: {
+      initialHour: {
         type: Date,
         required: true
       },
-      horarioFin: {
+      endHour: {
       type: Date,
       required: true
       }
     },
-    capacidad: {
+    capacity: {
       type: Number,
       required: true
     },
-    precioPorMediaHora: {
+    priceForHalfHour: {
       type: Number,
       required: true
     }
-  });
+});
 
-// Definir el modelo de Instalación
-const Instalacion = mongoose.model('instalaciones', instalacionSchema);
+const Facility = mongoose.model('instalaciones', instalacionSchema);
 
-module.exports = Instalacion;
+module.exports = Facility;

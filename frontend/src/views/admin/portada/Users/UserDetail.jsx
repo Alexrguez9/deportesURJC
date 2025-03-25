@@ -50,54 +50,54 @@ const UserDetail = () => {
                     <strong>Rol:</strong> <span>{user?.role}</span>
                 </div>
                 <div>
-                    <strong>Alta GYM:</strong> <span>{user?.alta?.gimnasio?.estado ? "Sí" : "No"}</span>
+                    <strong>Alta GYM:</strong> <span>{user?.registration?.gym?.isActive ? "Sí" : "No"}</span>
                 </div>
-                {user.alta?.gimnasio?.estado && (
+                {user.registration?.gym?.isActive && (
                 <>
                     <div>
-                    <strong>Inicio GYM:</strong> <span>{user?.alta?.gimnasio?.fechaInicio}</span>
+                    <strong>Inicio GYM:</strong> <span>{user?.registration?.gym?.initDate}</span>
                     </div>
                     <div>
-                    <strong>Fin GYM:</strong> <span>{user?.alta?.gimnasio?.fechaFin}</span>
+                    <strong>Fin GYM:</strong> <span>{user?.registration?.gym?.endDate}</span>
                     </div>
                 </>
                 )}
                 <div>
-                    <strong>Alta Atletismo:</strong> <span>{user?.alta?.atletismo?.estado ? "Sí" : "No"}</span>
+                    <strong>Alta Atletismo:</strong> <span>{user?.registration?.athletics?.isActive ? "Sí" : "No"}</span>
                 </div>
-                {user.alta?.atletismo?.estado && (
+                {user.registration?.athletics?.isActive && (
                 <>
                     <div>
-                    <strong>Inicio Atletismo:</strong> <span>{user?.alta?.atletismo?.fechaInicio}</span>
+                    <strong>Inicio Atletismo:</strong> <span>{user?.registration?.athletics?.initDate}</span>
                     </div>
                     <div>
-                    <strong>Fin Atletismo:</strong> <span>{user?.alta?.atletismo?.fechaFin}</span>
+                    <strong>Fin Atletismo:</strong> <span>{user?.registration?.athletics?.endDate}</span>
                     </div>
                 </>
                 )}
                 <div>
-                    <strong>Suscripción GYM:</strong> <span>{user?.subscription?.gimnasio?.estado ? "Sí" : "No"}</span>
+                    <strong>Suscripción GYM:</strong> <span>{user?.subscription?.gym?.isActive ? "Sí" : "No"}</span>
                 </div>
-                {user.subscription?.gimnasio?.estado && (
+                {user.subscription?.gym?.isActive && (
                 <>
                     <div>
-                    <strong>Inicio GYM:</strong> <span>{user?.subscription?.gimnasio?.fechaInicio}</span>
+                    <strong>Inicio GYM:</strong> <span>{user?.subscription?.gym?.initDate}</span>
                     </div>
                     <div>
-                    <strong>Fin GYM:</strong> <span>{user?.subscription?.gimnasio?.fechaFin}</span>
+                    <strong>Fin GYM:</strong> <span>{user?.subscription?.gym?.endDate}</span>
                     </div>
                 </>
                 )}
                 <div>
-                    <strong>Suscripción Atletismo:</strong> <span>{user?.subscription?.atletismo?.estado ? "Sí" : "No"}</span>
+                    <strong>Suscripción Atletismo:</strong> <span>{user?.subscription?.athletics?.isActive ? "Sí" : "No"}</span>
                 </div>
-                {user.subscription?.atletismo?.estado && (
+                {user.subscription?.athletics?.isActive && (
                 <>
                     <div>
-                    <strong>Inicio Atletismo:</strong> <span>{user?.subscription?.atletismo?.fechaInicio}</span>
+                    <strong>Inicio Atletismo:</strong> <span>{user?.subscription?.athletics?.initDate}</span>
                     </div>
                     <div>
-                    <strong>Fin Atletismo:</strong> <span>{user?.subscription?.atletismo?.fechaFin}</span>
+                    <strong>Fin Atletismo:</strong> <span>{user?.subscription?.athletics?.endDate}</span>
                     </div>
                 </>
                 )}

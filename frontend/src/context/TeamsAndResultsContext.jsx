@@ -69,10 +69,10 @@ export const TeamsAndResultsProvider = ({ children }) => {
         try {
             const formattedData = {
                 ...newData,
-                jornada: Number(newData.jornada),
-                goles_local: Number(newData.goles_local),
-                goles_visitante: Number(newData.goles_visitante),
-                fecha: new Date(newData.fecha).toISOString(), // Asegura que sea formato ISO
+                round: Number(newData.round),
+                localGoals: Number(newData.localGoals),
+                visitorGoals: Number(newData.visitorGoals),
+                date: new Date(newData.date).toISOString(), // Asegura que sea formato ISO
             };
 
             const response = await fetch('http://localhost:4000/resultados', {
@@ -122,10 +122,10 @@ export const TeamsAndResultsProvider = ({ children }) => {
         try {
             const formattedData = {
                 ...updateData,
-                jornada: Number(updateData.jornada),
-                goles_local: Number(updateData.goles_local),
-                goles_visitante: Number(updateData.goles_visitante),
-                fecha: new Date(updateData.fecha)?.toISOString(), // Asegura que sea formato ISO
+                round: Number(updateData.round),
+                localGoals: Number(updateData.localGoals),
+                visitorGoals: Number(updateData.visitorGoals),
+                date: new Date(updateData.date)?.toISOString(), // Asegura que sea formato ISO
             };
 
             const response = await fetch(`http://localhost:4000/resultados/${resultId}`, {
@@ -198,21 +198,21 @@ export const TeamsAndResultsProvider = ({ children }) => {
             }
             const resultados = await response.json();
 
-            // Actualiza el nombre en todos los resultados donde el equipo aparece
-            for (const resultado of resultados) {
-                const isLocal = resultado.equipo_local_id === teamId;
-                const updatedFields = isLocal ? { equipo_local: newTeamName } : { equipo_visitante: newTeamName };
+            // Update name in all results where the team appears
+            for (const result of resultados) {
+                const isLocal = result.localTeamId === teamId;
+                const updatedFields = isLocal ? { localTeam: newTeamName } : { visitorTeam: newTeamName };
     
-                await fetch(`http://localhost:4000/resultados/${resultado._id}`, {
+                await fetch(`http://localhost:4000/resultados/${result._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ ...resultado, ...updatedFields }),
+                    body: JSON.stringify({ ...result, ...updatedFields }),
                 });
             }
     
-            // Refresca resultados locales del contexto
+            // Refresh results from context
             await fetchResults();
             return response;
         } catch (error) {

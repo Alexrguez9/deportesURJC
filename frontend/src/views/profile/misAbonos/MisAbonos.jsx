@@ -10,10 +10,10 @@ const MisAbonos = () => {
 
     const handleBaja = (instalacion) => async () => {
         const updatedUserData  = { ...user };
-        if (instalacion === 'gimnasio') {
-            updatedUserData.subscription.gimnasio = { estado: false, fechaInicio: null, fechaFin: null };
-        } else if (instalacion === 'atletismo') {
-            updatedUserData.subscription.atletismo = { estado: false, fechaInicio: null, fechaFin: null};
+        if (instalacion === 'gym') {
+            updatedUserData.subscription.gym = { isActive: false, initDate: null, endDate: null };
+        } else if (instalacion === 'athletics') {
+            updatedUserData.subscription.athletics = { isActive: false, initDate: null, endDate: null};
         }
         try {
             await updateUser(user._id, updatedUserData );
@@ -27,20 +27,20 @@ const MisAbonos = () => {
     }, []);
 
     // Altas
-    const altaStateGimnasio = user?.alta?.gimnasio?.estado;
-    const altaStateAtletismo = user?.alta?.atletismo?.estado;
-    const gimnasioAltaDateInit = getPrettyDate(user?.alta?.gimnasio?.fechaInicio);
-    const atletismoAltaDateInit = getPrettyDate(user?.alta?.atletismo?.fechaInicio);
+    const registrationGym = user?.registration?.gym?.isActive;
+    const registrationAthletics = user?.registration?.athletics?.isActive;
+    const gymRegistrationDateInit = getPrettyDate(user?.registration?.gym?.initDate);
+    const athleticsRegistrationDateInit = getPrettyDate(user?.registration?.athletics?.initDate);
 
     // Subscriptions
-    const subscriptionStateAtletismo = user?.subscription?.atletismo?.estado;
-    const subscriptionStateGimnasio = user?.subscription?.gimnasio?.estado;
-    const gimnasioSubsDateInit = getPrettyDate(user?.subscription?.gimnasio?.fechaInicio);
-    const gimnasioSubsDateEnd = getPrettyDate(user?.subscription?.gimnasio?.fechaFin);
-    const atletismoSubsDateInit = getPrettyDate(user?.subscription?.atletismo?.fechaInicio);
-    const atletismoSubsDateEnd = getPrettyDate(user?.subscription?.atletismo?.fechaFin);
-    const isGimnasioExpired = isSubscriptionExpired(user?.subscription?.gimnasio);
-    const isAtletismoExpired = isSubscriptionExpired(user?.subscription?.atletismo);
+    const subscriptionStateAtletismo = user?.subscription?.athletics?.isActive;
+    const subscriptionStateGimnasio = user?.subscription?.gym?.isActive;
+    const gymSubsDateInit = getPrettyDate(user?.subscription?.gym?.initDate);
+    const gymSubsDateEnd = getPrettyDate(user?.subscription?.gym?.endDate);
+    const athleticsSubsDateInit = getPrettyDate(user?.subscription?.athletics?.initDate);
+    const athleticsSubsDateEnd = getPrettyDate(user?.subscription?.athletics?.endDate);
+    const isGymExpired = isSubscriptionExpired(user?.subscription?.gym);
+    const isAthleticsExpired = isSubscriptionExpired(user?.subscription?.athletics);
 
 
     return (
@@ -51,20 +51,20 @@ const MisAbonos = () => {
                     <div className="cards-container">
                         <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
-                            <p>Fecha alta: { altaStateGimnasio ? gimnasioAltaDateInit : 'No estás dado de alta'}</p>
+                            <p>Fecha alta: { registrationGym ? gymRegistrationDateInit : 'No estás dado de alta'}</p>
                             <h2>GIMNASIO MENSUAL</h2>
                             { subscriptionStateGimnasio ? (
-                                isGimnasioExpired ? (
+                                isGymExpired ? (
                                     <p>Abono caducado</p>
                                 ) : (
                                     <Fragment>
                                         <p>Abono activo</p>
-                                        <p>Fecha alta: { gimnasioSubsDateInit }</p>
-                                        <p>Fecha caducidad: { gimnasioSubsDateEnd }</p>
-                                        {/* <p>{ user?.alta?.gimnasio?.fechaInicio?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
+                                        <p>Fecha alta: { gymSubsDateInit }</p>
+                                        <p>Fecha caducidad: { gymSubsDateEnd }</p>
+                                        {/* <p>{ user?.registration?.gym?.initDate?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                         <button
                                             onClick={()=> {
-                                                toast.promise(handleBaja('gimnasio'), {
+                                                toast.promise(handleBaja('gym'), {
                                                     loading: 'Dando de baja...',
                                                     success: 'Baja completada con éxito!',
                                                     error: (err) => {
@@ -81,20 +81,20 @@ const MisAbonos = () => {
                         </div>
                         <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
-                            <p>Fecha de alta: { altaStateAtletismo ? atletismoAltaDateInit : 'No estás dado de alta' }</p>
+                            <p>Fecha de alta: { registrationAthletics ? athleticsRegistrationDateInit : 'No estás dado de alta' }</p>
                             <h2>ATLETISMO MENSUAL</h2>
                             { subscriptionStateAtletismo ? (
-                                isAtletismoExpired ? (
+                                isAthleticsExpired ? (
                                     <p>Abono caducado</p>
                                 ) : (
                                     <Fragment>
                                         <p>Abono activo</p>
-                                        <p>Fecha inicio: { atletismoSubsDateInit }</p>
-                                        <p>Fecha caducidad: { atletismoSubsDateEnd }</p>
-                                        {/* <p>{ user?.alta?.atletismo?.fechaInicio?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
+                                        <p>Fecha inicio: { athleticsSubsDateInit }</p>
+                                        <p>Fecha caducidad: { athleticsSubsDateEnd }</p>
+                                        {/* <p>{ user?.registration?.athletics?.initDate?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                         <button
                                             onClick={()=> {
-                                                toast.promise(handleBaja('atletismo'), {
+                                                toast.promise(handleBaja('athletics'), {
                                                     loading: 'Dando de baja...',
                                                     success: 'Baja completada con éxito!',
                                                     error: (err) => {

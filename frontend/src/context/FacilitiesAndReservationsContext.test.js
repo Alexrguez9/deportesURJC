@@ -1,7 +1,6 @@
 // FacilitiesAndReservationsContext.test.js
 import { render, waitFor, act } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../context/FacilitiesAndReservationsContext";
-import mockFacilitiesAndReservationsContext from "../utils/mocks";
 
 // Mock de fetch global para simular las llamadas a la API
 global.fetch = jest.fn();
@@ -587,10 +586,10 @@ describe("FacilitiesAndReservationsProvider", () => {
 
     describe("contarReservasPorFranjaHoraria", () => {
         it("debería retornar 0 si no hay reservas para la franja horaria especificada", async () => {
-            const fechaInicio = new Date(2024, 0, 1, 10, 0);
+            const initDate = new Date(2024, 0, 1, 10, 0);
             contextValues.reservas = [];
 
-            const count = await contextValues.contarReservasPorFranjaHoraria("1", fechaInicio);
+            const count = await contextValues.contarReservasPorFranjaHoraria("1", initDate);
 
             expect(count).toBe(0);
         });

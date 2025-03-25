@@ -53,13 +53,13 @@ describe("PagoAbono Component", () => {
             _id: '123',
             name: 'Test User',
             email: 'test@example.com',
-            alta: {
-                gimnasio: { estado: true, fechaInicio: new Date('2024-08-03T09:00'), fechaFin: new Date('2024-08-03T09:00') },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            registration: {
+                gym: { isActive: true, initDate: new Date('2024-08-03T09:00'), endDate: new Date('2024-08-03T09:00') },
+                athletics: { isActive: false, initDate: null, endDate: null }
             },
             subscription: {
-                gimnasio: { estado: true, fechaInicio: new Date('2025-03-01T09:00'), fechaFin: new Date('2025-04-01T09:00') },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+                gym: { isActive: true, initDate: new Date('2025-03-01T09:00'), endDate: new Date('2025-04-01T09:00') },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200 });
@@ -83,16 +83,16 @@ describe("PagoAbono Component", () => {
         expect(screen.getByText("No estás dado de alta en Atletismo")).toBeInTheDocument();
     });
 
-    it("renderiza mensaje de 'No estás dado de alta en Gimnasio' si no hay alta", async () => {
+    it("renderiza mensaje de 'No estás dado de alta en Gimnasio' si no hay registration", async () => {
         mockAuthContext.user = {
             ...mockAuthContext.user,
-            alta: {
-                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                atletismo: { estado: true, fechaInicio: new Date('2024-08-03T09:00'), fechaFin: new Date('2027-08-03T09:00') }
+            registration: {
+                gym: { isActive: false, initDate: null, endDate: null },
+                athletics: { isActive: true, initDate: new Date('2024-08-03T09:00'), endDate: new Date('2027-08-03T09:00') }
             },
             subscription: {
-                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+                gym: { isActive: false, initDate: null, endDate: null },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         render(<BrowserRouter><PagoAbono /></BrowserRouter>);
@@ -144,13 +144,13 @@ describe("PagoAbono Component", () => {
     it("renderiza botón 'Obtener gratis' si no tiene suscripción activa", () => {
         mockAuthContext.user = {
             ...mockAuthContext.user,
-            alta: {
-                gimnasio: { estado: true, fechaInicio: "2025-03-01", fechaFin: "2025-04-01" },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            registration: {
+                gym: { isActive: true, initDate: "2025-03-01", endDate: "2025-04-01" },
+                athletics: { isActive: false, initDate: null, endDate: null }
             },
             subscription: {
-                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+                gym: { isActive: false, initDate: null, endDate: null },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         useAuth.mockReturnValue(mockAuthContext);
@@ -165,15 +165,15 @@ describe("PagoAbono Component", () => {
         expect(screen.getByText(/Debes iniciar sesión/)).toBeInTheDocument();
     });
 
-    it("renderiza mensaje de alta requerido si no hay alta en ninguna instalación", () => {
-        mockAuthContext.user.alta.gimnasio.estado = false;
+    it("renderiza mensaje de alta requerido si no hay registration en ninguna instalación", () => {
+        mockAuthContext.user.registration.gym.isActive = false;
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><PagoAbono /></BrowserRouter>);
         expect(screen.getByText(/No estás dado de alta en ninguna instalación/)).toBeInTheDocument();
     });
 
-    it("redirige al alta si se pulsa el botón de alta", () => {
-        mockAuthContext.user.alta.gimnasio.estado = false;
+    it("redirige al alta si se pulsa el botón de registration", () => {
+        mockAuthContext.user.registration.gym.isActive = false;
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><PagoAbono /></BrowserRouter>);
         fireEvent.click(screen.getByRole("button", { name: /Alta de usuarios/i }));

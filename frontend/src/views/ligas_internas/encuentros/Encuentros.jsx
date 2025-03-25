@@ -26,6 +26,7 @@ const Encuentros = () => {
             await fetchResults();
         }
         fetchData();
+        console.log('---results---', results);
     }, []);
 
     const handleDeporteChange = (event) => {
@@ -36,26 +37,26 @@ const Encuentros = () => {
         return filtroDeporte === 'Fútbol-7' || results.sport === filtroDeporte;
     });
 
-    const openModal = async (resultado) => {
-        if (!resultado) {
+    const openModal = async (result) => {
+        if (!result) {
             setPopupData({
                 sport: '',
-                jornada: '',
-                equipo_local_id: '',
-                goles_local: '',
-                equipo_visitante: 0,
-                equipo_visitante_id: 0,
-                goles_visitante: '',
-                fecha: '',
-                hora: '',
-                lugar: ''
+                round: '',
+                localTeamId: '',
+                localGoals: '',
+                visitorTeam: 0,
+                visitorTeamId: 0,
+                visitorGoals: '',
+                date: '',
+                hour: '',
+                place: ''
             });
             const newResult = true; // Variable temporal
             setIsNewResult(newResult);
             setIsModalOpen(true);
             return;
         }
-        const newPopupData = await { ...resultado };
+        const newPopupData = await { ...result };
         setPopupData(newPopupData);
         setIsModalOpen(true);
     }
@@ -125,13 +126,13 @@ const Encuentros = () => {
                         <tbody>
                             {filteredResults?.map((results) => (
                                 <tr key={results._id}>
-                                    <td>{results.jornada}</td>
-                                    <td>{results.equipo_local}</td>
-                                    <td>{results.goles_local}</td>
-                                    <td>{results.goles_visitante}</td>
-                                    <td>{results.equipo_visitante}</td>
-                                    <td>{getPrettyDate(results.fecha)}</td>
-                                    <td>{results.lugar}</td>
+                                    <td>{results.round}</td>
+                                    <td>{results.localTeam}</td>
+                                    <td>{results.localGoals}</td>
+                                    <td>{results.visitorGoals}</td>
+                                    <td>{results.visitorTeam}</td>
+                                    <td>{getPrettyDate(results.date)}</td>
+                                    <td>{results.place}</td>
                                     {isAdmin() && (
                                         <td>
                                             <>

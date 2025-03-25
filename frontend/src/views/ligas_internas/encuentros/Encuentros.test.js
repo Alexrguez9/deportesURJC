@@ -129,8 +129,8 @@ describe("Encuentros Component", () => {
 
     it("filters results by sport", async () => {
         mockTeamsAndResultsContext.results = [
-            { _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-sala', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' },
-            { _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'F7 local', equipo_visitante: 'F7 visitor' },
+            { _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-sala', localTeam: 'Local Team', visitorTeam: 'Visitor Team' },
+            { _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'F7 local', visitorTeam: 'F7 visitor' },
         ];
         mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
@@ -161,7 +161,7 @@ describe("Encuentros Component", () => {
 
     it("opens the modal when 'add' button is clicked by admin", async () => {
         mockAuthContext.isAdmin.mockReturnValue(true);
-        mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }]; // Added team names
+        mockTeamsAndResultsContext.results = [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'Local Team', visitorTeam: 'Visitor Team' }]; // Added team names
         mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
         useAuth.mockReturnValue(mockAuthContext);
@@ -180,7 +180,7 @@ describe("Encuentros Component", () => {
 
     it("opens the modal with result data when 'edit' button is clicked by admin", async () => {
         mockAuthContext.isAdmin.mockReturnValue(true);
-        mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }];
+        mockTeamsAndResultsContext.results = [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'Local Team', visitorTeam: 'Visitor Team' }];
         mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
         useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
         useAuth.mockReturnValue(mockAuthContext);
@@ -202,7 +202,7 @@ describe("Encuentros Component", () => {
         it("calls deleteResult function and shows success toast on successful deletion", async () => {
             mockAuthContext.isAdmin.mockReturnValue(true);
             mockTeamsAndResultsContext.deleteResult.mockResolvedValue({ ok: true });
-            mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }];
+            mockTeamsAndResultsContext.results = [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'Local Team', visitorTeam: 'Visitor Team' }];
             mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
             useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
             useAuth.mockReturnValue(mockAuthContext);
@@ -229,7 +229,7 @@ describe("Encuentros Component", () => {
         it("shows error toast if deleteResult API call fails", async () => {
             mockAuthContext.isAdmin.mockReturnValue(true);
             mockTeamsAndResultsContext.deleteResult.mockResolvedValue({ ok: false });
-            mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }];
+            mockTeamsAndResultsContext.results = [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'Local Team', visitorTeam: 'Visitor Team' }];
             mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
             useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
             useAuth.mockReturnValue(mockAuthContext);
@@ -256,7 +256,7 @@ describe("Encuentros Component", () => {
         it("shows generic error toast if deleteResult throws error", async () => {
             mockAuthContext.isAdmin.mockReturnValue(true);
             mockTeamsAndResultsContext.deleteResult.mockRejectedValue(new Error("Delete failed"));
-            mockTeamsAndResultsContext.results = [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7', equipo_local: 'Local Team', equipo_visitante: 'Visitor Team' }];
+            mockTeamsAndResultsContext.results = [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'Local Team', visitorTeam: 'Visitor Team' }];
             mockTeamsAndResultsContext.fetchResults.mockResolvedValue(mockTeamsAndResultsContext.results);
             useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
             useAuth.mockReturnValue(mockAuthContext);

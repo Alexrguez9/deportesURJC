@@ -39,13 +39,13 @@ describe("UserDetail Component", () => {
             name: "Test User",
             email: "test@user.com",
             role: "user",
-            alta: {
-                gimnasio: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2024-12-31" },
-                atletismo: { estado: false }
+            registration: {
+                gym: { isActive: true, initDate: "2024-01-01", endDate: "2024-12-31" },
+                athletics: { isActive: false }
             },
             subscription: {
-                gimnasio: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2025-01-01" },
-                atletismo: { estado: false }
+                gym: { isActive: true, initDate: "2024-01-01", endDate: "2025-01-01" },
+                athletics: { isActive: false }
             },
             balance: 42
         };
@@ -68,21 +68,21 @@ describe("UserDetail Component", () => {
             expect(screen.getByText("Alta GYM:").nextElementSibling).toHaveTextContent("Sí");
 
             const allInicioGYM = screen.getAllByText("Inicio GYM:");
-            expect(allInicioGYM[0].nextElementSibling).toHaveTextContent(mockUser.alta.gimnasio.fechaInicio);
-            expect(allInicioGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gimnasio.fechaInicio);
+            expect(allInicioGYM[0].nextElementSibling).toHaveTextContent(mockUser.registration.gym.initDate);
+            expect(allInicioGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gym.initDate);
 
             expect(screen.getByText("Alta Atletismo:").nextElementSibling).toHaveTextContent("No");
 
             const allFinGYM = screen.getAllByText("Fin GYM:");
-            expect(allFinGYM[0].nextElementSibling).toHaveTextContent(mockUser.alta.gimnasio.fechaFin);
-            expect(allFinGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gimnasio.fechaFin);
+            expect(allFinGYM[0].nextElementSibling).toHaveTextContent(mockUser.registration.gym.endDate);
+            expect(allFinGYM[1].nextElementSibling).toHaveTextContent(mockUser.subscription.gym.endDate);
         
             expect(screen.getByText("Saldo:").nextElementSibling).toHaveTextContent(`${mockUser.balance} €`);
         });
         
     });
 
-    it("does not show subscription dates if estado is false", async () => {
+    it("does not show subscription dates if isActive is false", async () => {
         useParams.mockReturnValue({ id: '1' });
         const mockUser = {
             _id: "1",
@@ -90,8 +90,8 @@ describe("UserDetail Component", () => {
             email: "test@user.com",
             role: "user",
             subscription: {
-                gimnasio: { estado: false },
-                atletismo: { estado: false }
+                gym: { isActive: false },
+                athletics: { isActive: false }
             },
             balance: 50
         };
@@ -130,9 +130,9 @@ describe("UserDetail Component", () => {
     });
 
     // Ya existentes pero siguen siendo válidos:
-    it("displays 'No' when alta.gimnasio.estado is false", async () => {
+    it("displays 'No' when registration.gym.isActive is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 };
+        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", registration: { gym: { isActive: false } }, balance: 10 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -147,9 +147,9 @@ describe("UserDetail Component", () => {
         });
     });
 
-    it("does not display GYM start/end dates if alta.gimnasio.estado is false", async () => {
+    it("does not display GYM start/end dates if registration.gym.isActive is false", async () => {
         useParams.mockReturnValue({ id: '1' });
-        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 };
+        const mockUser = { _id: "1", name: "Test", email: "test@user.com", role: "user", registration: { gym: { isActive: false } }, balance: 10 };
         mockAuthContext.getAllUsers.mockResolvedValue([mockUser]);
 
         render(
@@ -164,15 +164,15 @@ describe("UserDetail Component", () => {
         });
     });
 
-    it('displays "Sí" when subscription.atletismo.estado is true', async () => {
+    it('displays "Sí" when subscription.athletics.isActive is true', async () => {
         useParams.mockReturnValue({ id: '1' });
         const mockUser = [{
             _id: "1",
             name: "Test",
             email: "test@user.com",
             role: "user",
-            alta: { gimnasio: { estado: false }, atletismo: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2024-12-31" } },
-            subscription: { atletismo: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2025-01-01" } },
+            registration: { gym: { isActive: false }, athletics: { isActive: true, initDate: "2024-01-01", endDate: "2024-12-31" } },
+            subscription: { athletics: { isActive: true, initDate: "2024-01-01", endDate: "2025-01-01" } },
             balance: 10
         }];
         mockAuthContext.getAllUsers.mockResolvedValue(mockUser);

@@ -97,7 +97,7 @@ describe("TeamsAndResultsProvider", () => {
 
     describe("fetchResults", () => {
         it("debería obtener la lista de resultados correctamente", async () => {
-            const mockResults = [{ _id: "1", jornada: 1 }, { _id: "2", jornada: 2 }];
+            const mockResults = [{ _id: "1", round: 1 }, { _id: "2", round: 2 }];
             fetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => mockResults,
@@ -209,7 +209,7 @@ describe("TeamsAndResultsProvider", () => {
 
     describe("addResult", () => {
         it("debería añadir un resultado correctamente", async () => {
-            const newResult = { jornada: "1", equipo_local: "Local", equipo_visitante: "Visitor", goles_local: "1", goles_visitante: "0", fecha: "2024-01-01" };
+            const newResult = { round: "1", localTeam: "Local", visitorTeam: "Visitor", localGoals: "1", visitorGoals: "0", date: "2024-01-01" };
             fetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({ ...newResult, _id: 'newResultId' }), // Simulando respuesta del backend
@@ -238,7 +238,7 @@ describe("TeamsAndResultsProvider", () => {
 
             await act(async () => {
                 try {
-                    await contextValues.addResult({ jornada: "a", equipo_local: "Local", equipo_visitante: "Visitor" }); // Jornada no numérica
+                    await contextValues.addResult({ round: "a", localTeam: "Local", visitorTeam: "Visitor" }); // round no numérica
                 } catch (error) {
                     errorThrown = error;
                 }
@@ -258,7 +258,7 @@ describe("TeamsAndResultsProvider", () => {
 
             await act(async () => {
                 try {
-                    await contextValues.addResult({ jornada: "1", equipo_local: "Local", equipo_visitante: "Visitor" });
+                    await contextValues.addResult({ round: "1", localTeam: "Local", visitorTeam: "Visitor" });
                 } catch (error) {
                     errorThrown = error;
                 }
@@ -346,7 +346,7 @@ describe("TeamsAndResultsProvider", () => {
     describe("updateResult", () => {
         it("debería actualizar un resultado correctamente", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1", fecha: "2024-01-01" };
+            const updateData = { localGoals: "2", visitorGoals: "1", date: "2024-01-01" };
             const mockUpdatedTeam = { _id: resultId, ...updateData };
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -368,7 +368,7 @@ describe("TeamsAndResultsProvider", () => {
 
         it("debería manejar errores al actualizar un resultado", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1" };
+            const updateData = { localGoals: "2", visitorGoals: "1" };
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 404,
@@ -393,7 +393,7 @@ describe("TeamsAndResultsProvider", () => {
 
         it("debería manejar errores de red al actualizar un resultado", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1" };
+            const updateData = { localGoals: "2", visitorGoals: "1" };
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
             let errorThrown;
@@ -550,23 +550,23 @@ describe("TeamsAndResultsProvider", () => {
             const mockResultados = [
                 {
                     _id: "res1",
-                    equipo_local_id: "1",
-                    equipo_local: "Viejo Nombre",
-                    equipo_visitante: "Otro Equipo",
-                    goles_local: 2,
-                    goles_visitante: 1,
-                    jornada: 1,
-                    fecha: "2024-01-01T00:00:00.000Z",
+                    localTeamId: "1",
+                    localTeam: "Viejo Nombre",
+                    visitorTeam: "Otro Equipo",
+                    localGoals: 2,
+                    visitorGoals: 1,
+                    round: 1,
+                    date: "2024-01-01T00:00:00.000Z",
                 },
                 {
                     _id: "res2",
-                    equipo_visitante_id: "1",
-                    equipo_local: "Otro",
-                    equipo_visitante: "Viejo Nombre",
-                    goles_local: 1,
-                    goles_visitante: 3,
-                    jornada: 2,
-                    fecha: "2024-01-02T00:00:00.000Z",
+                    visitorTeamId: "1",
+                    localTeam: "Otro",
+                    visitorTeam: "Viejo Nombre",
+                    localGoals: 1,
+                    visitorGoals: 3,
+                    round: 2,
+                    date: "2024-01-02T00:00:00.000Z",
                 }
             ];
     

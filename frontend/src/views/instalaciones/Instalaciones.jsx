@@ -25,10 +25,10 @@ const Instalaciones = () => {
             formState: { errors: errorFacilities },
         } = useForm({
             userId: user?._id || '',
-            instalacionId: selectedInstalacionId || '',
-            fechaInicio: '',
-            fechaFin: '',
-            precioTotal: instalacionCompleta?.precioPorMediaHora || 0,
+            facilityId: selectedInstalacionId || '',
+            initDate: '',
+            endDate: '',
+            totalPrice: instalacionCompleta?.priceForHalfHour || 0,
             isPaid: false,
         });
 
@@ -68,12 +68,12 @@ const Instalaciones = () => {
     
         const inst = await getInstalacion(selectedInstalacionId);
         /* istanbul ignore next */
-        if (!inst || !inst.horario || !inst.horario.horarioInicio) {
+        if (!inst || !inst.schedule || !inst.schedule.initialHour) {
             console.error("Error: Instalación sin horario válido", inst);
             return new Date();
         }
     
-        const startTime = new Date(inst.horario.horarioInicio);
+        const startTime = new Date(inst.schedule.initialHour);
          /* istanbul ignore if */
         if (isNaN(startTime.getTime())) {
             console.error("Error: La fecha no es válida", startTime);
@@ -91,7 +91,7 @@ const Instalaciones = () => {
         } else if (selectedInstalacionId) {
             const inst = await getInstalacion(selectedInstalacionId);
 
-            const startTime = new Date(inst?.horario?.horarioFin);
+            const startTime = new Date(inst?.schedule?.endHour);
             let hours = startTime.getUTCHours();
             let minutes = startTime.getUTCMinutes();
 
@@ -135,27 +135,27 @@ const Instalaciones = () => {
             endDate.setMinutes(30);
         }
 
-        // TODO: ver que hacer con precioTotal
+        // TODO: ver que hacer con totalPrice
         const reserva = {
             userId: user?._id,
-            instalacionId: selectedInstalacionId,
-            fechaInicio: startDate,
-            fechaFin: endDate,
-            precioTotal: instalacionCompleta?.precioPorMediaHora,
+            facilityId: selectedInstalacionId,
+            initDate: startDate,
+            endDate: endDate,
+            totalPrice: instalacionCompleta?.priceForHalfHour,
             isPaid: false,
         };
 
         const numReservas = await contarReservasPorFranjaHoraria(selectedInstalacionId, startDate);
         toast.promise(
             async () => {
-                if (numReservas >= instalacionCompleta.capacidad) {
+                if (numReservas >= instalacionCompleta.capacity) {
                     // setErrorMessage('Actualmente ya hay ' + numReservas + ' reservas para esa hora. Por favor, selecciona otra hora.');
                     throw { status: { ok: false, error: 'Actualmente ya no hay reservas disponibles para esa hora. Por favor, selecciona otra hora.' } };
                 }
 
                 try {
                     const response = await addReservation(reserva);
-                    //setPrecioTotal(response.data.precioTotal);
+                    //setPrecioTotal(response.data.totalPrice);
                     if (!response.ok) {
                         throw { status: { ok: false, error: 'Hubo un problema al realizar la reserva. Inténtalo de nuevo.' } };
                     } else {
@@ -163,7 +163,7 @@ const Instalaciones = () => {
                             user.email,
                             'DeportesURJC - Confirmación de reserva',
                             `Hola ${user.name},\n\n` +
-                            `Tu reserva de la instalación ${instalacionCompleta.nombre} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.precioPorMediaHora}€.\n¡Nos vemos pronto!\n\n` +
+                            `Tu reserva de la instalación ${instalacionCompleta.name} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${instalacionCompleta.priceForHalfHour}€.\n¡Nos vemos pronto!\n\n` +
                             `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                         );
                         toast.success('Correo de confirmación enviado a: ' + user.email);
@@ -210,17 +210,17 @@ const Instalaciones = () => {
                             >
                                 {facilities.map(instalacion => (
                                     <option key={instalacion?._id} value={instalacion?._id}>
-                                        {instalacion.nombre}
+                                        {instalacion.name}
                                     </option>
                                 ))}
                             </select>
                         </label>
                     </div>
                     <div>
-                        <>Horario de inicio: {instalacionCompleta.horario && instalacionCompleta.horario.horarioInicio ? getHoursAndMinutes(instalacionCompleta.horario.horarioInicio) : 'No definido'}<br />
-                        Horario de fin: {instalacionCompleta.horario && instalacionCompleta.horario.horarioFin ? getHoursAndMinutes(instalacionCompleta.horario.horarioFin) : 'No definido'}</>
-                        {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.precioPorMediaHora}€.</p>)}
-                        {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.nombre}: {instalacionCompleta.capacidad}</p>}
+                        <>Horario de inicio: {instalacionCompleta.schedule && instalacionCompleta.schedule.initialHour ? getHoursAndMinutes(instalacionCompleta.schedule.initialHour) : 'No definido'}<br />
+                        Horario de fin: {instalacionCompleta.schedule && instalacionCompleta.schedule.endHour ? getHoursAndMinutes(instalacionCompleta.schedule.endHour) : 'No definido'}</>
+                        {selectedInstalacionId && (<p>Precio por media hora: {instalacionCompleta?.priceForHalfHour}€.</p>)}
+                        {instalacionCompleta && <p>Capacidad por reserva para {instalacionCompleta.name}: {instalacionCompleta.capacity}</p>}
                     </div>
                     
                     {selectedInstalacionId ? (

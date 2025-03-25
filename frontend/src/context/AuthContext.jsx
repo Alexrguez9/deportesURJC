@@ -158,17 +158,21 @@ export const AuthProvider = ({ children }) => {
                 credentials: 'include'
             });
     
+            const data = await response.json();
+    
             if (!response.ok) {
-                throw new Error(`Error ${response.status}: No se pudo actualizar el perfil`);
+                throw new Error(data.message || "Error al actualizar el perfil");
             }
     
-            const updatedUser = await response.json();
-            return updatedUser;
+            setUser(data.user);
+            return data.user;
+    
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);
             throw error;
         }
     };
+    
 
     const deleteUser = async (userId) => {
         try {

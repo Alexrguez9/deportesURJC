@@ -20,12 +20,12 @@ export const getPrettyDate = (date) => {
 
 export const getMonthlyDateRange = (user) => {
     if (user) {
-        const fechaInicio = new Date();
-        const fechaFin = new Date(fechaInicio);
-        fechaFin.setMonth(fechaFin.getMonth() + 1); // Un mes de alta
+        const initDate = new Date();
+        const endDate = new Date(initDate);
+        endDate.setMonth(endDate.getMonth() + 1); // Un mes de alta
         return {
-            startDate: fechaInicio.toISOString(),
-            endDate: fechaFin.toISOString()
+            startDate: initDate.toISOString(),
+            endDate: endDate.toISOString()
         };
     }
     return {startDate: null, endDate: null};

@@ -56,9 +56,9 @@ const Clasificaciones = () => {
                         <tr key={equipo._id}>
                             <td>{equipo.name}</td>
                             <td>{equipo.sport}</td>
-                            <td>{equipo.results.partidos_ganados}</td>
-                            <td>{equipo.results.partidos_empatados}</td>
-                            <td>{equipo.results.partidos_perdidos}</td>
+                            <td>{equipo.results.wins}</td>
+                            <td>{equipo.results.draws}</td>
+                            <td>{equipo.results.losses}</td>
                             <td>{equipo.points}</td>
                         </tr>
                     ))}

@@ -35,9 +35,9 @@ const AdminTeams = () => {
                 sport: '',
                 name: '',
                 results: {
-                    partidos_ganados: 0,
-                    partidos_perdidos: 0,
-                    partidos_empatados: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
                 },
             });
             const newResult = true; // Variable temporal
@@ -114,9 +114,9 @@ const AdminTeams = () => {
                                     <tr key={teams?._id}>
                                         <td>{teams?.sport}</td>
                                         <td>{teams?.name}</td>
-                                        <td>{teams?.results?.partidos_ganados}</td>
-                                        <td>{teams?.results?.partidos_perdidos}</td>
-                                        <td>{teams?.results?.partidos_empatados}</td>
+                                        <td>{teams?.results?.wins}</td>
+                                        <td>{teams?.results?.losses}</td>
+                                        <td>{teams?.results?.draws}</td>
                                         <td>{teams?.points}</td>
                                         <td>
                                             <GoPencil onClick={() => openModal(teams)} className="editPencil" />

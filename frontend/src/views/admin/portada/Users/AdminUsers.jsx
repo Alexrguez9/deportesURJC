@@ -111,10 +111,10 @@ const AdminUsers = () => {
                                         <td>{userInList?.name}</td>
                                         <td>{userInList?.email}</td>
                                         <td>{userInList?.role}</td>
-                                        <td>{userInList?.alta?.gimnasio?.estado ? "Sí" : "No"}</td>
-                                        <td>{userInList?.alta?.atletismo?.estado ? "Sí" : "No"}</td>
-                                        <td>{userInList?.subscription?.gimnasio?.estado ? "Sí" : "No"}</td>
-                                        <td>{userInList?.subscription?.atletismo?.estado ? "Sí" : "No"}</td>
+                                        <td>{userInList?.registration?.gym?.isActive ? "Sí" : "No"}</td>
+                                        <td>{userInList?.registration?.athletics?.isActive ? "Sí" : "No"}</td>
+                                        <td>{userInList?.subscription?.gym?.isActive ? "Sí" : "No"}</td>
+                                        <td>{userInList?.subscription?.athletics?.isActive ? "Sí" : "No"}</td>
                                         <td>{userInList?.balance} €</td>
                                         <td className="actions">
                                             <GoPencil onClick={() => openModal(userInList)} className="editPencil" />

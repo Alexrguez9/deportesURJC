@@ -12,9 +12,9 @@ const EquipoSchema = new mongoose.Schema(
       required: true
     },
     results: {
-      partidos_ganados: { type: Number, default: 0 },
-      partidos_empatados: { type: Number, default: 0 },
-      partidos_perdidos: { type: Number, default: 0 }
+      wins: { type: Number, default: 0 },
+      draws: { type: Number, default: 0 },
+      losses: { type: Number, default: 0 }
     },
     points: { 
       type: Number,
@@ -27,6 +27,6 @@ const EquipoSchema = new mongoose.Schema(
   }
 );
 
-const Equipo = mongoose.model('equipos', EquipoSchema);
+const Team = mongoose.model('equipos', EquipoSchema);
 
-module.exports = Equipo;
+module.exports = Team;

@@ -28,10 +28,10 @@ export const mockAuthContext = {
 
 export const mockFacilitiesAndReservationsContext = {
     instalaciones: [{ _id: '1', name: 'Gimnasio' }],
-    reservas: [{ _id: '1', instalacionId: '1', fechaInicio: new Date('2024-08-05T10:00') }],
+    reservas: [{ _id: '1', facilityId: '1', initDate: new Date('2024-08-05T10:00') }],
     getInstalacion: jest.fn().mockResolvedValue({ _id: '1', name: 'Gimnasio' }),
     getAllFacilities: jest.fn().mockResolvedValue([{ _id: '1', name: 'Gimnasio' }]),
-    getAllReservations: jest.fn().mockResolvedValue([{ _id: '1', instalacionId: '1' }]),
+    getAllReservations: jest.fn().mockResolvedValue([{ _id: '1', facilityId: '1' }]),
     addReservation: jest.fn().mockResolvedValue({ ok: true }),
     addFacility: jest.fn().mockImplementation(async (facility) => ({ ok: true, name: facility.name })),
     updateReservation: jest.fn().mockResolvedValue({ ok: true }),
@@ -45,9 +45,9 @@ export const mockFacilitiesAndReservationsContext = {
 
 export const mockTeamsAndResultsContext = {
     teams: [{ _id: '1', name: 'Equipo A', sport: 'Fútbol-7' }],
-    results: [{ _id: '1', jornada: 1, goles_local: 2, goles_visitante: 1, sport: 'Fútbol-7' }],
+    results: [{ _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7' }],
     fetchTeams: jest.fn().mockResolvedValue([{ _id: '1', name: 'Equipo A' }]),
-    fetchResults: jest.fn().mockResolvedValue([{ _id: '1', jornada: 1 }]),
+    fetchResults: jest.fn().mockResolvedValue([{ _id: '1', round: 1 }]),
     addTeam: jest.fn().mockResolvedValue({ ok: true }),
     addResult: jest.fn().mockResolvedValue({ ok: true }),
     updateTeam: jest.fn().mockResolvedValue({ ok: true }),

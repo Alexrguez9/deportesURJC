@@ -26,9 +26,9 @@ describe("ReservasPreparacion Component", () => {
             _id: '123',
             name: 'Test User',
             email: 'test@example.com',
-            alta: {
-                gimnasio: { estado: true, fechaInicio: new Date(), fechaFin: new Date() },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            registration: {
+                gym: { isActive: true, initDate: new Date(), endDate: new Date() },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         mockAuthContext.isStudent = jest.fn().mockReturnValue(true);
@@ -37,7 +37,7 @@ describe("ReservasPreparacion Component", () => {
         });
     });
 
-    it("renders component elements correctly when user is logged in and has alta in at least one sport", async () => {
+    it("renders component elements correctly when user is logged in and has registration in at least one sport", async () => {
         render(
             <BrowserRouter>
                 <ReservasPreparacion />
@@ -69,10 +69,10 @@ describe("ReservasPreparacion Component", () => {
         expect(screen.queryByText(/Debes estar dado de alta en el servicio de deportes para poder reservar salas de preparación física./i)).not.toBeInTheDocument();
     });
 
-    it("renders 'Debes estar dado de alta...' message and alta button when user is logged in but has no altas", async () => {
-        mockAuthContext.user.alta = {
-            gimnasio: { estado: false },
-            atletismo: { estado: false }
+    it("renders 'Debes estar dado de alta...' message and registration button when user is logged in but has no registration", async () => {
+        mockAuthContext.user.registration = {
+            gym: { isActive: false },
+            athletics: { isActive: false }
         };
         render(
             <BrowserRouter>
@@ -101,7 +101,7 @@ describe("ReservasPreparacion Component", () => {
         });
     });
 
-    it("renders 'PRÓXIMAMENTE...' message when user has alta", async () => {
+    it("renders 'PRÓXIMAMENTE...' message when user has registration", async () => {
         render(
             <BrowserRouter>
                 <ReservasPreparacion />
@@ -122,10 +122,10 @@ describe("ReservasPreparacion Component", () => {
         expect(screen.queryByText(/PRÓXIMAMENTE.../i)).not.toBeInTheDocument();
     });
 
-    it("does not render sport filter dropdown and 'PRÓXIMAMENTE...' message when user is logged in but has no alta", async () => {
-        mockAuthContext.user.alta = {
-            gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-            atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+    it("does not render sport filter dropdown and 'PRÓXIMAMENTE...' message when user is logged in but has no registration", async () => {
+        mockAuthContext.user.registration = {
+            gym: { isActive: false, initDate: null, endDate: null },
+            athletics: { isActive: false, initDate: null, endDate: null }
         };
         useAuth.mockReturnValue(mockAuthContext);
         render(
@@ -155,9 +155,9 @@ describe("ReservasPreparacion Component", () => {
     });
 
     it("navigates to '/salas-preparacion/alta' when 'Darme de alta' button is clicked", async () => {
-        mockAuthContext.user.alta = {
-            gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-            atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+        mockAuthContext.user.registration = {
+            gym: { isActive: false, initDate: null, endDate: null },
+            athletics: { isActive: false, initDate: null, endDate: null }
         };
         useAuth.mockReturnValue(mockAuthContext);
         render(
@@ -166,8 +166,8 @@ describe("ReservasPreparacion Component", () => {
             </BrowserRouter>
         );
 
-        const altaButton = screen.getByRole("button", { name: /darme de alta/i });
-        fireEvent.click(altaButton);
+        const registrationButton = screen.getByRole("button", { name: /darme de alta/i });
+        fireEvent.click(registrationButton);
 
         await waitFor(() => {
             expect(screen.getByRole('link', { name: /darme de alta/i })).toHaveAttribute('href', '/salas-preparacion/alta');

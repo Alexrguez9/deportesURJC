@@ -60,7 +60,7 @@ describe("Instalaciones Component", () => {
             });
 
             it("displays facilities after successful API call", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1' }, { _id: '2', nombre: 'Pista 2' }]);
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1' }, { _id: '2', name: 'Pista 2' }]);
                 render(<Instalaciones />);
                 await waitFor(() => {
                     expect(screen.getByRole('option', { name: /Pista 1/i })).toBeInTheDocument();
@@ -86,8 +86,8 @@ describe("Instalaciones Component", () => {
             });
 
             it("displays price per media hora when an instalacion is selected", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20 }]);
-                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 });
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20 }]);
+                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 });
     
                 render(<Instalaciones />);
                 await waitFor(() => {
@@ -97,8 +97,8 @@ describe("Instalaciones Component", () => {
             });
 
             it("displays capacity per reserva when an instalacion is selected", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', capacidad: 5 }]);
-                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 });
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', capacity: 5 }]);
+                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 });
 
                 render(<Instalaciones />);
                 await waitFor(() => {
@@ -110,8 +110,8 @@ describe("Instalaciones Component", () => {
             });
 
             it("renders DatePicker and Reservar button when instalacion is selected", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20 }]);
-                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20 }]);
+                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
    
                render(<Instalaciones />);
                await waitFor(() => {
@@ -128,7 +128,7 @@ describe("Instalaciones Component", () => {
                 mockAuthContext.user = { _id: '1', email: 'test@test.com', role: 'user' };
             });
             it("updates selectedInstalacionId state on facility selection", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1' }]);
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1' }]);
                 render(<Instalaciones />);
 
                 await waitFor(() => {
@@ -137,7 +137,7 @@ describe("Instalaciones Component", () => {
             });
 
             it("calls obtenerInstalacionCompleta  when facility is selected", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1' }]);
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1' }]);
                 render(<Instalaciones />);
     
                 await waitFor(async () => {
@@ -148,8 +148,8 @@ describe("Instalaciones Component", () => {
             });
     
             it("updates startDate state on date change in DatePicker", async () => {
-                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20 }]);
-                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+                mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20 }]);
+                mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
                 render(<Instalaciones />);
     
                 await waitFor(() => {
@@ -163,24 +163,24 @@ describe("Instalaciones Component", () => {
             it("calls handleReservation on valid form submit", async () => {
                 mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{
                     _id: "1",
-                    nombre: "Fútbol sala",
-                    precioPorMediaHora: 20,
-                    capacidad: 5,
-                    descripcion: "Pista de fútbol sala",
-                    horario: { horarioInicio: new Date("2023-08-03T09:00"), horarioFin: new Date("2023-08-03T19:00") },
+                    name: "Fútbol sala",
+                    priceForHalfHour: 20,
+                    capacity: 5,
+                    description: "Pista de fútbol sala",
+                    schedule: { initialHour: new Date("2023-08-03T09:00"), endHour: new Date("2023-08-03T19:00") },
                     isInternSport: true,
                 }]);
                 mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({
                     _id: "1",
-                    nombre: "Fútbol sala",
-                    precioPorMediaHora: 20,
-                    capacidad: 5,
-                    descripcion: "Pista de fútbol sala",
-                    horario: { horarioInicio: new Date("2023-08-03T09:00"), horarioFin: new Date("2023-08-03T19:30") },
+                    name: "Fútbol sala",
+                    priceForHalfHour: 20,
+                    capacity: 5,
+                    description: "Pista de fútbol sala",
+                    schedule: { initialHour: new Date("2023-08-03T09:00"), endHour: new Date("2023-08-03T19:30") },
                     isInternSport: true,
                 });
                 mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(0);
-                mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: true, data: { precioTotal: 20 } });
+                mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: true, data: { totalPrice: 20 } });
                 mockFacilitiesAndReservationsContext.getMinTime.mockResolvedValue(new Date(new Date().setHours(9, 0, 0)));
                 mockFacilitiesAndReservationsContext.getMaxTime.mockResolvedValue(new Date(new Date().setHours(19, 30, 0)));
             
@@ -215,8 +215,8 @@ describe("Instalaciones Component", () => {
             
 
             // it("shows success message on successful reservation", async () => {
-            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 }]);
-            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 }]);
+            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
             //     mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(0);
             //     mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: true });
             
@@ -239,8 +239,8 @@ describe("Instalaciones Component", () => {
             // });
 
             // it("shows error message on failed reservation", async () => {
-            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 }]);
-            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 }]);
+            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
             //     mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(0);
             //     mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: false });
 
@@ -257,8 +257,8 @@ describe("Instalaciones Component", () => {
             // });
 
             // it("calls contarReservasPorFranjaHoraria before addReservation", async () => {
-            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 }]);
-            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 }]);
+            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
             //     mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(0);
             //     mockFacilitiesAndReservationsContext.addReservation.mockResolvedValue({ ok: true });
 
@@ -278,8 +278,8 @@ describe("Instalaciones Component", () => {
             // });
 
             // it("shows error message if facility is fully booked", async () => {
-            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 1 }]); // Capacity 1 for easy full booking
-            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 1 });
+            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 1 }]); // Capacity 1 for easy full booking
+            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 1 });
             //     mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(1); // Already 1 reservation, so fully booked
 
             //     render(<Instalaciones />);
@@ -294,8 +294,8 @@ describe("Instalaciones Component", () => {
             //     });
             // });
             // it("updates startDate state on date change in DatePicker", async () => {
-            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20 }]);
-            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+            //     mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20 }]);
+            //     mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
             //     render(<Instalaciones />);
 
             //     await waitFor(() => {
@@ -327,8 +327,8 @@ describe("Instalaciones Component", () => {
 
         //     it("shows alert if user is not logged in when trying to reserve", async () => {
         //         useAuth.mockReturnValue({ ...mockAuthContext, user: null });
-        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 }]);
-        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 }]);
+        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
         //         render(<Instalaciones />);
 
         //         await waitFor(() => {
@@ -354,8 +354,8 @@ describe("Instalaciones Component", () => {
 
         //     it("shows console error if instalacion has no valid horario", async () => {
         //         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); // Spy on console.error to check if it's called
-        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1' }]);
-        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', nombre: 'Pista 1', horario: null }); // Invalid horario
+        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1' }]);
+        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', name: 'Pista 1', schedule: null }); // Invalid schedule
 
         //         render(<Instalaciones />);
 
@@ -363,13 +363,13 @@ describe("Instalaciones Component", () => {
         //             fireEvent.change(screen.getByRole('combobox', { name: /instalación/i }), { target: { value: '1' } });
         //         });
 
-        //         expect(consoleErrorSpy).toHaveBeenCalledWith( "Error: Instalación sin horario válido", { _id: '1', nombre: 'Pista 1', horario: null });
+        //         expect(consoleErrorSpy).toHaveBeenCalledWith( "Error: Instalación sin schedule válido", { _id: '1', name: 'Pista 1', schedule: null });
         //         consoleErrorSpy.mockRestore(); // Restore console.error
         //     });
 
         //     it("shows alert error if addReservation API call fails", async () => {
-        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', nombre: 'Pista 1', precioPorMediaHora: 20, capacidad: 5 }]);
-        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', nombre: 'Pista 1', horario: { horarioInicio: new Date('2023-08-03T09:00'), horarioFin: new Date('2023-08-03T19:00')}, precioPorMediaHora: 20, capacidad: 5 });
+        //         mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([{ _id: '1', name: 'Pista 1', priceForHalfHour: 20, capacity: 5 }]);
+        //         mockFacilitiesAndReservationsContext.getInstalacion.mockResolvedValue({ _id: '1', _id:'1', name: 'Pista 1', schedule: { initialHour: new Date('2023-08-03T09:00'), endHour: new Date('2023-08-03T19:00')}, priceForHalfHour: 20, capacity: 5 });
         //         mockFacilitiesAndReservationsContext.contarReservasPorFranjaHoraria.mockResolvedValue(0);
         //         mockFacilitiesAndReservationsContext.addReservation.mockRejectedValue(new Error("API addReservation error"));
 

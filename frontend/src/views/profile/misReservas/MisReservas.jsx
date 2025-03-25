@@ -20,6 +20,8 @@ const MisReservas = () => {
 
     useEffect(() => {
         fetchReservas();
+        console.log('---filteredReservas---', filteredReservas);
+        console.log('---instalaciones---', instalaciones);
     }, []);
 
     const handleRemoveReserva = async (reservaId) => {
@@ -59,12 +61,12 @@ const MisReservas = () => {
                                 <tbody>
                                     {filteredReservas.map((reserva) => (
                                         <tr key={reserva._id}>
-                                            <td>{instalaciones.find(instalacion => instalacion._id === reserva.instalacionId)?.nombre}</td>
-                                            <td>{getPrettyDate(reserva.fechaInicio)}</td>
-                                            <td>{getPrettyDate(reserva.fechaFin)}</td>
+                                            <td>{instalaciones.find(instalacion => instalacion._id === reserva.facilityId)?.name}</td>
+                                            <td>{getPrettyDate(reserva.initDate)}</td>
+                                            <td>{getPrettyDate(reserva.endDate)}</td>
                                             <td>
                                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {reserva.precioTotal} €
+                                                    {reserva.totalPrice} €
                                                     {reserva.isPaid ? (
                                                         <MdAttachMoney title="Pagado" style={{ marginLeft: '0.5rem', color: 'green', width: '1.5em', height: '1.5em' }} />
                                                     ) : (

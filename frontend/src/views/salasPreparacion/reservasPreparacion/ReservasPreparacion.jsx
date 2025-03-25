@@ -34,7 +34,7 @@ const ReservasPreparacion = () => {
             <h1>Reservas de sala de preparación física</h1>
             <p>Bienvenido a la página de Reservas de salas de preparación física URJC Deportes.</p>
             {user ? (
-                user.alta.gimnasio.estado || user.alta.atletismo.estado ? (
+                user.registration.gym.isActive || user.registration.athletics.isActive ? (
                     <section>
                     <select value={filtroDeporte} onChange={handleDeporteChange}>
                         <option value="Gimnasio">Gimnasio</option>

@@ -7,20 +7,20 @@ const reservasSchema = new mongoose.Schema({
     ref: 'users',
     required: true
   },
-  instalacionId: {
+  facilityId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'instalaciones',
     required: true
   },
-  fechaInicio: {
+  initDate: {
     type: Date,
     required: true
   },
-  fechaFin: {
+  endDate: {
     type: Date,
     required: true
   },
-  precioTotal: {
+  totalPrice: {
     type: Number,
     required: true
   },
@@ -30,20 +30,20 @@ const reservasSchema = new mongoose.Schema({
   },
 });
 
-// Middleware para calcular el precio total antes de guardar
+// Middleware to calculate the total price before saving the reservation
 reservasSchema.pre('save', async function(next) {
-  const reserva = this;
-  const instalacion = await mongoose.model('instalaciones').findById(reserva.instalacionId);
+  const reservation = this;
+  const facility = await mongoose.model('instalaciones').findById(reservation.facilityId);
 
-  if (!instalacion) {
+  if (!facility) {
     throw new Error('Instalación no encontrada');
   }
-  const duracion = (reserva.fechaFin - reserva.fechaInicio) / (30 * 60 * 1000); // Duración en medias horas
-  reserva.precioTotal = duracion * instalacion.precioPorMediaHora;
+  const duration = (reservation.endDate - reservation.initDate) / (30 * 60 * 1000); // Duration in half hours
+  reservation.totalPrice = duration * facility.priceForHalfHour;
   
   next();
 });
 
 
-const Reservas = mongoose.model('reservas', reservasSchema);
-module.exports = Reservas;
+const Reservation = mongoose.model('reservas', reservasSchema);
+module.exports = Reservation;

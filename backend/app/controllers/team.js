@@ -1,16 +1,15 @@
-//controller-equipo.js
-const model = require('../models/Equipo');
+const Team = require('../models/team');
 
-// obtener data de users
+// Get all teams
 exports.getData = async (req, res) => {
-    const userData = await model.find();
-    res.json(userData);
+    const users = await Team.find();
+    res.json(users);
 }
 
-// insertar data en users
+// Add a new team
 exports.insertData = async (req, res) => {
     try {
-        const newTeam = new model(req.body);
+        const newTeam = new Team(req.body);
         const savedTeam = await newTeam.save();
         res.status(201).json(savedTeam);
     } catch (error) {
@@ -19,15 +18,13 @@ exports.insertData = async (req, res) => {
     }
 };
 
-
-// editar un equipo
+// Update a team
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
-        const updateTeam = await model.updateOne({ _id: id }, { $set: body });
+        const updateTeam = await Team.updateOne({ _id: id }, { $set: body });
 
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
         if (updateTeam.matchedCount === 0) {
             res.status(404).json({ message: 'No se encontró el equipo para actualizar' });
         } else {
@@ -40,13 +37,12 @@ exports.updateOne = async (req, res) => {
     }
 }
 
-// eliminar un equipo
+// Delete a team
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedTeam = await model.deleteOne({ _id: id });
+        const deletedTeam = await Team.deleteOne({ _id: id });
         
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
         if (deletedTeam.deletedCount === 0) {
             res.status(404).json({ message: 'No se encontró el equipo para eliminar' });
         } else {

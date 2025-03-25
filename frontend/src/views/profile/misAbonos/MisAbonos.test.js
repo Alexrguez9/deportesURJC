@@ -40,13 +40,13 @@ describe("MisAbonos Component", () => {
         mockAuthContext.user = {
             _id: "123",
             name: "Test User",
-            alta: {
-                gimnasio: { estado: true, fechaInicio: "2024-01-01", fechaFin: "2024-12-31" },
-                atletismo: { estado: true, fechaInicio: "2024-02-01", fechaFin: "2024-12-31" }
+            registration: {
+                gym: { isActive: true, initDate: "2024-01-01", endDate: "2024-12-31" },
+                athletics: { isActive: true, initDate: "2024-02-01", endDate: "2024-12-31" }
             },
             subscription: {
-                gimnasio: { estado: true, fechaInicio: "2025-03-01", fechaFin: "2025-03-30" },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+                gym: { isActive: true, initDate: "2025-03-01", endDate: "2025-03-30" },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200 });
@@ -60,20 +60,20 @@ describe("MisAbonos Component", () => {
         expect(screen.getByText("Debes iniciar sesión para acceder a tus abonos")).toBeInTheDocument();
     });
 
-    it("renderiza ambas tarjetas de gimnasio y atletismo", () => {
+    it("renderiza ambas tarjetas de gym y athletics", () => {
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         expect(screen.getByText("GIMNASIO MENSUAL")).toBeInTheDocument();
         expect(screen.getByText("ATLETISMO MENSUAL")).toBeInTheDocument();
     });
 
-    it("muestra información de abono activo y botón de baja para gimnasio", () => {
+    it("muestra información de abono activo y botón de baja para gym", () => {
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         const gimnasioCard = screen.getByText("GIMNASIO MENSUAL").closest(".card-no-hover");
         expect(within(gimnasioCard).getByText("Abono activo")).toBeInTheDocument();
         expect(within(gimnasioCard).getByRole("button", { name: /Darme de baja/i })).toBeInTheDocument();
     });
 
-    it("muestra 'Abono inactivo' si no hay suscripción en atletismo", () => {
+    it("muestra 'Abono inactivo' si no hay suscripción en athletics", () => {
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         const atletismoCard = screen.getByText("ATLETISMO MENSUAL").closest(".card-no-hover");
         expect(within(atletismoCard).getByText("Abono inactivo")).toBeInTheDocument();
@@ -90,15 +90,15 @@ describe("MisAbonos Component", () => {
         )).toBeInTheDocument();
     });
     
-    it("muestra mensaje de 'No estás dado de alta' si el alta es false", () => {
-        mockAuthContext.user.alta.gimnasio.estado = false;
-        mockAuthContext.user.alta.atletismo.estado = false;
+    it("muestra mensaje de 'No estás dado de alta' si el registration es false", () => {
+        mockAuthContext.user.registration.gym.isActive = false;
+        mockAuthContext.user.registration.athletics.isActive = false;
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         expect(screen.getAllByText(/No estás dado de alta/)).toHaveLength(2);
     });
 
-    it("llama a updateUser y muestra éxito al dar de baja en gimnasio", async () => {
+    it("llama a updateUser y muestra éxito al dar de baja en gym", async () => {
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         const btn = screen.getByRole("button", { name: /Darme de baja/i });
         fireEvent.click(btn);
@@ -106,10 +106,10 @@ describe("MisAbonos Component", () => {
         await waitFor(() => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith("123", expect.objectContaining({
                 subscription: expect.objectContaining({
-                    gimnasio: {
-                        estado: false,
-                        fechaInicio: null,
-                        fechaFin: null
+                    gym: {
+                        isActive: false,
+                        initDate: null,
+                        endDate: null
                     }
                 })
             }));
@@ -117,10 +117,10 @@ describe("MisAbonos Component", () => {
         });
     });
 
-    it("llama a updateUser y muestra éxito al dar de baja en atletismo", async () => {
-        mockAuthContext.user.subscription.atletismo.estado = true;
-        mockAuthContext.user.subscription.atletismo.fechaInicio = "2025-01-01";
-        mockAuthContext.user.subscription.atletismo.fechaFin = "2029-01-01";
+    it("llama a updateUser y muestra éxito al dar de baja en athletics", async () => {
+        mockAuthContext.user.subscription.athletics.isActive = true;
+        mockAuthContext.user.subscription.athletics.initDate = "2025-01-01";
+        mockAuthContext.user.subscription.athletics.endDate = "2029-01-01";
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
         const btn = screen.getAllByRole("button", { name: /Darme de baja/i })[1];
@@ -129,10 +129,10 @@ describe("MisAbonos Component", () => {
         await waitFor(() => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith("123", expect.objectContaining({
                 subscription: expect.objectContaining({
-                    atletismo: {
-                        estado: false,
-                        fechaInicio: null,
-                        fechaFin: null
+                    athletics: {
+                        isActive: false,
+                        initDate: null,
+                        endDate: null
                     }
                 })
             }));
@@ -140,7 +140,7 @@ describe("MisAbonos Component", () => {
         });
     });
 
-    it("show error message if updateUser fails for gimnasio", async () => {
+    it("show error message if updateUser fails for gym", async () => {
         mockAuthContext.updateUser = jest.fn().mockRejectedValue({ status: 500 });
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
@@ -152,10 +152,10 @@ describe("MisAbonos Component", () => {
         });
     });
 
-    it("show error message if updateUser fails for atletismo", async () => {
-        mockAuthContext.user.subscription.atletismo.estado = true;
-        mockAuthContext.user.subscription.atletismo.fechaInicio = "2025-01-01";
-        mockAuthContext.user.subscription.atletismo.fechaFin = "2029-01-01";
+    it("show error message if updateUser fails for athletics", async () => {
+        mockAuthContext.user.subscription.athletics.isActive = true;
+        mockAuthContext.user.subscription.athletics.initDate = "2025-01-01";
+        mockAuthContext.user.subscription.athletics.endDate = "2029-01-01";
         mockAuthContext.updateUser = jest.fn().mockRejectedValue({ status: 500 });
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
@@ -178,8 +178,8 @@ describe("MisAbonos Component", () => {
         )).toBeInTheDocument();
     });
 
-    it("renderiza correctamente el mensaje de 'Abono inactivo' en atletismo", () => {
-        mockAuthContext.user.subscription.gimnasio.estado = false;
+    it("renderiza correctamente el mensaje de 'Abono inactivo' en athletics", () => {
+        mockAuthContext.user.subscription.gym.isActive = false;
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MisAbonos /></BrowserRouter>);
     
@@ -187,14 +187,14 @@ describe("MisAbonos Component", () => {
         expect(within(atletismoCard).getByText("Abono inactivo")).toBeInTheDocument();
     });
 
-    it("show 'Abono caducado' for gimnasio if end date is past", () => {
+    it("show 'Abono caducado' for gym if end date is past", () => {
         const pastDate = new Date();
         pastDate.setDate(pastDate.getDate() - 1);
     
-        mockAuthContext.user.subscription.gimnasio = {
-            estado: true,
-            fechaInicio: "2025-01-01",
-            fechaFin: "2025-01-31",
+        mockAuthContext.user.subscription.gym = {
+            isActive: true,
+            initDate: "2025-01-01",
+            endDate: "2025-01-31",
         };
     
         useAuth.mockReturnValue(mockAuthContext);
@@ -204,14 +204,14 @@ describe("MisAbonos Component", () => {
         expect(within(gimnasioCard).getByText("Abono caducado")).toBeInTheDocument();
     });
     
-    it("show 'Abono caducado' for atletismo if end date is past", () => {
+    it("show 'Abono caducado' for athletics if end date is past", () => {
         const pastDate = new Date();
         pastDate.setDate(pastDate.getDate() - 1);
     
-        mockAuthContext.user.subscription.atletismo = {
-            estado: true,
-            fechaInicio: "2025-01-01",
-            fechaFin:  "2025-01-31",
+        mockAuthContext.user.subscription.athletics = {
+            isActive: true,
+            initDate: "2025-01-01",
+            endDate:  "2025-01-31",
         };
     
         useAuth.mockReturnValue(mockAuthContext);

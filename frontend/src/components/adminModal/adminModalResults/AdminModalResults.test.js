@@ -68,36 +68,36 @@ describe("AdminModalResults Component", () => {
         // it.only("fills in initial values when in Edit Result mode", async () => {
         //     const popupData = {
         //         sport: 'Fútbol-sala',
-        //         jornada: 5, equipo_local: 'Team 1',
-        //         goles_local: 2,
-        //         equipo_visitante: 'Team 3',
-        //         goles_visitante: 1,
-        //         fecha: '2024-07-20',
-        //         hora: '10:00',
-        //         lugar: 'Campo A'
+        //         round: 5, localTeam: 'Team 1',
+        //         localGoals: 2,
+        //         visitorTeam: 'Team 3',
+        //         visitorGoals: 1,
+        //         date: '2024-07-20',
+        //         hour: '10:00',
+        //         place: 'Campo A'
         //     };
         //     render(<AdminModalResults closeModal={mockCloseModal} isNewResult={false} popupData={popupData} />);
         //     await waitFor(() => {
         //         expect(screen.getByLabelText(/Deporte:/i)).toHaveValue(popupData.sport);
-        //         expect(screen.getByLabelText(/Jornada:/i)).toHaveValue(Number(popupData.jornada));
+        //         expect(screen.getByLabelText(/Jornada:/i)).toHaveValue(Number(popupData.round));
         //     });
         //     fireEvent.blur(screen.getByLabelText(/Deporte:/i));
 
         //     await waitFor(() => {
-        //         expect(screen.getByRole('combobox', { name: /Equipo local:/i })).toHaveValue(popupData.equipo_local);
-        //         expect(screen.getByLabelText(/Goles del equipo local:/i)).toHaveValue(Number(popupData.goles_local));
+        //         expect(screen.getByRole('combobox', { name: /Equipo local:/i })).toHaveValue(popupData.localTeam);
+        //         expect(screen.getByLabelText(/Goles del equipo local:/i)).toHaveValue(Number(popupData.localGoals));
         //     });
         //     fireEvent.blur(screen.getByRole('combobox', { name: "Equipo local:" }));
 
         //     await waitFor(() => {
-        //         expect(screen.getByRole('combobox', { name: /Equipo visitante:/i })).toHaveValue(popupData.equipo_visitante);
-        //         expect(screen.getByLabelText(/Goles del equipo visitante:/i)).toHaveValue(Number(popupData.goles_visitante));
+        //         expect(screen.getByRole('combobox', { name: /Equipo visitante:/i })).toHaveValue(popupData.visitorTeam);
+        //         expect(screen.getByLabelText(/Goles del equipo visitante:/i)).toHaveValue(Number(popupData.visitorGoals));
         //     });
         //     fireEvent.blur(screen.getByRole('combobox', { name: "Equipo visitante:" }));
 
         //     expect(screen.getByLabelText(/Fecha:/i)).toHaveValue("2024-07-20");
-        //     expect(screen.getByLabelText(/Hora:/i)).toHaveValue(popupData.hora);
-        //     expect(screen.getByLabelText(/Lugar:/i)).toHaveValue(popupData.lugar);
+        //     expect(screen.getByLabelText(/Hora:/i)).toHaveValue(popupData.hour);
+        //     expect(screen.getByLabelText(/Lugar:/i)).toHaveValue(popupData.place);
         // });
 
         it("filters teams based on selected sport", async () => {
@@ -161,7 +161,7 @@ describe("AdminModalResults Component", () => {
             });
         });
 
-        it("shows error message for empty fecha field", async () => {
+        it("shows error message for empty date field", async () => {
             render(<AdminModalResults closeModal={mockCloseModal} isNewResult={true} />);
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
@@ -169,7 +169,7 @@ describe("AdminModalResults Component", () => {
             });
         });
 
-        it("shows error message for empty hora field", async () => {
+        it("shows error message for empty hour field", async () => {
             render(<AdminModalResults closeModal={mockCloseModal} isNewResult={true} />);
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
@@ -177,11 +177,11 @@ describe("AdminModalResults Component", () => {
             });
         });
 
-        it("shows error message for empty lugar field", async () => {
+        it("shows error message for empty place field", async () => {
             render(<AdminModalResults closeModal={mockCloseModal} isNewResult={true} />);
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
             await waitFor(() => {
-                expect(screen.getByText(/Por favor, introduce el lugar/i)).toBeInTheDocument();
+                expect(screen.getByText(/Por favor, introduce el place/i)).toBeInTheDocument();
             });
         });
 
@@ -255,14 +255,14 @@ describe("AdminModalResults Component", () => {
                 popupData={{
                     _id: 'someResultId',
                     sport: 'Fútbol-7',
-                    jornada: 1,
-                    equipo_local: 'Team 1',
-                    goles_local: 2,
-                    equipo_visitante: 'Team 2',
-                    goles_visitante: 1,
-                    fecha: '2024-07-21',
-                    hora: '11:00',
-                    lugar: 'Campo B'
+                    round: 1,
+                    localTeam: 'Team 1',
+                    localGoals: 2,
+                    visitorTeam: 'Team 2',
+                    visitorGoals: 1,
+                    date: '2024-07-21',
+                    hour: '11:00',
+                    place: 'Campo B'
                 }}
             />);
 
@@ -321,14 +321,14 @@ describe("AdminModalResults Component", () => {
                 popupData={{
                     _id: 'someResultId',
                     sport: 'Fútbol-7',
-                    jornada: 1,
-                    equipo_local: 'Team 1',
-                    goles_local: 2,
-                    equipo_visitante: 'Team 2',
-                    goles_visitante: 1,
-                    fecha: '2024-07-21',
-                    hora: '11:00',
-                    lugar: 'Campo B'
+                    round: 1,
+                    localTeam: 'Team 1',
+                    localGoals: 2,
+                    visitorTeam: 'Team 2',
+                    visitorGoals: 1,
+                    date: '2024-07-21',
+                    hour: '11:00',
+                    place: 'Campo B'
                 }}
             />);
 
@@ -413,14 +413,14 @@ describe("AdminModalResults Component", () => {
                 popupData={{
                     _id: 'someResultId',
                     sport: 'Fútbol-7',
-                    jornada: 1,
-                    equipo_local: 'Team 1',
-                    goles_local: 2,
-                    equipo_visitante: 'Team 2',
-                    goles_visitante: 1,
-                    fecha: '2024-07-21',
-                    hora: '11:00',
-                    lugar: 'Campo B'
+                    round: 1,
+                    localTeam: 'Team 1',
+                    localGoals: 2,
+                    visitorTeam: 'Team 2',
+                    visitorGoals: 1,
+                    date: '2024-07-21',
+                    hour: '11:00',
+                    place: 'Campo B'
                 }}
             />);
 

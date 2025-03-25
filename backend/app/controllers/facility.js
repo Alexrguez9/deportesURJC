@@ -1,40 +1,39 @@
-const Instalacion = require('../models/Instalaciones');
+const Facility = require('../models/facility');
 
-// obtener data de Instalaciones
+// Get all facilities
 exports.getData = async (req, res) => {
     try {
-        const instalacionData = await Instalacion.find();
-        res.json(instalacionData);
+        const facilities = await Facility.find();
+        res.json(facilities);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener los datos de los instalaciones', message: error.message });
     }
 };
 
-// insertar data en Instalaciones
+// Add a new facility
 exports.insertData = async (req, res) => {
     try {
-        const newInstalacion = new Instalacion(req.body);
-        const savedInstalacion = await newInstalacion.save();
-        res.status(201).json(savedInstalacion);
+        const newFacility = new Facility(req.body);
+        const savedFacility = await newFacility.save();
+        res.status(201).json(savedFacility);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al insertar datos', message: error.message });
     }
 };
 
-// editar una Instalación
+// Update a facility
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
-        const updatedInstalacion = await Instalacion.updateOne({ _id: id }, { $set: body });
+        const updatedFacility = await Facility.updateOne({ _id: id }, { $set: body });
 
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
-        if (updatedInstalacion.matchedCount === 0) {
+        if (updatedFacility.matchedCount === 0) {
             res.status(404).json({ message: 'No se encontró el usuario para actualizar' });
         } else {
-            res.json({ message: 'Usuario actualizado exitosamente', updatedInstalacion });
+            res.json({ message: 'Usuario actualizado exitosamente', updatedFacility });
         }
     } catch (error) {
         console.error(error);
@@ -42,17 +41,16 @@ exports.updateOne = async (req, res) => {
     }
 }
 
-// eliminar una Instalación
+// Delete a facility
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedInstalacion = await Instalacion.deleteOne({ _id: id });
+        const deletedFacility = await Facility.deleteOne({ _id: id });
         
-        // Respuesta al cliente. EVITAMOS ERROR: si no damos respuesta, se quedará cargando el front
-        if (deletedInstalacion.deletedCount === 0) {
+        if (deletedFacility.deletedCount === 0) {
             res.status(404).json({ message: 'No se encontró el usuario para eliminar' });
         } else {
-            res.json({ message: 'Usuario eliminado exitosamente', deletedInstalacion });
+            res.json({ message: 'Usuario eliminado exitosamente', deletedFacility });
         }
     } catch (error) {
         console.error(error);

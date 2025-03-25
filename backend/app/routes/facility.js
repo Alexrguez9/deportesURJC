@@ -1,19 +1,19 @@
 const express = require('express')
-const controller = require('../controllers/equipo')
+const controller = require('../controllers/facility')
 
 const router = express.Router()
-const path = 'equipos'
+const path = 'instalaciones'
 
-// Ruta GET equipos
+// Ruta GET instalaciones
 router.get(`/${path}`, controller.getData);
 
-// Ruta POST equipo
+// Ruta POST instalaciones
 router.post(`/${path}`, controller.insertData);
 
-// Ruta PUT equipo
+// Ruta PUT instalaciones
 router.put(`/${path}/:id`, controller.updateOne);
 
-// Ruta DELETE equipo
+// Ruta DELETE instalaciones
 router.delete(`/${path}/:id`, controller.deleteOne);
 
-module.exports = router
+module.exports = router;

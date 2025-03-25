@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
-import './Alta.css';
+import './Registration.css';
 import BackButton from "../../../components/backButton/BackButton";
 import { getMonthlyDateRange, infinityDate } from "../../../utils/dates";
 
-const Alta = () => {
+const Registration = () => {
     const [filtroDeporte, setFiltroDeporte] = useState('Gimnasio');
     const { user, updateUser } = useAuth();
 
@@ -17,23 +17,24 @@ const Alta = () => {
     };
 
 
-    const handleAlta = async () => {
+    const handleRegistration = async () => {
         if(user) {
-            if (user.alta.gimnasio.estado && user.alta.atletismo.estado) {
+            console.log('---user---', user);
+            if (user.registration.gym.isActive && user.registration.athletics.isActive) {
                 throw { status: { ok: false, error: 'Ya estás dado de alta en las dos instalaciones.' } };
             }
-            if (filtroDeporte === 'Atletismo' && user.alta.atletismo.estado) {
-                throw { status: { ok: false, error: 'Ya estás dado de alta en atletismo' } };
+            if (filtroDeporte === 'Atletismo' && user.registration.athletics.isActive) {
+                throw { status: { ok: false, error: 'Ya estás dado de alta en athletics' } };
             }
-            if (filtroDeporte === 'Gimnasio' && user.alta.gimnasio.estado) {
+            if (filtroDeporte === 'Gimnasio' && user.registration.gym.isActive) {
                 throw { status: { ok: false, error: 'Ya estás dado de alta en gimnasio' } };
             }
-            const { startDate, endDate } = getMonthlyDateRange(user);
+            const { startDate } = getMonthlyDateRange(user);
             const updatedUserData  = { ...user };
             if (filtroDeporte === 'Gimnasio') {
-                updatedUserData.alta.gimnasio = { estado: true, fechaInicio: startDate, fechaFin: infinityDate };
+                updatedUserData.registration.gym = { isActive: true, initDate: startDate, endDate: infinityDate };
             } else if (filtroDeporte === 'Atletismo') {
-                updatedUserData.alta.atletismo = { estado: true, fechaInicio: startDate, fechaFin: infinityDate };
+                updatedUserData.registration.athletics = { isActive: true, initDate: startDate, endDate: infinityDate };
             } else {
                 throw { status: { ok: false, error: 'Escoja una opción válida por favor.' } };
             }
@@ -69,7 +70,7 @@ const Alta = () => {
                         <button 
                             className="button-light" 
                             onClick={()=> {
-                                toast.promise(() => handleAlta(), {
+                                toast.promise(() => handleRegistration(), {
                                     loading: 'Dando de alta...',
                                     success: 'Alta completada con éxito!',
                                     error: (err) => {
@@ -83,4 +84,4 @@ const Alta = () => {
         </div>
     );
 }
-export default Alta;
+export default Registration;

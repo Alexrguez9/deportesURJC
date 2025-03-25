@@ -101,12 +101,12 @@ const AdminReservations = () => {
                     {reservations.map((reservation) => (
                         <tr key={reservation?._id}>
                             <td>{reservation?.userId}</td>
-                            <td>{reservation?.instalacionId}</td>
-                            <td>{getPrettyDate(reservation?.fechaInicio)}</td>
-                            <td>{getPrettyDate(reservation?.fechaFin)}</td>
+                            <td>{reservation?.facilityId}</td>
+                            <td>{getPrettyDate(reservation?.initDate)}</td>
+                            <td>{getPrettyDate(reservation?.endDate)}</td>
                             <td>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                  {reservation?.precioTotal} €
+                                  {reservation?.totalPrice} €
                                   {reservation?.isPaid ? (
                                       <MdAttachMoney title="Pagado" style={{ marginLeft: '0.5rem', color: 'green', width: '1.5em', height: '1.5em' }} />
                                   ) : (

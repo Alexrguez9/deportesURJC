@@ -44,24 +44,24 @@ describe("AdminFacilities Component", () => {
         const mockFacilitiesData = [
             {
                 _id: "facility001",
-                nombre: "Facility 1",
-                descripcion: "Description 1",
-                capacidad: 10,
-                precioPorMediaHora: 25,
-                horario: {
-                    horarioInicio: "2024-07-15T08:00:00.000Z",
-                    horarioFin: "2024-07-15T22:00:00.000Z"
+                name: "Facility 1",
+                description: "Description 1",
+                capacity: 10,
+                priceForHalfHour: 25,
+                schedule: {
+                    initialHour: "2024-07-15T08:00:00.000Z",
+                    endHour: "2024-07-15T22:00:00.000Z"
                 }
             },
             {
                 _id: "facility002",
-                nombre: "Facility 2",
-                descripcion: "Description 2",
-                capacidad: 20,
-                precioPorMediaHora: 50,
-                horario: {
-                    horarioInicio: "2024-07-16T07:00:00.000Z",
-                    horarioFin: "2024-07-16T21:00:00.000Z"
+                name: "Facility 2",
+                description: "Description 2",
+                capacity: 20,
+                priceForHalfHour: 50,
+                schedule: {
+                    initialHour: "2024-07-16T07:00:00.000Z",
+                    endHour: "2024-07-16T21:00:00.000Z"
                 }
             },
         ];

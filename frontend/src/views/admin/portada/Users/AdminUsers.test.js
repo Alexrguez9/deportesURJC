@@ -29,8 +29,8 @@ describe("AdminUsers Component", () => {
         mockAuthContext.isAdmin.mockReturnValue(true);
         mockAuthContext.user = { name: "Admin" };
         mockAuthContext.getAllUsers.mockResolvedValue([
-            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: {}, subscription: { gimnasio: { estado: true }, atletismo: { estado: false } }, balance: 10 },
-            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", alta: {}, subscription: { gimnasio: { estado: false }, atletismo: { estado: true } }, balance: 0 }
+            { _id: "1", name: "User 1", email: "user1@test.com", role: "user", registration: {}, subscription: { gym: { isActive: true }, athletics: { isActive: false } }, balance: 10 },
+            { _id: "2", name: "Admin User", email: "admin@test.com", role: "admin", registration: {}, subscription: { gym: { isActive: false }, athletics: { isActive: true } }, balance: 0 }
         ]);
         mockAuthContext.deleteUser.mockResolvedValue(true);
         sonner.toast.success.mockClear();
@@ -152,9 +152,9 @@ describe("AdminUsers Component", () => {
     });
 
     describe('Altas column', () => {
-        it("renders 'Sí' for gimnasio alta estado when true", async () => {
+        it("renders 'Sí' for gym registration isActive when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: true } }, balance: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", registration: { gym: { isActive: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -162,12 +162,12 @@ describe("AdminUsers Component", () => {
             });
         });
 
-        it("renders 'No' for gimnasio alta estado when false or undefined", async () => {
+        it("renders 'No' for gym registration isActive when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { gimnasio: { estado: false } }, balance: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { gimnasio: {} }, balance: 10 },
-                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: { gimnasio: null }, balance: 10 },
-                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, balance: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", registration: { gym: { isActive: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", registration: { gym: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", registration: { gym: null }, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", registration: {}, balance: 10 },
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -175,9 +175,9 @@ describe("AdminUsers Component", () => {
             });
         });
 
-        it("renders 'Sí' for atletismo alta estado when true", async () => {
+        it("renders 'Sí' for athletics registration isActive when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: true } }, balance: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", registration: { athletics: { isActive: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -185,12 +185,12 @@ describe("AdminUsers Component", () => {
             });
         });
 
-        it("renders 'No' for atletismo alta estado when false or undefined", async () => {
+        it("renders 'No' for athletics registration isActive when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", alta: { atletismo: { estado: false } }, balance: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", alta: { atletismo: {} }, balance: 10 },
-                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", alta: null, balance: 10 },
-                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", alta: {}, balance: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", registration: { athletics: { isActive: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", registration: { athletics: {} }, balance: 10 },
+                { _id: "3", name: "User 3", email: "user3@test.com", role: "user", registration: null, balance: 10 },
+                { _id: "4", name: "User 4", email: "user4@test.com", role: "user", registration: {}, balance: 10 },
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -200,9 +200,9 @@ describe("AdminUsers Component", () => {
     });
 
     describe('Suscripciones column', () => {
-        it("renders 'Sí' for gimnasio subscription estado when true", async () => {
+        it("renders 'Sí' for gym subscription isActive when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gimnasio: { estado: true } }, balance: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gym: { isActive: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -210,10 +210,10 @@ describe("AdminUsers Component", () => {
             });
         });
     
-        it("renders 'No' for gimnasio subscription estado when false or undefined", async () => {
+        it("renders 'No' for gym subscription isActive when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gimnasio: { estado: false } }, balance: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { gimnasio: {} }, balance: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { gym: { isActive: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { gym: {} }, balance: 10 },
                 { _id: "3", name: "User 3", email: "user3@test.com", role: "user", subscription: null, balance: 10 },
                 { _id: "4", name: "User 4", email: "user4@test.com", role: "user", subscription: {}, balance: 10 },
             ]);
@@ -223,9 +223,9 @@ describe("AdminUsers Component", () => {
             });
         });
     
-        it("renders 'Sí' for atletismo subscription estado when true", async () => {
+        it("renders 'Sí' for athletics subscription isActive when true", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { atletismo: { estado: true } }, balance: 10 }
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { athletics: { isActive: true } }, balance: 10 }
             ]);
             render(<AdminUsers />);
             await waitFor(() => {
@@ -233,10 +233,10 @@ describe("AdminUsers Component", () => {
             });
         });
     
-        it("renders 'No' for atletismo subscription estado when false or undefined", async () => {
+        it("renders 'No' for athletics subscription isActive when false or undefined", async () => {
             mockAuthContext.getAllUsers.mockResolvedValue([
-                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { atletismo: { estado: false } }, balance: 10 },
-                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { atletismo: {} }, balance: 10 },
+                { _id: "1", name: "User 1", email: "user1@test.com", role: "user", subscription: { athletics: { isActive: false } }, balance: 10 },
+                { _id: "2", name: "User 2", email: "user2@test.com", role: "user", subscription: { athletics: {} }, balance: 10 },
                 { _id: "3", name: "User 3", email: "user3@test.com", role: "user", subscription: null, balance: 10 },
                 { _id: "4", name: "User 4", email: "user4@test.com", role: "user", subscription: {}, balance: 10 },
             ]);

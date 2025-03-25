@@ -71,13 +71,13 @@ describe("AdminModalUsers Component", () => {
                 email: 'existing@example.com',
                 role: 'admin',
                 balance: 100,
-                alta: {
-                    gimnasio: { estado: true },
-                    atletismo: { estado: false }
+                registration: {
+                    gym: { isActive: true },
+                    athletics: { isActive: false }
                 },
                 subscription: {
-                    gimnasio: { estado: true },
-                    atletismo: { estado: false }
+                    gym: { isActive: true },
+                    athletics: { isActive: false }
                 }
             };
             
@@ -139,7 +139,7 @@ describe("AdminModalUsers Component", () => {
             });
         });
 
-        it("calls addUser with formatted alta and subscription data", async () => {
+        it("calls addUser with formatted registration and subscription data", async () => {
             const mockDateRange = {
                 startDate: '2025-01-01T00:00:00.000Z',
                 endDate: '2025-02-01T00:00:00.000Z'
@@ -153,10 +153,14 @@ describe("AdminModalUsers Component", () => {
                 password: 'password123',
                 role: 'user',
                 balance: 20,
-                alta_gimnasio: true,
-                alta_atletismo: false,
-                subs_gimnasio: true,
-                subs_atletismo: true,
+                registration:{
+                    gym: true,
+                    athletics: false
+                },
+                subscription:{
+                    gym: true,
+                    athletics: true
+                },
             };
         
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
@@ -173,28 +177,28 @@ describe("AdminModalUsers Component", () => {
         
             await waitFor(() => {
                 expect(mockAuthContext.addUser).toHaveBeenCalledWith(expect.objectContaining({
-                    alta: {
-                        gimnasio: {
-                            estado: true,
-                            fechaInicio: mockDateRange.startDate,
-                            fechaFin: infinity
+                    registration: {
+                        gym: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: infinity
                         },
-                        atletismo: {
-                            estado: false,
-                            fechaInicio: null,
-                            fechaFin: null
+                        athletics: {
+                            isActive: false,
+                            initDate: null,
+                            endDate: null
                         }
                     },
                     subscription: {
-                        gimnasio: {
-                            estado: true,
-                            fechaInicio: mockDateRange.startDate,
-                            fechaFin: mockDateRange.endDate
+                        gym: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: mockDateRange.endDate
                         },
-                        atletismo: {
-                            estado: true,
-                            fechaInicio: mockDateRange.startDate,
-                            fechaFin: mockDateRange.endDate
+                        athletics: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: mockDateRange.endDate
                         }
                     }
                 }));

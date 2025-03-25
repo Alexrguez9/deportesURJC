@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const ConsultarPerfil = () => {
-    const { user, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
+    const { user, setUser, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservas, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -57,18 +57,24 @@ const ConsultarPerfil = () => {
 
         try {
             const updatedUserRes = await updatePasswordAndName(user?._id, currentPassword, updatedPassword, updatedName);
+            console.log('---updatedUserRes---', updatedUserRes);
             /* istanbul ignore if */
             if (!updatedUserRes) {
                 toast.error("Error al actualizar el perfil. Inténtalo de nuevo.");
                 return;
             }
             toast.success("Perfil actualizado con éxito.");
+
+            const { user: updatedUser } = updatedUserRes;
+            await setUser(updatedUser);
             setEditMode(false);
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);
             toast.error("Hubo un error al actualizar tu perfil. Inténtalo de nuevo.");
         }
     };
+
+    console.log('---user---', user);
 
     return (
         <Fragment>

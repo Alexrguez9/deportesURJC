@@ -1,31 +1,31 @@
-const model = require('../models/Reservas');
+const Reservation = require('../models/reservation');
 
 // Get all data from Reservas
 exports.getData = async (req, res) => {
-    const reservasData = await model.find();
-    res.json(reservasData);
+    const reservations = await Reservation.find();
+    res.json(reservations);
 }
 
 // Add new reservation
 exports.insertData = async (req, res) => {
     try {
-        const { userId, instalacionId, fechaInicio, fechaFin, precioTotal, isPaid }  = req.body;
+        const { userId, facilityId, initDate, endDate, totalPrice, isPaid }  = req.body;
 
-        if (!userId || !instalacionId || !fechaInicio || !fechaFin) {
+        if (!userId || !facilityId || !initDate || !endDate) {
             return res.status(400).json({ error: 'Todos los campos son requeridos' });
         }
 
-        const newReserva = new model({
+        const newReserva = new Reservation({
             userId,
-            instalacionId,
-            fechaInicio,
-            fechaFin,
-            precioTotal,
+            facilityId,
+            initDate,
+            endDate,
+            totalPrice,
             isPaid
         });
 
-        const savedReserva = await newReserva.save();
-        res.status(201).json(savedReserva);
+        const savedReservation = await newReserva.save();
+        res.status(201).json(savedReservation);
 
     } catch (error) {
         console.error(error);
@@ -38,12 +38,12 @@ exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
-        const updatedReserva = await model.updateOne({ _id: id }, { $set: body });
+        const updatedReservation = await Reservation.updateOne({ _id: id }, { $set: body });
 
-        if (updatedReserva.matchedCount === 0) {
+        if (updatedReservation.matchedCount === 0) {
             res.status(404).json({ message: 'No se encontró la reserva para actualizar' });
         } else {
-            res.json({ message: 'Reserva actualizada exitosamente', updatedReserva });
+            res.json({ message: 'Reserva actualizada exitosamente', updatedReservation });
         }
     } catch (error) {
         console.error(error);
@@ -55,12 +55,12 @@ exports.updateOne = async (req, res) => {
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedReserva = await model.deleteOne({ _id: id });
+        const deletedReservation = await Reservation.deleteOne({ _id: id });
         
-        if (deletedReserva.deletedCount === 0) {
+        if (deletedReservation.deletedCount === 0) {
             res.status(404).json({ message: 'No se encontró la reserva para eliminar' });
         } else {
-            res.json({ message: 'Reserva eliminada exitosamente', deletedReserva });
+            res.json({ message: 'Reserva eliminada exitosamente', deletedReservation });
         }
     } catch (error) {
         console.error(error);

@@ -1,5 +1,5 @@
 const express = require('express')
-const controller = require('../controllers/reservas')
+const controller = require('../controllers/reservation')
 
 const router = express.Router()
 const path = 'reservas'

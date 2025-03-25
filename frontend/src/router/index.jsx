@@ -9,7 +9,7 @@ import Encuentros from '../views/ligas_internas/encuentros/Encuentros';
 import InternLeaguesContent from '../components/InternLeaguesContent/InternLeaguesContent';
 import SalasPreparacion from '../views/salasPreparacion/SalasPreparacion';
 import ContentSalasPreparacion from '../components/contentSalasPreparacion/ContentSalasPreparacion';
-import Alta from '../views/salasPreparacion/alta/Alta';
+import Registration from '../views/salasPreparacion/registration/Registration.jsx';
 import ReservasPreparacion from '../views/salasPreparacion/reservasPreparacion/ReservasPreparacion';
 import Instalaciones from '../views/instalaciones/Instalaciones';
 import MisReservas from '../views/profile/misReservas/MisReservas';
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
                 element: <SalasPreparacion />,
                 children: [
                     { path: '', element: <ContentSalasPreparacion /> },
-                    { path: 'alta', element: <Alta /> },
+                    { path: 'alta', element: <Registration /> },
                     { path: 'reservas-preparacion', element: <ReservasPreparacion /> },
                     { path: 'pago-abono', element: <PagoAbono /> },
                 ]

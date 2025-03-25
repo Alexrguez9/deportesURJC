@@ -7,48 +7,48 @@ const ResultadosSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    jornada: {
+    round: {
       type: Number,
       default: 0,
       required: true
     },
-    fecha: {
+    date: {
       type: Date,
       required: true
     },
-    hora: {
+    hour: {
       type: String,
       required: true
     },
-    lugar: {
+    place: {
       type: String,
       required: true
     },
-    equipo_local_id: {
+    localTeamId: {
       type: String,
       required: true
     },
-    equipo_visitante_id: {
+    visitorTeamId: {
       type: String,
       required: true
     },
-    equipo_local: {
+    localTeam: {
       type: String,
       required: true
     },
-    equipo_visitante: {
+    visitorTeam: {
       type: String,
       required: true
     },
-    goles_local: {
+    localGoals: {
       type: Number,
       required: true
     },
-    goles_visitante: {
+    visitorGoals: {
       type: Number,
       required: true
     },
-    resultado: {
+    result: {
       type: String,
       required: true
     }
@@ -62,26 +62,26 @@ const ResultadosSchema = new mongoose.Schema(
 // Middleware para formatear los datos antes de guardarlos
 ResultadosSchema.pre('save', function (next) {
     try {
-        this.goles_local = Number(this.goles_local);
-        this.goles_visitante = Number(this.goles_visitante);
+        this.localGoals = Number(this.localGoals);
+        this.visitorGoals = Number(this.visitorGoals);
 
-        if (isNaN(this.goles_local) || isNaN(this.goles_visitante)) {
+        if (isNaN(this.localGoals) || isNaN(this.visitorGoals)) {
             throw new Error('Los goles deben ser números válidos.');
         }
 
-        if (this.fecha) {
-            const fecha = new Date(this.fecha);
-            if (isNaN(fecha.getTime())) {
+        if (this.date) {
+            const date = new Date(this.date);
+            if (isNaN(date.getTime())) {
                 throw new Error('La fecha no es válida.');
             }
         }
 
-        if (this.hora) {
-            const [hours, minutes] = this.hora.split(':');
+        if (this.hour) {
+            const [hours, minutes] = this.hour.split(':');
             if (!hours || !minutes) {
                 throw new Error('La hora debe estar en formato HH:mm.');
             }
-            this.hora = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
+            this.hour = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
         }
 
         next();
@@ -91,6 +91,6 @@ ResultadosSchema.pre('save', function (next) {
 });
 
 
-const Resultados = mongoose.model('resultados', ResultadosSchema);
+const Result = mongoose.model('resultados', ResultadosSchema);
 
-module.exports = Resultados;
+module.exports = Result;

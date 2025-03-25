@@ -101,12 +101,12 @@ const AdminFacilities = () => {
             <tbody>
               {facilities.map((facility) => (
                 <tr key={facility._id}>
-                  <td>{facility.nombre}</td>
-                  <td>{facility.descripcion}</td>
-                  <td>{facility.capacidad}</td>
-                  <td>{getHoursAndMinutes(facility?.horario?.horarioInicio)}</td>
-                  <td>{getHoursAndMinutes(facility?.horario?.horarioFin)}</td>
-                  <td>{facility.precioPorMediaHora} €</td>
+                  <td>{facility.name}</td>
+                  <td>{facility.description}</td>
+                  <td>{facility.capacity}</td>
+                  <td>{getHoursAndMinutes(facility?.schedule?.initialHour)}</td>
+                  <td>{getHoursAndMinutes(facility?.schedule?.endHour)}</td>
+                  <td>{facility.priceForHalfHour} €</td>
                   <td>
                     <GoPencil
                       onClick={() => openModal(facility)}

@@ -16,9 +16,9 @@ describe('Clasificaciones Component', () => {
   beforeEach(() => {
     useTeamsAndResults.mockReturnValue({
       teams: [
-        { _id: '1', name: 'Equipo A', sport: 'Fútbol-7', results: { partidos_ganados: 3, partidos_empatados: 1, partidos_perdidos: 1 }, points: 10 },
-        { _id: '2', name: 'Equipo B', sport: 'Baloncesto', results: { partidos_ganados: 2, partidos_empatados: 2, partidos_perdidos: 1 }, points: 8 },
-        { _id: '3', name: 'Equipo C', sport: 'Fútbol-7', results: { partidos_ganados: 1, partidos_empatados: 1, partidos_perdidos: 3 }, points: 4 },
+        { _id: '1', name: 'Equipo A', sport: 'Fútbol-7', results: { wins: 3, draws: 1, losses: 1 }, points: 10 },
+        { _id: '2', name: 'Equipo B', sport: 'Baloncesto', results: { wins: 2, draws: 2, losses: 1 }, points: 8 },
+        { _id: '3', name: 'Equipo C', sport: 'Fútbol-7', results: { wins: 1, draws: 1, losses: 3 }, points: 4 },
       ],
       fetchTeams: jest.fn(),
     });

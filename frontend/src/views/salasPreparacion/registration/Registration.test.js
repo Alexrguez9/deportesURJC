@@ -4,7 +4,7 @@ import {
     fireEvent,
     waitFor,
 } from "@testing-library/react";
-import Alta from "./Alta";
+import Registration from "./Registration";
 import { useAuth } from '../../../context/AuthContext';
 import { mockAuthContext } from "../../../utils/mocks";
 import { BrowserRouter } from 'react-router-dom';
@@ -47,9 +47,9 @@ describe("Alta Component", () => {
         mockAuthContext.user = {
             _id: '123',
             name: 'Test User',
-            alta: {
-                gimnasio: { estado: false, fechaInicio: null, fechaFin: null },
-                atletismo: { estado: false, fechaInicio: null, fechaFin: null }
+            registration: {
+                gym: { isActive: false, initDate: null, endDate: null },
+                athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         mockAuthContext.updateUser = jest.fn().mockResolvedValue({ ok: true });
@@ -59,34 +59,34 @@ describe("Alta Component", () => {
     it("no muestra el botón si el usuario no está logueado", () => {
         mockAuthContext.user = null;
         useAuth.mockReturnValue(mockAuthContext);
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         expect(screen.queryByRole("button", { name: /darme de alta/i })).not.toBeInTheDocument();
         expect(screen.getByText(/Debes iniciar sesión/i)).toBeInTheDocument();
     });
 
-    it("llama a updateUser correctamente para gimnasio", async () => {
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+    it("llama a updateUser correctamente para gym", async () => {
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
         await waitFor(() => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
                 '123',
                 expect.objectContaining({
-                    alta: expect.objectContaining({
-                        gimnasio: {
-                            estado: true,
-                            fechaInicio: startDate,
-                            fechaFin: infinityDate
+                    registration: expect.objectContaining({
+                        gym: {
+                            isActive: true,
+                            initDate: startDate,
+                            endDate: infinityDate
                         }
                     })
                 })
             );
-            expect(toast.success).toHaveBeenCalledWith("Alta completada con éxito!");
         });
+        expect(toast.success).toHaveBeenCalledWith("Alta completada con éxito!");
     });
 
-    it("llama a updateUser correctamente para atletismo", async () => {
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+    it("llama a updateUser correctamente para athletics", async () => {
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Atletismo' } });
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
@@ -94,11 +94,11 @@ describe("Alta Component", () => {
             expect(mockAuthContext.updateUser).toHaveBeenCalledWith(
                 '123',
                 expect.objectContaining({
-                    alta: expect.objectContaining({
-                        atletismo: {
-                            estado: true,
-                            fechaInicio: startDate,
-                            fechaFin: infinityDate
+                    registration: expect.objectContaining({
+                        athletics: {
+                            isActive: true,
+                            initDate: startDate,
+                            endDate: infinityDate
                         }
                     })
                 })
@@ -108,7 +108,7 @@ describe("Alta Component", () => {
 
     it("muestra error si updateUser devuelve ok: false", async () => {
         mockAuthContext.updateUser = jest.fn().mockResolvedValue({ ok: false });
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
         await waitFor(() => {
@@ -118,7 +118,7 @@ describe("Alta Component", () => {
 
     it("muestra error si updateUser lanza excepción", async () => {
         mockAuthContext.updateUser = jest.fn().mockRejectedValue({});
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
         await waitFor(() => {
@@ -127,9 +127,9 @@ describe("Alta Component", () => {
     });
 
     it("muestra error si ya está dado de alta en ambos", async () => {
-        mockAuthContext.user.alta.gimnasio.estado = true;
-        mockAuthContext.user.alta.atletismo.estado = true;
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+        mockAuthContext.user.registration.gym.isActive = true;
+        mockAuthContext.user.registration.athletics.isActive = true;
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
         await waitFor(() => {
@@ -137,9 +137,9 @@ describe("Alta Component", () => {
         });
     });
 
-    it("muestra error si ya está dado de alta en gimnasio", async () => {
-        mockAuthContext.user.alta.gimnasio.estado = true;
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+    it("muestra error si ya está dado de alta en gym", async () => {
+        mockAuthContext.user.registration.gym.isActive = true;
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Gimnasio' } });
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
@@ -148,19 +148,19 @@ describe("Alta Component", () => {
         });
     });
 
-    it("muestra error si ya está dado de alta en atletismo", async () => {
-        mockAuthContext.user.alta.atletismo.estado = true;
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+    it("muestra error si ya está dado de alta en athletics", async () => {
+        mockAuthContext.user.registration.athletics.isActive = true;
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Atletismo' } });
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 
         await waitFor(() => {
-            expect(toast.error).toHaveBeenCalledWith("Ya estás dado de alta en atletismo");
+            expect(toast.error).toHaveBeenCalledWith("Ya estás dado de alta en athletics");
         });
     });
 
     it("muestra error si se selecciona una opción inválida", async () => {
-        render(<BrowserRouter><Alta /></BrowserRouter>);
+        render(<BrowserRouter><Registration /></BrowserRouter>);
         fireEvent.change(screen.getByRole("combobox"), { target: { value: 'Invalido' } });
         fireEvent.click(screen.getByRole("button", { name: /darme de alta/i }));
 

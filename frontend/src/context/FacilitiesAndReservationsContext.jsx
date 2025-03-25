@@ -122,9 +122,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     };
 
-    const updateFacility = async (instalacionId, instalacion) => {
+    const updateFacility = async (facilityId, instalacion) => {
         try {
-            const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+            const response = await fetch(`http://localhost:4000/instalaciones/${facilityId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -164,9 +164,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     };
 
-    const deleteFacility = async (instalacionId) => {
+    const deleteFacility = async (facilityId) => {
         try {
-          const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+          const response = await fetch(`http://localhost:4000/instalaciones/${facilityId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -184,21 +184,21 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     }
 
-    const contarReservasPorFranjaHoraria = async (instalacionId, fechaInicio) => {
-        const hora = fechaInicio.getHours();
-        const minutos = fechaInicio.getMinutes();
+    const contarReservasPorFranjaHoraria = async (facilityId, initDate) => {
+        const hour = initDate.getHours();
+        const minutos = initDate.getMinutes();
       
         // Filtramos las reservas por instalación y fecha
         const reservasFiltradas = reservas.filter(
             (reserva) => {
-              const reservaDate = typeof reserva.fechaInicio === 'object' && reserva.fechaInicio instanceof Date ? reserva.fechaInicio : new Date(reserva.fechaInicio);
+              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date ? reserva.initDate : new Date(reserva.initDate);
         
               return (
-                reserva.instalacionId === instalacionId &&
-                reservaDate.getDate() === fechaInicio.getDate() &&
-                reservaDate.getMonth() === fechaInicio.getMonth() &&
-                reservaDate.getFullYear() === fechaInicio.getFullYear() &&
-                reservaDate.getHours() === hora &&
+                reserva.facilityId === facilityId &&
+                reservaDate.getDate() === initDate.getDate() &&
+                reservaDate.getMonth() === initDate.getMonth() &&
+                reservaDate.getFullYear() === initDate.getFullYear() &&
+                reservaDate.getHours() === hour &&
                 reservaDate.getMinutes() === minutos
               );
             }
