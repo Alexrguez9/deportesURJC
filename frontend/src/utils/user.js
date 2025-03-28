@@ -5,10 +5,10 @@
  * @returns {Boolean} - True if the subscription is expired, false otherwise
  */
 export const isSubscriptionExpired = (subscription) => {
-    if (!subscription?.estado || !subscription.fechaFin) return true;
+    if (!subscription?.isActive || !subscription.endDate) return true;
   
     const now = new Date();
-    const fechaFin = new Date(subscription.fechaFin);
+    const endDate = new Date(subscription.endDate);
   
-    return now > fechaFin;
+    return now > endDate;
 };

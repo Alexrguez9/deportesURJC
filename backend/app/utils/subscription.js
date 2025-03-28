@@ -7,14 +7,14 @@
 const cleanExpiredSubscriptions = (user) => {
     const now = new Date();
 
-    ['gimnasio', 'atletismo'].forEach((area) => {
+    ['gym', 'athletics'].forEach((area) => {
         const subs = user.subscription?.[area];
 
-        if (subs?.estado && subs?.fechaFin && new Date(subs.fechaFin) < now) {
+        if (subs?.isActive && subs?.endDate && new Date(subs.endDate) < now) {
             user.subscription[area] = {
-                estado: false,
-                fechaInicio: null,
-                fechaFin: null,
+                isActive: false,
+                initDate: null,
+                endDate: null,
             };
         }
     });

@@ -4,10 +4,8 @@ import {
     useContext
 } from "react";
 
-// Creamos contexto
 const AuthContext = createContext();
 
-// Creamos provider
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,9 +16,9 @@ export const AuthProvider = ({ children }) => {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Añade headers de autorización si son necesarios
+                    //Add authorization header if necessary (e.g., with token)
                 },
-                credentials: 'include' // Incluir credenciales para autenticación del usuario
+                credentials: 'include' // Include credentials for the server to identify the user
             });
     
             if (response.ok) {
@@ -28,7 +26,7 @@ export const AuthProvider = ({ children }) => {
                 return users;
             } else {
                 console.error("Error al obtener la lista de usuarios:", response.status);
-                return null; // Manejar el error según sea necesario
+                return null;
             }
         } catch (error) {
             console.error("Error en el fetch para obtener usuarios:", error);
@@ -39,7 +37,6 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (userData, navigate) => {
         try {
-            // Llamamos al backend para iniciar sesión
             const response = await fetch('http://localhost:4000/users/login', {
                 method: 'POST',
                 headers: {
@@ -57,7 +54,6 @@ export const AuthProvider = ({ children }) => {
                 return response;
             } else {
                 console.error("Error en el fetch al back de iniciar sesión:", response.status);
-                // mostrar un mensaje de error al usuario
                 return response;
             }
         } catch (error) {
@@ -74,10 +70,10 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(userData),
-                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+                credentials: 'include'
             });
+            // User already exists
             if (response.status === 409) {
-                // Caso de usuario duplicado
                 return response;
             }
 
@@ -93,7 +89,6 @@ export const AuthProvider = ({ children }) => {
                 }
             } else {
                 console.error("Error en el fetch al back de registrarse:", response.status);
-                // mostrar un mensaje de error al usuario
                 return response;
             }
         } catch (error) {
@@ -158,12 +153,15 @@ export const AuthProvider = ({ children }) => {
                 credentials: 'include'
             });
     
+            const data = await response.json();
+    
             if (!response.ok) {
-                throw new Error(`Error ${response.status}: No se pudo actualizar el perfil`);
+                throw new Error(data.message || "Error al actualizar el perfil");
             }
     
-            const updatedUser = await response.json();
-            return updatedUser;
+            setUser(data.user);
+            return data.user;
+    
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);
             throw error;
@@ -208,9 +206,9 @@ export const AuthProvider = ({ children }) => {
     }
 
     /* 
-    * SOLAMENTE SE HACE USO EN EL REGISTER DE LA APLICACIÓN
-    * Función inicial para asignarpoer tener un primer usuario admin y así, poder ir editando los roles de los demás usuarios...
-    * Modificar según las necesidades de la aplicación. 
+    * IS ONLY USED IN THE APPLICATION REGISTER.
+    * Initial function to assign a first admin user and thus be able to edit the roles of the other users...
+    * Modify according to the needs of the application.
     */
     const handleAdmin = async (data) => {
         try {
@@ -224,7 +222,7 @@ export const AuthProvider = ({ children }) => {
     
             if (!response.ok) {
                 console.error("⚠️ Error al verificar si el usuario es admin:", response.status);
-                return { ...data, role: "user" }; // Si hay error, asignamos "user" por defecto
+                return { ...data, role: "user" }; // If error, assign "user"
             }
     
             const { isAdmin } = await response.json();
@@ -232,7 +230,7 @@ export const AuthProvider = ({ children }) => {
             return { ...data, role: isAdmin ? "admin" : "user" };
         } catch (error) {
             console.error("Error en handleAdmin:", error);
-            return { ...data, role: "user" }; // Si hay error de red, asignamos "user"
+            return { ...data, role: "user" }; // If error, assign "user"
         }
     };
 

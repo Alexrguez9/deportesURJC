@@ -1,8 +1,8 @@
-// db.js
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-// ERROR: poniendo mongodb://localhost:27017/deportesdb -> crashea en local
+// ERROR with:
+// mongodb://localhost:27017/deportesdb -> crashea en local
 const uri = process.env.mongo_atlas_uri;
 
 module.exports = async () => {
@@ -12,5 +12,4 @@ module.exports = async () => {
     } catch (error) {
         console.error('Error conectando a la base de datos', error);
     }
-
 };

@@ -32,7 +32,7 @@ describe("AdminModalReservations Component", () => {
         });
 
         it("renders the component in 'Editar reserva' mode", () => {
-            render(<AdminModalReservations closeModal={mockCloseModal} popupData={{ _id: '1', userId: 'user1', instalacionId: 'instalacion1' }} />);
+            render(<AdminModalReservations closeModal={mockCloseModal} popupData={{ _id: '1', userId: 'user1', facilityId: 'instalacion1' }} />);
             expect(screen.getByRole('heading', { name: /Editar reserva/i })).toBeInTheDocument();
         });
 
@@ -50,18 +50,18 @@ describe("AdminModalReservations Component", () => {
             const popupData = {
                 _id: '1',
                 userId: 'user1',
-                instalacionId: 'instalacion1',
-                fechaInicio: new Date('2024-08-01T10:00'),
-                fechaFin: new Date('2024-08-01T12:00'),
-                precioTotal: 50,
+                facilityId: 'instalacion1',
+                initDate: new Date('2024-08-01T10:00'),
+                endDate: new Date('2024-08-01T12:00'),
+                totalPrice: 50,
                 isPaid: false,
             };
             render(<AdminModalReservations closeModal={mockCloseModal} popupData={popupData} />);
             expect(screen.getByLabelText(/Usuario ID:/i)).toHaveValue(popupData.userId);
-            expect(screen.getByLabelText(/Instalación ID:/i)).toHaveValue(popupData.instalacionId);
-            expect(screen.getByLabelText(/Fecha inicio:/i)).toHaveValue(popupData.fechaInicio.toISOString().slice(0, 16));
-            expect(screen.getByLabelText(/Fecha fin:/i)).toHaveValue(popupData.fechaFin.toISOString().slice(0, 16));
-            expect(screen.getByLabelText(/Precio total:/i)).toHaveValue(popupData.precioTotal);
+            expect(screen.getByLabelText(/Instalación ID:/i)).toHaveValue(popupData.facilityId);
+            expect(screen.getByLabelText(/Fecha inicio:/i)).toHaveValue(popupData.initDate.toISOString().slice(0, 16));
+            expect(screen.getByLabelText(/Fecha fin:/i)).toHaveValue(popupData.endDate.toISOString().slice(0, 16));
+            expect(screen.getByLabelText(/Precio total:/i)).toHaveValue(popupData.totalPrice);
             expect(screen.getByLabelText(/isPaid/i)).not.toBeChecked();
         });
     });

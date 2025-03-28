@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const initDB = require('./config/db');
 const cors = require('cors');
-const mailsRouters = require('./app/routes/mails');
+const mailsRouters = require('./app/routes/mail');
 
 const app = express();
 const port = process.env.PORT;
@@ -12,48 +12,44 @@ app.use(cors({
     credentials: true
 }));
 
-// Configurar express para parsear JSON
+// Configure express to use JSON and URL encoded request bodies
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Configurar middleware de sesión
+// Configure middleware for sessions
 app.use(session({
-    secret: 'yourSecretKey', // Cambia esto por una clave secreta segura
+    secret: 'yourSecretKey', // TODO: Change this to a secure key
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // Cambiar a true en producción cuando use HTTPS: process.env.NODE_ENV === 'production'
+        secure: false, // TODO: change to true in production (HTTPS: process.env.NODE_ENV === 'production')
         httpOnly: true,
-        maxAge: 60 * 60 * 1000 // Tiempo de vida de la cookie en milisegundos (aquí, 1 hora)
+        maxAge: 60 * 60 * 1000 // 1 hour
     }
 }));
 
-// Traemos rutas del equipo
-const teamRouters = require('./app/routes/equipo');
+// Configure routes
+const teamRouters = require('./app/routes/team');
 app.use(teamRouters);
 
-// Traemos rutas del usuario
 const userRouters = require('./app/routes/user');
 app.use('/', userRouters);
 
-// Traemos rutas de resultados
-const resultadosRouters = require('./app/routes/resultado');
+const resultadosRouters = require('./app/routes/result');
 app.use(resultadosRouters);
 
-// Traemos rutas de instalaciones
-const instalacionesRouters = require('./app/routes/instalaciones');
+const instalacionesRouters = require('./app/routes/facility');
 app.use(instalacionesRouters);
 
-// Traemos rutas de reservas
-const reservasRouters = require('./app/routes/reservas');
+const reservasRouters = require('./app/routes/reservation');
 app.use(reservasRouters);
 
-// Iniciar el servidor
+// Init express app
 app.listen(port, () => {
     console.log(`La app está en línea en el puerto ${port}`);
 });
 
 app.use(mailsRouters);
 
-// Inicializar bbdd
+// Init DB
 initDB();

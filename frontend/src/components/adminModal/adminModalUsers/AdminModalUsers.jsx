@@ -21,44 +21,44 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
         password: "",
         role: popupData?.role || "user",
         balance: popupData?.balance || 0,
-        alta_gimnasio: popupData?.alta?.gimnasio?.estado || false,
-        alta_atletismo: popupData?.alta?.atletismo?.estado || false,
-        subs_gimnasio: popupData?.subscription?.gimnasio?.estado || false,
-        subs_atletismo: popupData?.subscription?.atletismo?.estado || false,
+        gymRegistration: popupData?.registration?.gym?.isActive || false,
+        athleticsRegistration: popupData?.registration?.athletics?.isActive || false,
+        subs_gimnasio: popupData?.subscription?.gym?.isActive || false,
+        subs_atletismo: popupData?.subscription?.athletics?.isActive || false,
     };
 
     const onSubmit = async (data) => {
         const { startDate, endDate } = await getMonthlyDateRange(data);
         const formattedData = {
             ...data,
-            alta: {
-                gimnasio: {
-                    estado: data.alta_gimnasio,
-                    fechaInicio: data.alta_gimnasio ? startDate : null,
-                    fechaFin: data.alta_gimnasio ? infinityDate : null
+            registration: {
+                gym: {
+                    isActive: data.gymRegistration,
+                    initDate: data.gymRegistration ? startDate : null,
+                    endDate: data.gymRegistration ? infinityDate : null
                 },
-                atletismo: {
-                    estado: data.alta_atletismo,
-                    fechaInicio: data.alta_atletismo ? startDate : null,
-                    fechaFin: data.alta_atletismo ? infinityDate : null
+                athletics: {
+                    isActive: data.athleticsRegistration,
+                    initDate: data.athleticsRegistration ? startDate : null,
+                    endDate: data.athleticsRegistration ? infinityDate : null
                 },
             },
             subscription: {
-                gimnasio: {
-                    estado: data.subs_gimnasio,
-                    fechaInicio: data.subs_gimnasio ? startDate : null,
-                    fechaFin: data.subs_gimnasio ? endDate : null
+                gym: {
+                    isActive: data.subs_gimnasio,
+                    initDate: data.subs_gimnasio ? startDate : null,
+                    endDate: data.subs_gimnasio ? endDate : null
                 },
-                atletismo: {
-                    estado: data.subs_atletismo,
-                    fechaInicio: data.subs_atletismo ? startDate : null,
-                    fechaFin: data.subs_atletismo ? endDate : null
+                athletics: {
+                    isActive: data.subs_atletismo,
+                    initDate: data.subs_atletismo ? startDate : null,
+                    endDate: data.subs_atletismo ? endDate : null
                 },
             },
         };
-        // Delete props not in alta object
-        delete formattedData.alta_gimnasio;
-        delete formattedData.alta_atletismo;
+        // Delete props not in registration object
+        delete formattedData.gymRegistration;
+        delete formattedData.athleticsRegistration;
         delete formattedData.subs_gimnasio;
         delete formattedData.subs_atletismo;
 
@@ -171,8 +171,8 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
                             Alta gimnasio:
                             <input
                                 type="checkbox"
-                                {...register("alta_gimnasio")}
-                                defaultChecked={initialValues.alta_gimnasio}
+                                {...register("gymRegistration")}
+                                defaultChecked={initialValues.gymRegistration}
                             />
                         </label>
                     </div>
@@ -181,8 +181,8 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
                             Alta atletismo:
                             <input
                                 type="checkbox"
-                                {...register("alta_atletismo")}
-                                defaultChecked={initialValues.alta_atletismo}
+                                {...register("athleticsRegistration")}
+                                defaultChecked={initialValues.athleticsRegistration}
                             />
                         </label>
                     </div>
@@ -218,24 +218,25 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
 AdminModalUsers.propTypes = {
     closeModal: PropTypes.func.isRequired,
     popupData: PropTypes.shape({
+        _id: PropTypes.string,
         name: PropTypes.string,
         email: PropTypes.string,
         role: PropTypes.string,
         balance: PropTypes.number,
-        alta: PropTypes.shape({
-            gimnasio: PropTypes.shape({
-                estado: PropTypes.bool,
+        registration: PropTypes.shape({
+            gym: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
-            atletismo: PropTypes.shape({
-                estado: PropTypes.bool,
+            athletics: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
         }),
         subscription: PropTypes.shape({
-            gimnasio: PropTypes.shape({
-                estado: PropTypes.bool,
+            gym: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
-            atletismo: PropTypes.shape({
-                estado: PropTypes.bool,
+            athletics: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
         }),
     }),

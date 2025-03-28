@@ -17,31 +17,31 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    alta: {
-      gimnasio: {
-        estado: {
+    registration: {
+      gym: {
+        isActive: {
           type: Boolean,
           default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
           required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
           required: false 
         }
       },
-      atletismo: {
-        estado: {
+      athletics: {
+        isActive: {
           type: Boolean,
           default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
           required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
           required: false
         }
@@ -49,30 +49,30 @@ const UserSchema = new mongoose.Schema(
      
     },
     subscription: {
-      gimnasio: {
-        estado: {
+      gym: {
+        isActive: {
           type: Boolean,
           default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
           required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
           required: false
         },
       },
-      atletismo: {
-        estado: {
+      athletics: {
+        isActive: {
           type: Boolean,
           default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
           required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
           required: false
         }

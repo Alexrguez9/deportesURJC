@@ -5,34 +5,32 @@ import {
     useEffect
 } from 'react';
 
-// Crear el contexto
 const FacilitiesAndReservationsContext = createContext();
 
-// Proveedor del contexto
 export const FacilitiesAndReservationsProvider = ({ children }) => {
-    const [instalaciones, setInstalaciones] = useState([]);
-    const [reservas, setReservas] = useState([]);
+    const [facilities, setFacilities] = useState([]);
+    const [reservations, setReservations] = useState([]);
 
     useEffect(() => {
         getAllFacilities();
         getAllReservations();
     }, []);
 
-    const getInstalacion = async (id) => {
-        const instAux =  await instalaciones.find((instalacion) => instalacion._id === id);
+    const getFacility = async (id) => {
+        const instAux =  await facilities.find((facility) => facility._id === id);
         return instAux;
     };
 
     const getAllFacilities = async () => {
         try {
-            const response = await fetch('http://localhost:4000/instalaciones');
+            const response = await fetch('http://localhost:4000/facilities');
             if (!response.ok) {
                 console.error("Error al obtener la lista de instalaciones:", response.status);
                 return null;
             }
 
             const facilities = await response.json();
-            setInstalaciones(facilities);
+            setFacilities(facilities);
             return facilities;
         } catch (error) {
             console.error("Error al cargar instalaciones:", error);
@@ -42,15 +40,15 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const getAllReservations = async () => {
         try {
-            const response = await fetch('http://localhost:4000/reservas');
+            const response = await fetch('http://localhost:4000/reservations');
             if (!response.ok) {
                 console.error("Error al obtener la lista de reservas:", response.status);
                 return null;
             }
     
-            const reservas = await response.json();
-            setReservas(reservas);
-            return reservas;
+            const reservations = await response.json();
+            setReservations(reservations);
+            return reservations;
         } catch (error) {
             console.error("Error al cargar reservas:", error);
             return null;
@@ -58,8 +56,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     };
 
     const addReservation = async (reserva) => {
+        console.log('---addReservation reserva---', reserva);
         try {
-            const response = await fetch('http://localhost:4000/reservas', {
+            const response = await fetch('http://localhost:4000/reservations', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -71,7 +70,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
                 throw new Error('Error en el fetch de post reserva');
             }
             const data = await response.json();
-            setReservas([...reservas, data]);
+            setReservations([...reservations, data]);
             return response;
         } catch (error) {
             console.error("Error al postear reserva:", error);
@@ -81,7 +80,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const addFacility = async (facility) => {
         try {
-            const response = await fetch('http://localhost:4000/instalaciones', {
+            const response = await fetch('http://localhost:4000/facilities', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -94,7 +93,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
             }
             
             const newFacility = await response.json();
-            setInstalaciones([...instalaciones, newFacility]);
+            setFacilities([...facilities, newFacility]);
             return response;
         } catch (error) {
             console.error("Error al agregar instalación:", error);
@@ -104,7 +103,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const updateReservation = async (reservaId, reserva) => {
         try {
-            const response = await fetch(`http://localhost:4000/reservas/${reservaId}`, {
+            const response = await fetch(`http://localhost:4000/reservations/${reservaId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,14 +121,14 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     };
 
-    const updateFacility = async (instalacionId, instalacion) => {
+    const updateFacility = async (facilityId, facility) => {
         try {
-            const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+            const response = await fetch(`http://localhost:4000/facilities/${facilityId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(instalacion),
+                body: JSON.stringify(facility),
             });
 
             if (!response.ok) {
@@ -144,7 +143,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const deleteReservation = async (reservaId) => {
         try {
-          const response = await fetch(`http://localhost:4000/reservas/${reservaId}`, {
+          const response = await fetch(`http://localhost:4000/reservations/${reservaId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -164,9 +163,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     };
 
-    const deleteFacility = async (instalacionId) => {
+    const deleteFacility = async (facilityId) => {
         try {
-          const response = await fetch(`http://localhost:4000/instalaciones/${instalacionId}`, {
+          const response = await fetch(`http://localhost:4000/facilities/${facilityId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -184,21 +183,21 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         }
     }
 
-    const contarReservasPorFranjaHoraria = async (instalacionId, fechaInicio) => {
-        const hora = fechaInicio.getHours();
-        const minutos = fechaInicio.getMinutes();
+    const countReservationsByTimeSlot = async (facilityId, initDate) => {
+        const hour = initDate.getHours();
+        const minutos = initDate.getMinutes();
       
-        // Filtramos las reservas por instalación y fecha
-        const reservasFiltradas = reservas.filter(
+        // Filter reservations by facilityId and date
+        const reservasFiltradas = reservations.filter(
             (reserva) => {
-              const reservaDate = typeof reserva.fechaInicio === 'object' && reserva.fechaInicio instanceof Date ? reserva.fechaInicio : new Date(reserva.fechaInicio);
+              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date ? reserva.initDate : new Date(reserva.initDate);
         
               return (
-                reserva.instalacionId === instalacionId &&
-                reservaDate.getDate() === fechaInicio.getDate() &&
-                reservaDate.getMonth() === fechaInicio.getMonth() &&
-                reservaDate.getFullYear() === fechaInicio.getFullYear() &&
-                reservaDate.getHours() === hora &&
+                reserva.facilityId === facilityId &&
+                reservaDate.getDate() === initDate.getDate() &&
+                reservaDate.getMonth() === initDate.getMonth() &&
+                reservaDate.getFullYear() === initDate.getFullYear() &&
+                reservaDate.getHours() === hour &&
                 reservaDate.getMinutes() === minutos
               );
             }
@@ -208,7 +207,20 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     };
 
     return (
-        <FacilitiesAndReservationsContext.Provider value={{ instalaciones, reservas, getInstalacion, getAllFacilities, getAllReservations, addReservation, addFacility, updateReservation, updateFacility, deleteReservation, deleteFacility, contarReservasPorFranjaHoraria }}>
+        <FacilitiesAndReservationsContext.Provider value={{
+            facilities,
+            reservations,
+            getFacility,
+            getAllFacilities,
+            getAllReservations,
+            addReservation,
+            addFacility,
+            updateReservation,
+            updateFacility,
+            deleteReservation,
+            deleteFacility,
+            countReservationsByTimeSlot
+        }}>
             {children}
         </FacilitiesAndReservationsContext.Provider>
     );

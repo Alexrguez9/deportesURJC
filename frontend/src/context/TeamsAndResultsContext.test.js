@@ -1,7 +1,7 @@
 import { render, waitFor, act } from "@testing-library/react";
 import { TeamsAndResultsProvider, useTeamsAndResults } from "../context/TeamsAndResultsContext";
 
-// Mock de fetch global para simular las llamadas a la API
+// Global fetch mock to simulate API calls
 global.fetch = jest.fn();
 
 const TestComponent = ({ callback }) => {
@@ -28,7 +28,7 @@ describe("TeamsAndResultsProvider", () => {
         fetch.mockReset();
     });
 
-    test("debería proporcionar valores iniciales por defecto", () => {
+    test("should provide default initial values", () => {
         expect(contextValues.teams).toEqual([]);
         expect(contextValues.results).toEqual([]);
         expect(typeof contextValues.fetchTeams).toBe("function");
@@ -42,7 +42,7 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("fetchTeams", () => {
-        it("debería obtener la lista de equipos correctamente", async () => {
+        it("should fetch the list of teams successfully", async () => {
             const mockTeams = [{ _id: "1", name: "Team 1" }, { _id: "2", name: "Team 2" }];
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -56,19 +56,19 @@ describe("TeamsAndResultsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(fetch).toHaveBeenCalledWith("http://localhost:4000/equipos");
+                expect(fetch).toHaveBeenCalledWith("http://localhost:4000teams");
                 expect(contextValues.teams).toEqual(mockTeams);
                 expect(fetchedTeams).toEqual(mockTeams);
             });
         });
 
-        it("debería manejar errores al obtener equipos", async () => {
+        it("should handle errors when fetching teams", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
             });
 
-            console.error = jest.fn(); // Mock console.error para evitar logs en la consola durante la prueba
+            console.error = jest.fn();
 
             await act(async () => {
                 await contextValues.fetchTeams();
@@ -80,7 +80,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al obtener equipos", async () => {
+        it("should handle network errors when fetching teams", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -96,8 +96,8 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("fetchResults", () => {
-        it("debería obtener la lista de resultados correctamente", async () => {
-            const mockResults = [{ _id: "1", jornada: 1 }, { _id: "2", jornada: 2 }];
+        it("should fetch the list of results successfully", async () => {
+            const mockResults = [{ _id: "1", round: 1 }, { _id: "2", round: 2 }];
             fetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => mockResults,
@@ -110,13 +110,13 @@ describe("TeamsAndResultsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(fetch).toHaveBeenCalledWith("http://localhost:4000/resultados");
+                expect(fetch).toHaveBeenCalledWith("http://localhost:4000/results");
                 expect(contextValues.results).toEqual(mockResults);
                 expect(fetchedResults).toEqual(mockResults);
             });
         });
 
-        it("debería manejar errores al obtener resultados", async () => {
+        it("should handle errors when fetching results", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -133,7 +133,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al obtener resultados", async () => {
+        it("should handle network errors when fetching results", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -149,7 +149,7 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("addTeam", () => {
-        it("debería añadir un equipo correctamente", async () => {
+        it("should add a team successfully", async () => {
             const newTeam = { name: "New Team" };
             const mockResponseTeam = { _id: "3", ...newTeam };
             fetch.mockResolvedValueOnce({
@@ -164,14 +164,14 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/equipos",
+                    "http://localhost:4000/teams",
                     expect.anything()
                 );
                 expect(contextValues.teams).toContainEqual(mockResponseTeam);
             });
         });
 
-        it("debería manejar errores al añadir un equipo", async () => {
+        it("should handle errors when adding a team", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 400,
@@ -190,7 +190,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al añadir un equipo", async () => {
+        it("should handle network errors when adding a team", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
             let errorResponse;
@@ -208,8 +208,8 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("addResult", () => {
-        it("debería añadir un resultado correctamente", async () => {
-            const newResult = { jornada: "1", equipo_local: "Local", equipo_visitante: "Visitor", goles_local: "1", goles_visitante: "0", fecha: "2024-01-01" };
+        it("should add a result successfully", async () => {
+            const newResult = { round: "1", localTeam: "Local", visitorTeam: "Visitor", localGoals: "1", visitorGoals: "0", date: "2024-01-01" };
             fetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({ ...newResult, _id: 'newResultId' }), // Simulando respuesta del backend
@@ -222,13 +222,13 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/resultados",
+                    "http://localhost:4000/results",
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al añadir un resultado", async () => {
+        it("should handle errors when adding a result", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 400,
@@ -238,7 +238,7 @@ describe("TeamsAndResultsProvider", () => {
 
             await act(async () => {
                 try {
-                    await contextValues.addResult({ jornada: "a", equipo_local: "Local", equipo_visitante: "Visitor" }); // Jornada no numérica
+                    await contextValues.addResult({ round: "a", localTeam: "Local", visitorTeam: "Visitor" }); // round no numérica
                 } catch (error) {
                     errorThrown = error;
                 }
@@ -251,14 +251,14 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al añadir un resultado", async () => {
+        it("should handle network errors when adding a result", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
             let errorThrown;
 
             await act(async () => {
                 try {
-                    await contextValues.addResult({ jornada: "1", equipo_local: "Local", equipo_visitante: "Visitor" });
+                    await contextValues.addResult({ round: "1", localTeam: "Local", visitorTeam: "Visitor" });
                 } catch (error) {
                     errorThrown = error;
                 }
@@ -273,7 +273,7 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("updateTeam", () => {
-        it("debería actualizar un equipo correctamente", async () => {
+        it("should update a team successfully", async () => {
             const teamId = "1";
             const updateData = { name: "Updated Team Name" };
             const mockUpdatedTeam = { _id: teamId, ...updateData };
@@ -289,13 +289,13 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/equipos/${teamId}`,
+                    `http://localhost:4000/teams/${teamId}`,
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al actualizar un equipo", async () => {
+        it("should handle errors when updating a team", async () => {
             const teamId = "1";
             const updateData = { name: "Updated Team Name" };
             fetch.mockResolvedValueOnce({
@@ -320,7 +320,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al actualizar un equipo", async () => {
+        it("should handle network errors when updating a team", async () => {
             const teamId = "1";
             const updateData = { name: "Updated Team Name" };
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
@@ -344,9 +344,9 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("updateResult", () => {
-        it("debería actualizar un resultado correctamente", async () => {
+        it("should update a result successfully", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1", fecha: "2024-01-01" };
+            const updateData = { localGoals: "2", visitorGoals: "1", date: "2024-01-01" };
             const mockUpdatedTeam = { _id: resultId, ...updateData };
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -360,15 +360,15 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/resultados/${resultId}`,
+                    `http://localhost:4000/results/${resultId}`,
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al actualizar un resultado", async () => {
+        it("should handle errors when updating a result", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1" };
+            const updateData = { localGoals: "2", visitorGoals: "1" };
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 404,
@@ -391,9 +391,9 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al actualizar un resultado", async () => {
+        it("should handle network errors when updating a result", async () => {
             const resultId = "1";
-            const updateData = { goles_local: "2", goles_visitante: "1" };
+            const updateData = { localGoals: "2", visitorGoals: "1" };
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
             let errorThrown;
@@ -415,7 +415,7 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("deleteTeam", () => {
-        it("debería eliminar un equipo correctamente", async () => {
+        it("should delete a team successfully", async () => {
             const teamId = "1";
             fetch.mockResolvedValueOnce({ ok: true });
 
@@ -426,13 +426,13 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/equipos/${teamId}`,
+                    `http://localhost:4000/teams/${teamId}`,
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al eliminar un equipo", async () => {
+        it("should handle errors when deleting a team", async () => {
             const teamId = "1";
             fetch.mockResolvedValueOnce({
                 ok: false,
@@ -456,7 +456,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al eliminar un equipo", async () => {
+        it("should handle network errors when deleting a team", async () => {
             const teamId = "1";
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
@@ -479,7 +479,7 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("deleteResult", () => {
-        it("debería eliminar un resultado correctamente", async () => {
+        it("should delete a result successfully", async () => {
             const resultId = "1";
             fetch.mockResolvedValueOnce({ ok: true });
 
@@ -490,13 +490,13 @@ describe("TeamsAndResultsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/resultados/${resultId}`,
+                    `http://localhost:4000/results/${resultId}`,
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al eliminar un resultado", async () => {
+        it("should handle errors when deleting a result", async () => {
             const resultId = "1";
             fetch.mockResolvedValueOnce({
                 ok: false,
@@ -520,7 +520,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al eliminar un resultado", async () => {
+        it("should handle network errors when deleting a result", async () => {
             const resultId = "1";
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
@@ -543,36 +543,36 @@ describe("TeamsAndResultsProvider", () => {
     });
 
     describe("updateResultsWithNewTeamName", () => {
-        it("debería actualizar el nombre del equipo en los resultados relacionados", async () => {
+        it("should update team name in related results", async () => {
             const teamId = "1";
             const newTeamName = "Nuevo Nombre Equipo";
     
-            const mockResultados = [
+            const mockResults = [
                 {
                     _id: "res1",
-                    equipo_local_id: "1",
-                    equipo_local: "Viejo Nombre",
-                    equipo_visitante: "Otro Equipo",
-                    goles_local: 2,
-                    goles_visitante: 1,
-                    jornada: 1,
-                    fecha: "2024-01-01T00:00:00.000Z",
+                    localTeamId: "1",
+                    localTeam: "Viejo Nombre",
+                    visitorTeam: "Otro Equipo",
+                    localGoals: 2,
+                    visitorGoals: 1,
+                    round: 1,
+                    date: "2024-01-01T00:00:00.000Z",
                 },
                 {
                     _id: "res2",
-                    equipo_visitante_id: "1",
-                    equipo_local: "Otro",
-                    equipo_visitante: "Viejo Nombre",
-                    goles_local: 1,
-                    goles_visitante: 3,
-                    jornada: 2,
-                    fecha: "2024-01-02T00:00:00.000Z",
+                    visitorTeamId: "1",
+                    localTeam: "Otro",
+                    visitorTeam: "Viejo Nombre",
+                    localGoals: 1,
+                    visitorGoals: 3,
+                    round: 2,
+                    date: "2024-01-02T00:00:00.000Z",
                 }
             ];
     
             fetch.mockResolvedValueOnce({
                 ok: true,
-                json: async () => mockResultados,
+                json: async () => mockResults,
             });
     
             fetch.mockResolvedValueOnce({ ok: true }); // PUT res1
@@ -580,7 +580,7 @@ describe("TeamsAndResultsProvider", () => {
     
             fetch.mockResolvedValueOnce({
                 ok: true,
-                json: async () => mockResultados,
+                json: async () => mockResults,
             });
     
             await act(async () => {
@@ -588,16 +588,16 @@ describe("TeamsAndResultsProvider", () => {
             });
     
             await waitFor(() => {
-                expect(fetch).toHaveBeenCalledWith(`http://localhost:4000/resultados/byTeam/${teamId}`);
+                expect(fetch).toHaveBeenCalledWith(`http://localhost:4000/results/byTeam/${teamId}`);
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/resultados/res1`,
+                    `http://localhost:4000/results/res1`,
                     expect.objectContaining({
                         method: "PUT",
                         body: expect.stringContaining(newTeamName),
                     })
                 );
                 expect(fetch).toHaveBeenCalledWith(
-                    `http://localhost:4000/resultados/res2`,
+                    `http://localhost:4000/results/res2`,
                     expect.objectContaining({
                         method: "PUT",
                         body: expect.stringContaining(newTeamName),
@@ -606,7 +606,7 @@ describe("TeamsAndResultsProvider", () => {
             });
         });
     
-        it("debería manejar errores al actualizar nombres en resultados", async () => {
+        it("should handle errors when updating names in results", async () => {
             const teamId = "1";
             fetch.mockResolvedValueOnce({
                 ok: false,
