@@ -5,10 +5,10 @@ const cors = require('cors');
 const mailsRouters = require('./app/routes/mail');
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.BACKEND_PORT;
 
 app.use(cors({
-    origin: ['http://localhost:8080'],
+    origin: [process.env.FRONTEND_URL],
     credentials: true
 }));
 
@@ -22,7 +22,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // TODO: change to true in production (HTTPS: process.env.NODE_ENV === 'production')
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
         httpOnly: true,
         maxAge: 60 * 60 * 1000 // 1 hour
     }
