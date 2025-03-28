@@ -1,14 +1,25 @@
 import {
     createContext,
     useState,
-    useContext
+    useContext,
+    useEffect
 } from "react";
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const cookieUser = Cookies.get('user');
+        if (cookieUser && !user) {
+            const parsed = JSON.parse(cookieUser);
+            setUser(parsed);
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     const getAllUsers = async () => {
         try {
@@ -50,6 +61,7 @@ export const AuthProvider = ({ children }) => {
                 const loggedInUser = await response.json();
                 setUser(loggedInUser);
                 setIsAuthenticated(true);
+                Cookies.set('user', JSON.stringify(loggedInUser), { expires: 7 }); // Set cookie with user data for 7 days
                 navigate("/");
                 return response;
             } else {
@@ -106,6 +118,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
+                Cookies.remove('user');
             } else {
                 console.error("Error al cerrar sesión:", response.status);
             }
