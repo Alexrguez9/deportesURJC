@@ -2,7 +2,7 @@ import { render, waitFor, act } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { mockAuthContext } from "../utils/mocks";
 
-// Mock de fetch global para simular las llamadas a la API
+// Global fetch mock to prevent making real requests on API
 global.fetch = jest.fn();
 
 const TestComponent = ({ callback }) => {
@@ -29,7 +29,7 @@ describe("AuthProvider", () => {
     fetch.mockReset();
   });
 
-  test("debería proporcionar valores iniciales por defecto", () => {
+  test("should render default values", () => {
     expect(authValues.user).toBe(null);
     expect(authValues.isAuthenticated).toBe(false);
     expect(typeof authValues.login).toBe("function");
@@ -45,7 +45,7 @@ describe("AuthProvider", () => {
   });
 
   describe("getAllUsers", () => {
-    it("debería obtener todos los usuarios correctamente", async () => {
+    it("should get all users correctly", async () => {
       const mockUsers = [{ _id: "1", email: "user1@test.com" }];
       fetch.mockResolvedValueOnce({
         ok: true,
@@ -57,7 +57,7 @@ describe("AuthProvider", () => {
       expect(users).toEqual(mockUsers);
     });
 
-    it("debería devolver null si la respuesta no es ok", async () => {
+    it("should return null if the answer is not ok", async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
@@ -67,7 +67,7 @@ describe("AuthProvider", () => {
       consoleSpy.mockRestore();
     });
 
-    it("debería manejar errores de red", async () => {
+    it("should handle network errors", async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockRejectedValueOnce(new Error("Network error"));
 
@@ -78,7 +78,7 @@ describe("AuthProvider", () => {
   });
 
   describe("login", () => {
-    it("debería autenticar al usuario correctamente tras un login exitoso", async () => {
+    it("should authenticate the user correctly after a successful login", async () => {
       const mockUser = { _id: "123", email: "test@admin.com", role: "admin" };
       const response = {
         ok: true,
@@ -112,7 +112,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería manejar errores de login", async () => {
+    it("should handle login errors", async () => {
       fetch.mockResolvedValueOnce({
         ok: false,
         status: 401,
@@ -132,7 +132,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería manejar errores de red en el login", async () => {
+    it("should handle network errors in the login", async () => {
       fetch.mockRejectedValueOnce(new Error("Fallo de red"));
 
       await act(async () => {
@@ -151,7 +151,7 @@ describe("AuthProvider", () => {
   });
 
   describe("logout", () => {
-    it("debería cerrar la sesión del usuario correctamente", async () => {
+    it("should log the user out correctly", async () => {
       fetch.mockResolvedValueOnce({ ok: true });
       authValues.isAuthenticated = true;
       authValues.user = { _id: "123", email: "test@admin.com", role: "admin" };
@@ -168,7 +168,7 @@ describe("AuthProvider", () => {
         );
       });
     });
-    it("debería ejecutar y asertar el mock de logout directamente", async () => {
+    it("you should run and assert the logout mock directly", async () => {
       mockAuthContext.user = {
         _id: "123",
         email: "test@admin.com",
@@ -184,7 +184,7 @@ describe("AuthProvider", () => {
       expect(mockAuthContext.isAuthenticated).toBe(false);
     });
 
-    it("debería manejar errores en el logout", async () => {
+    it("should handle logout errors", async () => {
       fetch.mockResolvedValueOnce({ ok: false, status: 500 });
       authValues.isAuthenticated = true;
       authValues.user = { _id: "123", email: "test@admin.com", role: "admin" };
@@ -206,7 +206,7 @@ describe("AuthProvider", () => {
   });
 
   describe("addUser", () => {
-    it("debería registrar a un usuario nuevo correctamente", async () => {
+    it("you should register a new user correctly", async () => {
       fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({ _id: "newUserId", email: "new@test.com" }),
@@ -228,7 +228,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería manejar el caso de usuario duplicado (409)", async () => {
+    it("should handle the duplicate user case (409)", async () => {
       fetch.mockResolvedValueOnce({
         ok: false,
         status: 409,
@@ -248,7 +248,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería manejar errores de respuesta del servidor (status diferente de 409)", async () => {
+    it("should handle server response errors (status other than 409)", async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockResolvedValueOnce({
         ok: false,
@@ -269,7 +269,7 @@ describe("AuthProvider", () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it("debería manejar errores de red", async () => {
+    it("should handle network errors", async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
       fetch.mockRejectedValueOnce(new Error("Network error"));
 
@@ -285,7 +285,7 @@ describe("AuthProvider", () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it("debería llamar a navigate cuando el registro es exitoso y no hay usuario logueado", async () => {
+    it("should call navigate when registration is successful and there is no logged in user", async () => {
       const navigateMock = jest.fn();
       fetch.mockResolvedValueOnce({
         ok: true,
@@ -302,7 +302,7 @@ describe("AuthProvider", () => {
   });
 
   describe("updateUser", () => {
-    it("debería manejar errores en updateUser", async () => {
+    it("should handle errors in updateUser", async () => {
       fetch.mockResolvedValueOnce({ ok: false, status: 500 });
 
       await act(async () => {
@@ -312,7 +312,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería manejar errores de red en updateUser", async () => {
+    it("should handle network errors in updateUser", async () => {
       fetch.mockRejectedValueOnce(
         new Error("Fallo de red al actualizar usuario")
       );
@@ -337,7 +337,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería actualizar otro usuario correctamente sin modificar el usuario actual", async () => {
+    it("should update another user correctly without modifying the current user.", async () => {
       const mockUpdatedUser = {
         _id: "456",
         email: "updated@test.com",
@@ -366,7 +366,7 @@ describe("AuthProvider", () => {
       });
     });
 
-    it("debería llamar a fetch con los parámetros correctos", async () => {
+    it("should call fetch with the correct parameters", async () => {
       const updateData = { email: "updated@test.com", role: "admin" };
       fetch.mockResolvedValueOnce({
         ok: true,
@@ -505,38 +505,38 @@ describe("AuthProvider", () => {
 
 
   describe("isAdmin", () => {
-    it("debería devolver true si el usuario es admin", () => {
+    it("should return true if the user is admin", () => {
       act(() => {
         authValues.setUser({ role: "admin" });
       });
       expect(authValues.isAdmin()).toBe(true);
     });
 
-    it("debería devolver false si el usuario no es admin", () => {
+    it("should return false if the user is not admin", () => {
       authValues.user = { role: "user" };
       expect(authValues.isAdmin()).toBe(false);
     });
 
-    it("debería devolver false si no hay usuario", () => {
+    it("should return false if there is no user", () => {
       authValues.user = null;
       expect(authValues.isAdmin()).toBe(false);
     });
   });
 
   describe("isStudent", () => {
-    it("debería devolver true si el correo es de estudiante", () => {
+    it("should return true if the mail is from a student", () => {
       act(() => {
         authValues.setUser({ email: "alumno@alumnos.urjc.es" });
       });
       expect(authValues.isStudent()).toBe(true);
     });
 
-    it("debería devolver false si el correo no es de estudiante", () => {
+    it("should return false if the mail is not student mail", () => {
       authValues.user = { email: "profesor@urjc.es" };
       expect(authValues.isStudent()).toBe(false);
     });
 
-    it("debería devolver false si no hay usuario", () => {
+    it("should return false if there is no user", () => {
       authValues.user = null;
       expect(authValues.isStudent()).toBe(false);
     });

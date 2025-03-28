@@ -11,7 +11,7 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
 
   const formatDateForInput = (date) => {
     if (!date) return "";
-    return new Date(date).toISOString().slice(0, 16).replace("Z", ""); // Eliminar "Z" para evitar UTC
+    return new Date(date).toISOString().slice(0, 16).replace("Z", "");
   };
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm({

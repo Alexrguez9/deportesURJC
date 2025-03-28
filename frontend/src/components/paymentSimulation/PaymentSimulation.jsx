@@ -41,7 +41,7 @@ const PaymentSimulation = ({ externalPrice, onPayment }) => {
 
         if (Object.keys(errors).length === 0) {
             setFormErrors({});
-            onPayment(); // Llama a la función de pago del componente padre.
+            onPayment(); // Calls the onPayment function passed as a prop (from the parent component)
         } else {
             setFormErrors(errors);
         }

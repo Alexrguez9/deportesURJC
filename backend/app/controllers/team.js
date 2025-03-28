@@ -23,7 +23,11 @@ exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
         const body = req.body;
+
+        console.log('---body---', body);
+        console.log('---id---', id);
         const updateTeam = await Team.updateOne({ _id: id }, { $set: body });
+        console.log('---updateTeam---', updateTeam);
 
         if (updateTeam.matchedCount === 0) {
             res.status(404).json({ message: 'No se encontró el equipo para actualizar' });

@@ -17,7 +17,7 @@ const Header = () => {
     
     const handleLogout = () => {
         logout();
-        navigate('/'); // redirecciona a home
+        navigate('/');
         handleClick();
     };
 
@@ -69,7 +69,7 @@ const Header = () => {
                     {user ? (
                         <>
                             {menuOpen ? (
-                                // Mostrar los links en el móvil sin estar dentro del dropdown
+                                // Show links in dropdown in mobile mode
                                 <>
                                     <Link className="navbar-link" to="profile" onClick={toggleMenu}>
                                         <FiUser style={{ padding: '1rem' }} />
@@ -93,7 +93,7 @@ const Header = () => {
                                 </>
                             ) : (
                                 <>
-                                    {/* Mostrar los enlaces dentro del dropdown en modo escritorio */}
+                                    {/* Show user dropdown in desktop mode */}
                                     <div className="user-dropdown">
                                         <button className="navbar-button">
                                             {user.name}<IoMdArrowDropdown />

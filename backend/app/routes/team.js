@@ -2,18 +2,18 @@ const express = require('express')
 const controller = require('../controllers/team')
 
 const router = express.Router()
-const path = 'equipos'
+const path = 'teams'
 
-// Ruta GET equipos
+// Ruta GET teams
 router.get(`/${path}`, controller.getData);
 
-// Ruta POST equipo
+// Ruta POST team
 router.post(`/${path}`, controller.insertData);
 
-// Ruta PUT equipo
+// Ruta PUT team
 router.put(`/${path}/:id`, controller.updateOne);
 
-// Ruta DELETE equipo
+// Ruta DELETE team
 router.delete(`/${path}/:id`, controller.deleteOne);
 
 module.exports = router

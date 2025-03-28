@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const instalacionSchema = new mongoose.Schema({
+const facilitySchema = new mongoose.Schema({
     name: {
       type: String,
       required: true
@@ -33,6 +33,6 @@ const instalacionSchema = new mongoose.Schema({
     }
 });
 
-const Facility = mongoose.model('instalaciones', instalacionSchema);
+const Facility = mongoose.model('Facility', facilitySchema);
 
 module.exports = Facility;

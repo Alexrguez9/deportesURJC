@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Esquema de Reserva
-const reservasSchema = new mongoose.Schema({
+const reservationSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
@@ -9,7 +8,7 @@ const reservasSchema = new mongoose.Schema({
   },
   facilityId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'instalaciones',
+    ref: './facility',
     required: true
   },
   initDate: {
@@ -30,10 +29,12 @@ const reservasSchema = new mongoose.Schema({
   },
 });
 
+const Facility = require('./facility'); 
+
 // Middleware to calculate the total price before saving the reservation
-reservasSchema.pre('save', async function(next) {
+reservationSchema.pre('save', async function(next) {
   const reservation = this;
-  const facility = await mongoose.model('instalaciones').findById(reservation.facilityId);
+  const facility = await Facility.findById(reservation.facilityId);
 
   if (!facility) {
     throw new Error('Instalación no encontrada');
@@ -45,5 +46,5 @@ reservasSchema.pre('save', async function(next) {
 });
 
 
-const Reservation = mongoose.model('reservas', reservasSchema);
+const Reservation = mongoose.model('reservations', reservationSchema);
 module.exports = Reservation;

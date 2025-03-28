@@ -39,10 +39,10 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
     try {
       const facilityData = {
         ...data,
-        isInternSport: data.isInternSport === "true", // Convertir a booleano
+        isInternSport: data.isInternSport === "true", // Convert to boolean
         schedule: {
-          initialHour: new Date(data.initialHour + "Z"), // Convertir a Date, manteneniendo la zona horaria local
-          endHour: new Date(data.endHour + "Z"), // Convertir a Date, manteneniendo la zona horaria local
+          initialHour: new Date(data.initialHour + "Z"), // Convert to Date, keeping the local time zone
+          endHour: new Date(data.endHour + "Z"), // Convert to Date, keeping the local time zone
         },
       };
 

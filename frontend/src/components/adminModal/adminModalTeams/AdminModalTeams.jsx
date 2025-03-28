@@ -14,10 +14,9 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         formState: { errors: errorTeams },
     } = useForm();
 
-    // Obtener lista de deportes únicos
+    // Obtain unique sports from the teams
     const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
 
-    // Valores iniciales del formulario
     const initialValues = {
         sport: popupData?.sport || "",
         name: popupData?.name || "",

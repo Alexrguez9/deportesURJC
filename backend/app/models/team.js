@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Creamos Schema de moongose
-const EquipoSchema = new mongoose.Schema(
+const teamSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -27,6 +26,6 @@ const EquipoSchema = new mongoose.Schema(
   }
 );
 
-const Team = mongoose.model('equipos', EquipoSchema);
+const Team = mongoose.model('teams', teamSchema);
 
 module.exports = Team;

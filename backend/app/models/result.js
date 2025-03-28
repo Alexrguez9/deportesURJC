@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
-// Esquema de Resultados
-const ResultadosSchema = new mongoose.Schema(
+const resultSchema = new mongoose.Schema(
   {
     sport: {
       type: String,
@@ -59,8 +58,8 @@ const ResultadosSchema = new mongoose.Schema(
   }
 );
 
-// Middleware para formatear los datos antes de guardarlos
-ResultadosSchema.pre('save', function (next) {
+// Middleware for validating and formatting data before saving
+resultSchema.pre('save', function (next) {
     try {
         this.localGoals = Number(this.localGoals);
         this.visitorGoals = Number(this.visitorGoals);
@@ -91,6 +90,6 @@ ResultadosSchema.pre('save', function (next) {
 });
 
 
-const Result = mongoose.model('resultados', ResultadosSchema);
+const Result = mongoose.model('results', resultSchema);
 
 module.exports = Result;

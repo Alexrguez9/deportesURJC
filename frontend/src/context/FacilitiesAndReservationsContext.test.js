@@ -1,4 +1,3 @@
-// FacilitiesAndReservationsContext.test.js
 import { render, waitFor, act } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../context/FacilitiesAndReservationsContext";
 
@@ -29,9 +28,9 @@ describe("FacilitiesAndReservationsProvider", () => {
         fetch.mockReset();
     });
 
-    test("debería proporcionar valores iniciales por defecto", () => {
-        expect(contextValues.instalaciones).toEqual([]);
-        expect(contextValues.reservas).toEqual([]);
+    test("should provide default initial values", () => {
+        expect(contextValues.facilities).toEqual([]);
+        expect(contextValues.reservations).toEqual([]);
         expect(typeof contextValues.getAllFacilities).toBe("function");
         expect(typeof contextValues.getAllReservations).toBe("function");
         expect(typeof contextValues.addReservation).toBe("function");
@@ -40,12 +39,12 @@ describe("FacilitiesAndReservationsProvider", () => {
         expect(typeof contextValues.updateFacility).toBe("function");
         expect(typeof contextValues.deleteReservation).toBe("function");
         expect(typeof contextValues.deleteFacility).toBe("function");
-        expect(typeof contextValues.getInstalacion).toBe("function");
-        expect(typeof contextValues.contarReservasPorFranjaHoraria).toBe("function");
+        expect(typeof contextValues.getFacility).toBe("function");
+        expect(typeof contextValues.countReservationsByTimeSlot).toBe("function");
     });
 
     describe("getAllFacilities", () => {
-        it("debería obtener la lista de instalaciones correctamente", async () => {
+        it("should fetch facilities list successfully", async () => {
             const mockFacilities = [{ _id: "1", name: "Facility 1" }, { _id: "2", name: "Facility 2" }];
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -60,14 +59,14 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/instalaciones"
+                    "http://localhost:4000/facilities"
                 );
-                expect(contextValues.instalaciones).toEqual(mockFacilities);
+                expect(contextValues.facilities).toEqual(mockFacilities);
                 expect(facilities).toEqual(mockFacilities);
             });
         });
 
-        it("debería manejar errores al obtener la lista de instalaciones", async () => {
+        it("should handle API error when fetching facilities", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -82,12 +81,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.instalaciones).toEqual([]); // Instalaciones should remain empty
+                expect(contextValues.facilities).toEqual([]); // Facilities should remain empty
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería manejar errores de red al obtener instalaciones", async () => {
+        it("should handle network error when fetching facilities", async () => {
             jest.clearAllMocks();
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn(); // Mock console.error
@@ -98,12 +97,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(1);
-                expect(contextValues.instalaciones).toEqual([]);
+                expect(contextValues.facilities).toEqual([]);
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería ejecutar el bloque 'else' si la API devuelve un estado incorrecto", async () => {
+        it("should handle non-ok response from API when fetching facilities", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 403,
@@ -120,7 +119,7 @@ describe("FacilitiesAndReservationsProvider", () => {
                 expect(consoleErrorSpy).toHaveBeenCalledWith(
                     "Error al obtener la lista de instalaciones:", 403
                 );
-                expect(contextValues.instalaciones).toEqual([]);
+                expect(contextValues.facilities).toEqual([]);
             });
     
             consoleErrorSpy.mockRestore();
@@ -128,7 +127,7 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("getAllReservations", () => {
-        it("debería obtener la lista de reservas correctamente", async () => {
+        it("should fetch reservations list successfully", async () => {
             const mockReservations = [{ _id: "1", facilityId: "1", date: "2024-01-01" }, { _id: "2", facilityId: "2", date: "2024-01-02" }];
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -143,14 +142,14 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/reservas"
+                    "http://localhost:4000/reservations"
                 );
-                expect(contextValues.reservas).toEqual(mockReservations);
+                expect(contextValues.reservations).toEqual(mockReservations);
                 expect(reservations).toEqual(mockReservations);
             });
         });
 
-        it("debería manejar errores al obtener la lista de reservas", async () => {
+        it("should handle API error when fetching reservations", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -164,12 +163,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.reservas).toEqual([]); // Reservas should remain empty
+                expect(contextValues.reservations).toEqual([]); // Reservations should remain empty
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería manejar errores de red al obtener reservas", async () => {
+        it("should handle network error when fetching reservations", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -179,12 +178,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.reservas).toEqual([]);
+                expect(contextValues.reservations).toEqual([]);
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería ejecutar el bloque 'else' si la API devuelve un estado incorrecto", async () => {
+        it("should handle non-ok response from API when fetching reservations", async () => {
             jest.clearAllMocks();
             fetch.mockResolvedValueOnce({
                 ok: false,
@@ -202,7 +201,7 @@ describe("FacilitiesAndReservationsProvider", () => {
                 expect(consoleErrorSpy).toHaveBeenCalledWith(
                     "Error al obtener la lista de reservas:", 404
                 );
-                expect(contextValues.reservas).toEqual([]);
+                expect(contextValues.reservations).toEqual([]);
             });
     
             consoleErrorSpy.mockRestore();
@@ -210,7 +209,7 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("addReservation", () => {
-        it("debería agregar una reserva correctamente", async () => {
+        it("should add a reservation successfully", async () => {
             const mockReservation = { _id: "3", facilityId: "1", date: "2024-01-03" };
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -225,14 +224,14 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/reservas",
+                    "http://localhost:4000/reservations",
                     expect.anything()
                 );
-                expect(contextValues.reservas).toContainEqual(mockReservation);
+                expect(contextValues.reservations).toContainEqual(mockReservation);
             });
         });
 
-        it("debería manejar errores al agregar una reserva", async () => {
+        it("should handle API error when adding a reservation", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -247,12 +246,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.reservas).toEqual([]); //Reservas should not be updated in case of error. It is re-fetched on mount.
+                expect(contextValues.reservations).toEqual([]); //Reservations should not be updated in case of error. It is re-fetched on mount.
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería manejar errores de red al agregar una reserva", async () => {
+        it("should handle network error when adding a reservation", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -263,14 +262,14 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.reservas).toEqual([]); //Reservas should not be updated
+                expect(contextValues.reservations).toEqual([]); //Reservations should not be updated
                 expect(console.error).toHaveBeenCalled();
             });
         });
     });
 
     describe("addFacility", () => {
-        it("debería agregar una instalación correctamente", async () => {
+        it("should add a facility successfully", async () => {
             const mockFacility = { _id: "3", name: "New Facility" };
             fetch.mockResolvedValueOnce({
                 ok: true,
@@ -285,14 +284,14 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/instalaciones",
+                    "http://localhost:4000/facilities",
                     expect.anything()
                 );
-                expect(contextValues.instalaciones).toContainEqual(mockFacility);
+                expect(contextValues.facilities).toContainEqual(mockFacility);
             });
         });
 
-        it("debería manejar errores al agregar una instalación", async () => {
+        it("should handle API error when adding a facility", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -307,12 +306,12 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.instalaciones).toEqual([]); // Instalaciones should not be updated
+                expect(contextValues.facilities).toEqual([]); // Facilities should not be updated
                 expect(console.error).toHaveBeenCalled();
             });
         });
 
-        it("debería manejar errores de red al agregar una instalación", async () => {
+        it("should handle network error when adding a facility", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -323,14 +322,14 @@ describe("FacilitiesAndReservationsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(contextValues.instalaciones).toEqual([]); // Instalaciones should not be updated
+                expect(contextValues.facilities).toEqual([]); // Facilities should not be updated
                 expect(console.error).toHaveBeenCalled();
             });
         });
     });
 
     describe("updateReservation", () => {
-        it("debería actualizar una reserva correctamente", async () => {
+        it("should update a reservation successfully", async () => {
             fetch.mockResolvedValueOnce({ ok: true });
 
             const updatedReservation = { date: "2024-01-04" };
@@ -341,13 +340,13 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(4);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/reservas/1",
+                    "http://localhost:4000/reservations/1",
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al actualizar una reserva", async () => {
+        it("should handle API error when updating a reservation", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -366,7 +365,7 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al actualizar una reserva", async () => {
+        it("should handle network error when updating a reservation", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -383,7 +382,7 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("updateFacility", () => {
-        it("debería actualizar una instalación correctamente", async () => {
+        it("should update a facility successfully", async () => {
             fetch.mockResolvedValueOnce({ ok: true });
 
             const updatedFacility = { name: "Updated Facility" };
@@ -394,13 +393,13 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(4);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/instalaciones/1",
+                    "http://localhost:4000/facilities/1",
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al actualizar una instalación", async () => {
+        it("should handle API error when updating a facility", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -419,7 +418,7 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al actualizar una instalación", async () => {
+        it("should handle network error when updating a facility", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -436,7 +435,7 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("deleteReservation", () => {
-        it("debería eliminar una reserva correctamente", async () => {
+        it("should delete a reservation successfully", async () => {
             fetch.mockResolvedValueOnce({ ok: true, json: async () => ([]) }); //Simulating refetch returns empty array
 
             await act(async () => {
@@ -446,13 +445,13 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(4);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/reservas/1",
+                    "http://localhost:4000/reservations/1",
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al eliminar una reserva", async () => {
+        it("should handle API error when deleting a reservation", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -470,7 +469,7 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al eliminar una reserva", async () => {
+        it("should handle network error when deleting a reservation", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -486,7 +485,7 @@ describe("FacilitiesAndReservationsProvider", () => {
     });
 
     describe("deleteFacility", () => {
-        it("debería eliminar una instalación correctamente", async () => {
+        it("should delete a facility successfully", async () => {
             fetch.mockResolvedValueOnce({ ok: true });
 
             await act(async () => {
@@ -496,13 +495,13 @@ describe("FacilitiesAndReservationsProvider", () => {
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(4);
                 expect(fetch).toHaveBeenCalledWith(
-                    "http://localhost:4000/instalaciones/1",
+                    "http://localhost:4000/facilities/1",
                     expect.anything()
                 );
             });
         });
 
-        it("debería manejar errores al eliminar una instalación", async () => {
+        it("should handle API error when deleting a facility", async () => {
             fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
@@ -520,7 +519,7 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
         });
 
-        it("debería manejar errores de red al eliminar una instalación", async () => {
+        it("should handle network error when deleting a facility", async () => {
             fetch.mockRejectedValueOnce(new Error("Fallo de red"));
             console.error = jest.fn();
 
@@ -535,16 +534,14 @@ describe("FacilitiesAndReservationsProvider", () => {
         });
     });
 
-    describe("getInstalacion", () => {
-        it("debería retornar undefined si la instalación no se encuentra en el estado local", async () => {
-            contextValues.instalaciones = [{ _id: "1", name: "Facility 1" }];
-
-            const facility = await contextValues.getInstalacion("2");
-
+    describe("getFacility", () => {
+        it("should return undefined if facility is not found in local state", async () => {
+            contextValues.facilities = [{ _id: "1", name: "Facility 1" }];
+            const facility = await contextValues.getFacility("2");
             expect(facility).toBeUndefined();
         });
 
-        it("debería retornar la instalación correcta si existe en el estado local", async () => {
+        it("should return the correct facility if it exists in local state", async () => {
             fetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => [
@@ -558,38 +555,38 @@ describe("FacilitiesAndReservationsProvider", () => {
             });
     
             await waitFor(() => {
-                expect(contextValues.instalaciones).toEqual([
+                expect(contextValues.facilities).toEqual([
                     { _id: "1", name: "Facility 1" },
                     { _id: "2", name: "Facility 2" },
                 ]);
             });
     
             await act(async () => {
-                const facility = await contextValues.getInstalacion("2");
+                const facility = await contextValues.getFacility("2");
                 expect(facility).toEqual({ _id: "2", name: "Facility 2" });
             });
         });
     
-        it("debería retornar undefined si la instalación no se encuentra en el estado local", async () => {
+        it("should return undefined if facility is still not found after fetching", async () => {
             jest.spyOn(contextValues, "getAllFacilities").mockImplementation(async () => {
-                contextValues.instalaciones = [{ _id: "1", name: "Facility 1" }];
+                contextValues.facilities = [{ _id: "1", name: "Facility 1" }];
             });
     
             await act(async () => {
                 await contextValues.getAllFacilities();
             });
     
-            const facility = await contextValues.getInstalacion("2");
+            const facility = await contextValues.getFacility("2");
             expect(facility).toBeUndefined();
         });
     });
 
-    describe("contarReservasPorFranjaHoraria", () => {
-        it("debería retornar 0 si no hay reservas para la franja horaria especificada", async () => {
+    describe("countReservationsByTimeSlot", () => {
+        it("should return 0 if there are no reservations for the given time slot", async () => {
             const initDate = new Date(2024, 0, 1, 10, 0);
-            contextValues.reservas = [];
+            contextValues.reservations = [];
 
-            const count = await contextValues.contarReservasPorFranjaHoraria("1", initDate);
+            const count = await contextValues.countReservationsByTimeSlot("1", initDate);
 
             expect(count).toBe(0);
         });

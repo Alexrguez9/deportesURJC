@@ -22,7 +22,7 @@ export const getMonthlyDateRange = (user) => {
     if (user) {
         const initDate = new Date();
         const endDate = new Date(initDate);
-        endDate.setMonth(endDate.getMonth() + 1); // Un mes de alta
+        endDate.setMonth(endDate.getMonth() + 1); // One month from now
         return {
             startDate: initDate.toISOString(),
             endDate: endDate.toISOString()

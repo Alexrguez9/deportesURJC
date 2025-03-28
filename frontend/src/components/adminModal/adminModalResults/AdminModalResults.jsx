@@ -22,8 +22,8 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
         hour: popupData?.hour || "",
         place: popupData?.place || "",
     };
-    const [equipoLocal, setEquipoLocal] = useState(initialValues.localTeam);
-    const [equipoVisitante, setEquipoVisitante] = useState(initialValues.visitorTeam);
+    const [localTeam, setLocalTeam] = useState(initialValues.localTeam);
+    const [visitorTeam, setVisitorTeam] = useState(initialValues.visitorTeam);
     const {
         register,
         handleSubmit: handleSubmitEncuentros,
@@ -45,14 +45,14 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     useEffect(() => {
         async function fetchTeams() {
             if (popupData?.localTeam) {
-                setEquipoLocal(popupData.localTeam);
+                setLocalTeam(popupData.localTeam);
             } else if (popupData?.visitorTeam) {
-                setEquipoVisitante(popupData.visitorTeam);
+                setVisitorTeam(popupData.visitorTeam);
             } else {
-                setEquipoLocal("");
-                setEquipoVisitante("");
+                setLocalTeam("");
+                setVisitorTeam("");
             }
-            // Filtrar equipos basados en el deporte seleccionado
+            // Filter teams by selected sport
             const newFilteredTeams = teams.filter(team => team.sport === selectedSport);
             await setFilteredTeams(newFilteredTeams);
         }
@@ -69,13 +69,13 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     };
 
     const onSubmit = handleSubmitEncuentros(async (data) => {
-        const equipoLocal = filteredTeams.find(team => team.name === data.localTeam);
-        const equipoVisitante = filteredTeams.find(team => team.name === data.visitorTeam);
+        const localTeam = filteredTeams.find(team => team.name === data.localTeam);
+        const visitorTeam = filteredTeams.find(team => team.name === data.visitorTeam);
         const fullDate = combineDateAndTime(data.date, data.hour);
         data = {
             ...data,
-            localTeamId: equipoLocal?._id,
-            visitorTeamId: equipoVisitante?._id,
+            localTeamId: localTeam?._id,
+            visitorTeamId: visitorTeam?._id,
             result: data.localGoals > data.visitorGoals ? "local" : data.localGoals < data.visitorGoals ? "visitante" : "Empate",
             date: fullDate.toISOString(),
         };
@@ -146,8 +146,8 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Equipo local:&nbsp;
                             <select
                                 {...register("localTeam", { required: "Por favor, selecciona un equipo local" })}
-                                value={equipoLocal}
-                                onChange={(e) => setEquipoLocal(e.target.value)}
+                                value={localTeam}
+                                onChange={(e) => setLocalTeam(e.target.value)}
                             >
                                 <option value="">Selecciona un equipo</option>
                                 {filteredTeams.map(team => (
@@ -178,8 +178,8 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Equipo visitante:&nbsp;
                             <select
                                 {...register("visitorTeam", { required: "Por favor, selecciona un equipo visitante" })}
-                                value={equipoVisitante}
-                                onChange={(e) => setEquipoVisitante(e.target.value)}
+                                value={visitorTeam}
+                                onChange={(e) => setVisitorTeam(e.target.value)}
                             >
                                 <option value="">Selecciona un equipo</option>
                                 {filteredTeams.map(team => (

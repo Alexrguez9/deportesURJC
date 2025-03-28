@@ -340,7 +340,6 @@ describe("AdminModalResults Component", () => {
             });
         });
 
-        // TODO: Test correcto
         it('Haciendo click en deporte, y después click en Equipo local, debería mostrar el Equipo local', async () => {
             mockTeamsAndResultsContext.addResult.mockResolvedValue({ ok: true });
             render(<AdminModalResults closeModal={mockCloseModal} isNewResult={true} />);

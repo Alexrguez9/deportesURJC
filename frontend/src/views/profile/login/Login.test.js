@@ -322,7 +322,7 @@ describe("Login Component", () => {
             expect(screen.getByText(/email o contraseña incorrectos/i)).toBeInTheDocument();
         });
     
-        // Ahora simulamos que el usuario vuelve a escribir en el email para borrar el error
+        // Simulate user typing again in email input to clear the error
         fireEvent.change(emailInput, { target: { value: "new@example.com" } });
     
         await waitFor(() => {
@@ -355,7 +355,7 @@ describe("Login Component", () => {
             expect(screen.getByText(/email ya en uso/i)).toBeInTheDocument();
         });
     
-        // Ahora simulamos que el usuario vuelve a escribir en el email para borrar el error
+        // Simulate user typing again in email input to clear the error
         fireEvent.change(emailInput, { target: { value: "newemail@test.com" } });
     
         await waitFor(() => {

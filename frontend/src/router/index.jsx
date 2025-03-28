@@ -4,28 +4,28 @@ import Layout from '../views/layout/Layout';
 import Profile from '../views/profile/Profile';
 import NotFound from '../views/notFound/NotFound';
 import Home from '../views/home/Home';
-import Clasificaciones from '../views/ligas_internas/clasificaciones/Clasificaciones';
-import Encuentros from '../views/ligas_internas/encuentros/Encuentros';
+import Rankings from '../views/ligas_internas/rankings/Rankings';
+import Results from '../views/ligas_internas/results/Results';
 import InternLeaguesContent from '../components/InternLeaguesContent/InternLeaguesContent';
-import SalasPreparacion from '../views/salasPreparacion/SalasPreparacion';
-import ContentSalasPreparacion from '../components/contentSalasPreparacion/ContentSalasPreparacion';
-import Registration from '../views/salasPreparacion/registration/Registration.jsx';
-import ReservasPreparacion from '../views/salasPreparacion/reservasPreparacion/ReservasPreparacion';
-import Instalaciones from '../views/instalaciones/Instalaciones';
-import MisReservas from '../views/profile/misReservas/MisReservas';
-import MisAbonos from '../views/profile/misAbonos/MisAbonos.jsx';
-import ConsultarPerfil from '../views/profile/consultarPerfil/ConsultarPerfil';
+import FitnessRooms from '../views/FitnessRooms/FitnessRooms';
+import FitnessRoomsContent from '../components/fitnessRoomsContent/FitnessRoomsContent';
+import Registration from '../views/fitnessRooms/registration/Registration';
+import FitnessRoomsReservations from '../views/fitnessRooms/fitnessRoomsReservations/FitnessRoomsReservations';
+import Facilities from '../views/instalaciones/Facilities';
+import MyReservations from '../views/profile/myReservations/MyReservations';
+import MySubscriptions from '../views/profile/mySubscriptions/MySubscriptions';
+import SeeProfile from '../views/profile/seeProfile/SeeProfile';
 import ContentProfile from '../components/ContentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
-import PagoAbono from '../views/salasPreparacion/pagoAbono/PagoAbono';
-import RecargaMonedero from '../views/monedero/RecargaMonedero';
-import AdminPanel from '../views/admin/portada/AdminPanel';
-import AdminTeams from '../views/admin/portada/Teams/AdminTeams';
-import AdminUsers from '../views/admin/portada/Users/AdminUsers';
-import AdminReservations from '../views/admin/portada/Reservation/AdminReservations.jsx';
-import AdminFacilities from '../views/admin/portada/Facilities/AdminFacilities.jsx';
+import PaymentSubscription from '../views/fitnessRooms/paymentSubscription/PaymentSubscription';
+import WalletReload from '../views/walletReload/WalletReload';
+import AdminPanel from '../views/admin/cover/AdminPanel';
+import AdminTeams from '../views/admin/cover/Teams/AdminTeams';
+import AdminUsers from '../views/admin/cover/Users/AdminUsers';
+import AdminReservations from '../views/admin/cover/Reservation/AdminReservations';
+import AdminFacilities from '../views/admin/cover/Facilities/AdminFacilities';
 import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
-import UserDetail from '../views/admin/portada/Users/UserDetail';
+import UserDetail from '../views/admin/cover/Users/UserDetail';
 
 export const router = createBrowserRouter([
     {
@@ -39,38 +39,38 @@ export const router = createBrowserRouter([
                 element: <Ligas_internas />,
                 children: [
                     { path: '', element: <InternLeaguesContent /> },
-                    { path: 'encuentros', element: <Encuentros /> },
-                    { path: 'clasificaciones', element: <Clasificaciones /> },
+                    { path: 'encuentros', element: <Results /> },
+                    { path: 'clasificaciones', element: <Rankings /> },
                 ]
             },
             { 
                 path: 'salas-preparacion', 
-                element: <SalasPreparacion />,
+                element: <FitnessRooms />,
                 children: [
-                    { path: '', element: <ContentSalasPreparacion /> },
+                    { path: '', element: <FitnessRoomsContent /> },
                     { path: 'alta', element: <Registration /> },
-                    { path: 'reservas-preparacion', element: <ReservasPreparacion /> },
-                    { path: 'pago-abono', element: <PagoAbono /> },
+                    { path: 'reservas-preparacion', element: <FitnessRoomsReservations /> },
+                    { path: 'pago-abono', element: <PaymentSubscription /> },
                 ]
             },
             { 
                 path: 'instalaciones', 
-                element: <Instalaciones />,
+                element: <Facilities />,
             },
             { 
                 path: 'profile',
                 element: <Profile />,
                 children: [
                     { path: '', element: <ContentProfile /> },
-                    { path: 'mis-reservas', element: <MisReservas /> },
-                    { path: 'mis-abonos', element: <MisAbonos /> },
-                    { path: 'consultar-perfil', element: <ConsultarPerfil /> },
+                    { path: 'mis-reservas', element: <MyReservations /> },
+                    { path: 'mis-abonos', element: <MySubscriptions /> },
+                    { path: 'consultar-perfil', element: <SeeProfile /> },
                     { path: 'login', element: <Login /> },
                 ]
             },
             { 
                 path: 'monedero', 
-                element: <RecargaMonedero />,
+                element: <WalletReload />,
             },
             { 
                 path: 'admin-panel', 

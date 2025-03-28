@@ -2,18 +2,18 @@ const express = require('express')
 const controller = require('../controllers/facility')
 
 const router = express.Router()
-const path = 'instalaciones'
+const path = 'facilities'
 
-// Ruta GET instalaciones
+// Ruta GET facilities
 router.get(`/${path}`, controller.getData);
 
-// Ruta POST instalaciones
+// Ruta POST facilities
 router.post(`/${path}`, controller.insertData);
 
-// Ruta PUT instalaciones
+// Ruta PUT facilities
 router.put(`/${path}/:id`, controller.updateOne);
 
-// Ruta DELETE instalaciones
+// Ruta DELETE facilities
 router.delete(`/${path}/:id`, controller.deleteOne);
 
 module.exports = router;

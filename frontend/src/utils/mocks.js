@@ -27,9 +27,9 @@ export const mockAuthContext = {
 };
 
 export const mockFacilitiesAndReservationsContext = {
-    instalaciones: [{ _id: '1', name: 'Gimnasio' }],
-    reservas: [{ _id: '1', facilityId: '1', initDate: new Date('2024-08-05T10:00') }],
-    getInstalacion: jest.fn().mockResolvedValue({ _id: '1', name: 'Gimnasio' }),
+    facilities: [{ _id: '1', name: 'Gimnasio' }],
+    reservations: [{ _id: '1', facilityId: '1', initDate: new Date('2024-08-05T10:00') }],
+    getFacility: jest.fn().mockResolvedValue({ _id: '1', name: 'Gimnasio' }),
     getAllFacilities: jest.fn().mockResolvedValue([{ _id: '1', name: 'Gimnasio' }]),
     getAllReservations: jest.fn().mockResolvedValue([{ _id: '1', facilityId: '1' }]),
     addReservation: jest.fn().mockResolvedValue({ ok: true }),
@@ -38,7 +38,7 @@ export const mockFacilitiesAndReservationsContext = {
     updateFacility: jest.fn().mockResolvedValue({ ok: true }),
     deleteReservation: jest.fn().mockResolvedValue({ ok: true }),
     deleteFacility: jest.fn().mockResolvedValue({ ok: true }),
-    contarReservasPorFranjaHoraria: jest.fn().mockResolvedValue(2),
+    countReservationsByTimeSlot: jest.fn().mockResolvedValue(2),
     getMinTime: jest.fn().mockResolvedValue(new Date()),
     getMaxTime: jest.fn().mockResolvedValue(new Date())
 };

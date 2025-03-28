@@ -2,7 +2,7 @@ const express = require('express')
 const controller = require('../controllers/result')
 
 const router = express.Router()
-const path = 'resultados'
+const path = 'results'
 
 router.get(`/${path}`, controller.getData);
 
