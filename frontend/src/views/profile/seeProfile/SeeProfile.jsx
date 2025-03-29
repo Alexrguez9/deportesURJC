@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
 
 const SeeProfile = () => {
-    const { user, setUser, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
+    const { user, updateUserAndCookie, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservations, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -63,9 +63,6 @@ const SeeProfile = () => {
                 return;
             }
             toast.success("Perfil actualizado con éxito.");
-
-            const { user: updatedUser } = updatedUserRes;
-            await setUser(updatedUser);
             setEditMode(false);
         } catch (error) {
             console.error("Error al actualizar el perfil:", error);

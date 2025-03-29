@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 if (user?._id === userId) {
-                    setUser(updatedUser);
+                    updateUserAndCookie(updatedUser);
                 }
                 return response;
             } else {
@@ -167,12 +167,12 @@ export const AuthProvider = ({ children }) => {
             });
     
             const data = await response.json();
-    
+
             if (!response.ok) {
                 throw new Error(data.message || "Error al actualizar el perfil");
             }
     
-            setUser(data.user);
+            updateUserAndCookie(data.user);
             return data.user;
     
         } catch (error) {
@@ -247,6 +247,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUserAndCookie = (updatedUser) => {
+        setUser(updatedUser);
+        Cookies.set('user', JSON.stringify(updatedUser), { expires: 7 });
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -261,7 +266,8 @@ export const AuthProvider = ({ children }) => {
             isAdmin,
             isStudent,
             handleAdmin,
-            updatePasswordAndName
+            updatePasswordAndName,
+            updateUserAndCookie
         }}>
         {children}
         </AuthContext.Provider>

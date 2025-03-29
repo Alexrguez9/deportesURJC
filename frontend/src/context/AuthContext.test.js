@@ -1,6 +1,13 @@
 import { render, waitFor, act } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { mockAuthContext } from "../utils/mocks";
+import Cookies from 'js-cookie';
+
+jest.mock('js-cookie', () => ({
+  set: jest.fn(),
+  get: jest.fn(),
+  remove: jest.fn(),
+}));
 
 // Global fetch mock to prevent making real requests on API
 global.fetch = jest.fn();
@@ -397,7 +404,7 @@ describe("AuthProvider", () => {
         email: "test@example.com",
         name: "Nuevo Nombre",
       };
-
+    
       fetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -406,9 +413,9 @@ describe("AuthProvider", () => {
           user: mockUpdatedUser,
         }),
       });
-
+    
       let updatedUser;
-
+    
       await act(async () => {
         updatedUser = await authValues.updatePasswordAndName(
           "123",
@@ -417,12 +424,14 @@ describe("AuthProvider", () => {
           "Nuevo Nombre"
         );
       });
-
+    
       expect(updatedUser).toEqual(mockUpdatedUser);
-
+    
       await waitFor(() => {
         expect(authValues.user).toEqual(mockUpdatedUser);
       });
+
+      // expect(Cookies.get('user')).toBe(JSON.stringify(mockUpdatedUser));
     });
 
     it("should handle incorrect current password", async () => {
@@ -581,6 +590,31 @@ describe("AuthProvider", () => {
       expect(result.role).toBe("user");
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
+    });
+  });
+
+  describe("AuthProvider cookie integration", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      Cookies.get = jest.fn().mockReturnValue(undefined);
+      Cookies.set = jest.fn();
+      Cookies.remove = jest.fn();
+    });
+  
+    it("should write user to cookie on login", async () => {
+      const mockUser = { _id: "1", email: "cookie@test.com", name: "Test" };
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockUser,
+      });
+  
+      const navigate = jest.fn();
+  
+      await act(async () => {
+        await authValues.login({ email: "cookie@test.com", password: "123456" }, navigate);
+      });
+  
+      expect(Cookies.set).toHaveBeenCalledWith("user", JSON.stringify(mockUser), { expires: 7 });
     });
   });
 });

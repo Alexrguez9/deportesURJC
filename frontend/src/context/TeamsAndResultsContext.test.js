@@ -56,7 +56,7 @@ describe("TeamsAndResultsProvider", () => {
 
             await waitFor(() => {
                 expect(fetch).toHaveBeenCalledTimes(3);
-                expect(fetch).toHaveBeenCalledWith("http://localhost:4000teams");
+                expect(fetch).toHaveBeenCalledWith("http://localhost:4000/teams");
                 expect(contextValues.teams).toEqual(mockTeams);
                 expect(fetchedTeams).toEqual(mockTeams);
             });
