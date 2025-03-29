@@ -1,93 +1,135 @@
-import { render } from "@testing-library/react";
-import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../../context/FacilitiesAndReservationsContext";
-import { mockFacilitiesAndReservationsContext } from "../../utils/mocks";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import WalletReload from "./WalletReload";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "sonner";
+import { sendEmail } from "../../utils/mails";
 
-jest.mock("../../context/FacilitiesAndReservationsContext", () => ({
-    useFacilitiesAndReservations: jest.fn(),
-    FacilitiesAndReservationsProvider: ({ children }) => <div>{children}</div>
+// Mocks
+jest.mock("../../context/AuthContext");
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
 }));
-
-describe("FacilitiesAndReservationsContext", () => {
-    let facilitiesReservationsValues;
-    let testDate; 
-
-    beforeEach(() => {
-        jest.clearAllMocks();
-        facilitiesReservationsValues = null;
-        useFacilitiesAndReservations.mockReturnValue(mockFacilitiesAndReservationsContext);
-        testDate = new Date("2025-02-22T10:51:18.200Z");
-
-        render(
-            <FacilitiesAndReservationsProvider>
-                <TestComponent callback={(values) => (facilitiesReservationsValues = values)} />
-            </FacilitiesAndReservationsProvider>
-        );
-    });
-
-    it("should get an facility", async () => {
-        const facility = await facilitiesReservationsValues.getFacility('1');
-        expect(facility).toEqual({ _id: '1', name: 'Gimnasio' });
-        expect(mockFacilitiesAndReservationsContext.getFacility).toHaveBeenCalledWith('1');
-    });
-
-    it("should get all facilities", async () => {
-        const facilities = await facilitiesReservationsValues.getAllFacilities();
-        expect(facilities).toEqual([{ _id: '1', name: 'Gimnasio' }]);
-        expect(mockFacilitiesAndReservationsContext.getAllFacilities).toHaveBeenCalled();
-    });
-
-    it("should get all reservations", async () => {
-        const reservations = await facilitiesReservationsValues.getAllReservations();
-        expect(reservations).toEqual([{ _id: '1', facilityId: '1' }]);
-        expect(mockFacilitiesAndReservationsContext.getAllReservations).toHaveBeenCalled();
-    });
-
-    it("should add a new reservation", async () => {
-        const response = await facilitiesReservationsValues.addReservation({ facilityId: '1', initDate: testDate });
-        expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.addReservation).toHaveBeenCalled();
-    });
-
-    it("should add a new facility", async () => {
-        const response = await facilitiesReservationsValues.addFacility({ name: 'Pista de Tenis' });
-        expect(response.name).toBe('Pista de Tenis');
-        expect(mockFacilitiesAndReservationsContext.addFacility).toHaveBeenCalledWith({ name: 'Pista de Tenis' });
-    });
-
-    it("should update a reservation", async () => {
-        const response = await facilitiesReservationsValues.updateReservation('1', { facilityId: '2', initDate: testDate });
-        expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.updateReservation).toHaveBeenCalledWith('1', { facilityId: '2', initDate: testDate });
-    });
-
-    it("should update a facility", async () => {
-        const response = await facilitiesReservationsValues.updateFacility('1', { name: 'Gimnasio Cubierto' });
-        expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.updateFacility).toHaveBeenCalledWith('1', { name: 'Gimnasio Cubierto' });
-    });
-
-    it("should delete a reservation", async () => {
-        const response = await facilitiesReservationsValues.deleteReservation('1');
-        expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('1');
-    });
-
-    it("should delete a facility", async () => {
-        const response = await facilitiesReservationsValues.deleteFacility('1');
-        expect(response.ok).toBe(true);
-        expect(mockFacilitiesAndReservationsContext.deleteFacility).toHaveBeenCalledWith('1');
-    });
-
-    it("should count reservations by time slot", async () => {
-        const initDate = testDate;
-        const count = await facilitiesReservationsValues.countReservationsByTimeSlot('1', initDate);
-        expect(count).toBe(2);
-        expect(mockFacilitiesAndReservationsContext.countReservationsByTimeSlot).toHaveBeenCalledWith('1', initDate);
-    });
+jest.mock("../../utils/mails", () => ({
+  sendEmail: jest.fn(),
+}));
+jest.mock("../../components/spinner/Spinner", () => {
+  const MockSpinner = () => <div data-testid="spinner">Loading...</div>;
+  MockSpinner.displayName = "MockSpinner";
+  return MockSpinner;
 });
 
-const TestComponent = ({ callback }) => {
-    const values = useFacilitiesAndReservations();
-    callback(values);
-    return null;
-};
+describe("WalletReload", () => {
+  const mockUser = {
+    _id: "1",
+    name: "Test User",
+    email: "test@urjc.es",
+    balance: 10,
+  };
+
+  const updateUserMock = jest.fn();
+
+  const renderWithContext = (user = mockUser) => {
+    useAuth.mockReturnValue({
+      user,
+      updateUser: updateUserMock,
+    });
+
+    render(<WalletReload />);
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders loading spinner when isLoading is true", async () => {
+    renderWithContext();
+
+    fireEvent.change(screen.getByPlaceholderText("€"), { target: { value: "5" } });
+
+    updateUserMock.mockResolvedValue({ status: 200 });
+
+    fireEvent.click(screen.getByText("Enviar"));
+
+    expect(await screen.findByTestId("spinner")).toBeInTheDocument();
+  });
+
+  test("renders form with user data", () => {
+    renderWithContext();
+
+    expect(screen.getByText("Recarga de monedero")).toBeInTheDocument();
+    expect(screen.getByText("Introduce el importe a recargar:")).toBeInTheDocument();
+    expect(screen.getByText("Nombre:")).toBeInTheDocument();
+    expect(screen.getByText("Correo:")).toBeInTheDocument();
+    expect(screen.getByText("Saldo actual:")).toBeInTheDocument();
+  });
+
+  test("renders error message if user is null", () => {
+    renderWithContext(null);
+    expect(screen.getByText("No se ha podido cargar el usuario.")).toBeInTheDocument();
+  });
+
+  test("shows error toast on invalid input", () => {
+    renderWithContext();
+    fireEvent.change(screen.getByPlaceholderText("€"), { target: { value: "0" } });
+    fireEvent.click(screen.getByText("Enviar"));
+    expect(toast.error).toHaveBeenCalledWith("Por favor, introduce un importe válido.");
+  });
+
+  test("updates user balance and shows success toast", async () => {
+    renderWithContext();
+
+    updateUserMock.mockResolvedValue({ status: 200 });
+
+    fireEvent.change(screen.getByPlaceholderText("€"), { target: { value: "15" } });
+    fireEvent.click(screen.getByText("Enviar"));
+
+    await waitFor(() => {
+      expect(updateUserMock).toHaveBeenCalledWith("1", {
+        ...mockUser,
+        balance: 25,
+      });
+    });
+
+    await waitFor(() => {
+      expect(toast.success).toHaveBeenCalledWith("¡Saldo de 15€ añadido!");
+      expect(sendEmail).toHaveBeenCalledWith(
+        "test@urjc.es",
+        "Deportes URJC - Recarga de monedero con éxito",
+        expect.stringContaining("Has recargado tu monedero con un importe de €15.")
+      );
+    });
+  });
+
+  test("shows error toast on failed update", async () => {
+    renderWithContext();
+
+    updateUserMock.mockResolvedValue({
+      status: 500,
+      data: { message: "Server error" },
+    });
+
+    fireEvent.change(screen.getByPlaceholderText("€"), { target: { value: "10" } });
+    fireEvent.click(screen.getByText("Enviar"));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Error al recargar el monedero. Inténtalo de nuevo más tarde.");
+      expect(sendEmail).toHaveBeenCalled();
+    });
+  });
+
+  test("handles exception in try/catch block", async () => {
+    renderWithContext();
+
+    updateUserMock.mockRejectedValue(new Error("Unexpected error"));
+
+    fireEvent.change(screen.getByPlaceholderText("€"), { target: { value: "20" } });
+    fireEvent.click(screen.getByText("Enviar"));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Error al dar de alta. Inténtalo de nuevo.");
+    });
+  });
+});
