@@ -59,8 +59,6 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
         fetchTeams();
     }, [selectedSport, teams, popupData]);
 
-    const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
-
     const combineDateAndTime = (date, time) => {
         const dateObj = new Date(date);
         const [hours, minutes] = time.split(':');

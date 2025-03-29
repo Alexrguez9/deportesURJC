@@ -14,7 +14,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         formState: { errors: errorTeams },
     } = useForm();
 
-    // Obtain unique sports from the teams
+    // Obtain unique sports from the teams (cannot add teams in gym or athletics)
     const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
 
     const initialValues = {
