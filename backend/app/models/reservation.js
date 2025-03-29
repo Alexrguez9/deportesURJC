@@ -40,7 +40,7 @@ reservationSchema.pre('save', async function(next) {
     throw new Error('Instalación no encontrada');
   }
   const duration = (reservation.endDate - reservation.initDate) / (30 * 60 * 1000); // Duration in half hours
-  reservation.totalPrice = duration * facility.priceForHalfHour;
+  reservation.totalPrice = parseFloat((duration * facility.priceForHalfHour).toFixed(2));
   
   next();
 });
