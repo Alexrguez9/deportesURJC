@@ -1,14 +1,25 @@
 import {
     createContext,
     useState,
-    useContext
+    useContext,
+    useEffect
 } from "react";
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const cookieUser = Cookies.get('user');
+        if (cookieUser && !user) {
+            const parsed = JSON.parse(cookieUser);
+            setUser(parsed);
+            setIsAuthenticated(true);
+        }
+    }, []);
 
     const getAllUsers = async () => {
         try {
@@ -50,6 +61,7 @@ export const AuthProvider = ({ children }) => {
                 const loggedInUser = await response.json();
                 setUser(loggedInUser);
                 setIsAuthenticated(true);
+                Cookies.set('user', JSON.stringify(loggedInUser), { expires: 7 }); // Set cookie with user data for 7 days
                 navigate("/");
                 return response;
             } else {
@@ -106,6 +118,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
+                Cookies.remove('user');
             } else {
                 console.error("Error al cerrar sesión:", response.status);
             }
@@ -129,7 +142,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 if (user?._id === userId) {
-                    setUser(updatedUser);
+                    updateUserAndCookie(updatedUser);
                 }
                 return response;
             } else {
@@ -154,12 +167,12 @@ export const AuthProvider = ({ children }) => {
             });
     
             const data = await response.json();
-    
+
             if (!response.ok) {
                 throw new Error(data.message || "Error al actualizar el perfil");
             }
     
-            setUser(data.user);
+            updateUserAndCookie(data.user);
             return data.user;
     
         } catch (error) {
@@ -234,6 +247,11 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUserAndCookie = (updatedUser) => {
+        setUser(updatedUser);
+        Cookies.set('user', JSON.stringify(updatedUser), { expires: 7 });
+    };
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -248,7 +266,8 @@ export const AuthProvider = ({ children }) => {
             isAdmin,
             isStudent,
             handleAdmin,
-            updatePasswordAndName
+            updatePasswordAndName,
+            updateUserAndCookie
         }}>
         {children}
         </AuthContext.Provider>

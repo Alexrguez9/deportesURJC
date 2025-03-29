@@ -1,8 +1,15 @@
 export const mockAuthContext = {
     user: null,
     isAuthenticated: false,
+    setUser: jest.fn((newUser) => {
+        mockAuthContext.user = newUser;
+    }),
+    updateUserAndCookie: jest.fn((updatedUser) => {
+        mockAuthContext.user = updatedUser;
+    }),
     login: jest.fn().mockImplementation(async (credentials, callback) => {
-        mockAuthContext.user = { _id: "123", email: credentials.email, role: "admin" };
+        const mockUser = { _id: "123", email: credentials.email, role: "admin" };
+        mockAuthContext.user = mockUser;
         mockAuthContext.isAuthenticated = true;
         if (callback) callback();
     }),
@@ -15,16 +22,25 @@ export const mockAuthContext = {
         { _id: "2", email: "user2@admin.com", role: "admin" }
     ]),
     addUser: jest.fn().mockResolvedValue({ _id: "3", email: "newuser@test.com", role: "user" }),
-    updateUser: jest.fn().mockResolvedValue({ _id: "123", email: "updated@test.com" }),
-    updatePasswordAndName: jest.fn((userId, newPassword, newName) => {
-        return Promise.resolve({ success: true, userId, newPassword, newName });
+    updateUser: jest.fn().mockImplementation(async (id, data) => {
+        if (mockAuthContext.user?._id === id) {
+            const updated = { ...mockAuthContext.user, ...data };
+            mockAuthContext.updateUserAndCookie(updated);
+            return updated;
+        }
+        return { _id: id, ...data };
+    }),
+    updatePasswordAndName: jest.fn().mockImplementation(async (id, currentPassword, newPassword, name) => {
+        const updated = { ...mockAuthContext.user, name };
+        mockAuthContext.updateUserAndCookie(updated);
+        return updated;
     }),
     deleteUser: jest.fn().mockResolvedValue(true),
     isAdmin: jest.fn(() => mockAuthContext.user?.role === "admin"),
-    isStudent: jest.fn(() => mockAuthContext.user?.role === "student"),
+    isStudent: jest.fn(() => mockAuthContext.user?.email.includes("@alumnos.urjc.es")),
     handleAdmin: jest.fn().mockResolvedValue(true),
-    setUser: jest.fn(),
 };
+
 
 export const mockFacilitiesAndReservationsContext = {
     facilities: [{ _id: '1', name: 'Gimnasio' }],
