@@ -6,6 +6,7 @@ import { getDateWithoutTime } from "../../../utils/dates.js";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalResults.css";
 import { useForm } from "react-hook-form";
+import { teamSports } from '../../../utils/constants/sports';
 
 const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     const { teams, addResult, updateResult } = useTeamsAndResults();
@@ -58,8 +59,6 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
         }
         fetchTeams();
     }, [selectedSport, teams, popupData]);
-
-    const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
 
     const combineDateAndTime = (date, time) => {
         const dateObj = new Date(date);
@@ -121,7 +120,7 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                                 }}
                             >
                                 <option value="">Selecciona un deporte</option>
-                                {uniqueSports.map((sport) => (
+                                {teamSports.map((sport) => (
                                     <option key={sport} value={sport}>
                                         {sport}
                                     </option>
