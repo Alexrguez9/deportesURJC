@@ -72,6 +72,7 @@ describe("Results Component", () => {
             </BrowserRouter>
         );
 
+        fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
         expect(screen.getByRole('columnheader', { name: /acciones/i })).toBeInTheDocument();
     });
 
@@ -100,30 +101,61 @@ describe("Results Component", () => {
         expect(addButton).not.toBeInTheDocument();
     });
 
-    it("renders results table when results are available", async () => {
+    it("shows message to select a sport when none is selected", () => {
         render(
             <BrowserRouter>
                 <Results />
             </BrowserRouter>
         );
-        await waitFor(() => {
-            const select = screen.getByRole("combobox");
-            fireEvent.change(select, { target: { value: "Fútbol-7" } });
-            expect(screen.getByRole('table')).toBeInTheDocument();
-        });
+        expect(screen.getByText(/Selecciona un deporte para ver sus resultados/i)).toBeInTheDocument();
     });
 
-    it("renders 'No hay resultados' message when no results are available for a filter", async () => {
+    it("renders correct options in select", () => {
+        render(
+            <BrowserRouter>
+                <Results />
+            </BrowserRouter>
+        );
+        const select = screen.getByRole("combobox");
+        const options = screen.getAllByRole("option").map(o => o.textContent);
+        expect(options).toEqual([
+            "Elige un deporte",
+            "Fútbol-7",
+            "Fútbol-sala",
+            "Básket 3x3",
+            "Voleibol"
+        ]);
+    });
+
+    it("renders no results message when sport is selected but no results exist", async () => {
         mockTeamsAndResultsContext.results = [];
-        useTeamsAndResults.mockReturnValue(mockTeamsAndResultsContext);
+        render(
+            <BrowserRouter>
+                <Results />
+            </BrowserRouter>
+        );
+        const select = screen.getByRole("combobox");
+        fireEvent.change(select, { target: { value: "Fútbol-7" } });
+    
+        await waitFor(() => {
+            expect(screen.getByText(/No hay resultados de Fútbol-7 para mostrar/i)).toBeInTheDocument();
+        });
+    });
+//
+    it("renders results table when results are available", async () => {
+        mockTeamsAndResultsContext.results = [
+            { _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-sala', localTeam: 'Local Team', visitorTeam: 'Visitor Team' },
+            { _id: '1', round: 1, localGoals: 2, visitorGoals: 1, sport: 'Fútbol-7', localTeam: 'F7 local', visitorTeam: 'F7 visitor' },
+        ];
         render(
             <BrowserRouter>
                 <Results />
             </BrowserRouter>
         );
         fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
+
         await waitFor(() => {
-            expect(screen.getByText(/No hay resultados de Fútbol-7 para mostrar/i)).toBeInTheDocument();
+            expect(screen.getByRole('table')).toBeInTheDocument();
         });
     });
 
@@ -146,16 +178,22 @@ describe("Results Component", () => {
         });
     });
 
-    it("filters results Fútbol-7 by default", async () => {
+    it("displays results sorted by round", async () => {
+        mockTeamsAndResultsContext.results = [
+            { _id: '1', round: 2, sport: 'Fútbol-7', localGoals: 1, visitorGoals: 1, localTeam: 'A', visitorTeam: 'B', date: new Date(), place: 'Cancha 1' },
+            { _id: '2', round: 1, sport: 'Fútbol-7', localGoals: 3, visitorGoals: 2, localTeam: 'C', visitorTeam: 'D', date: new Date(), place: 'Cancha 2' },
+        ];
         render(
             <BrowserRouter>
                 <Results />
             </BrowserRouter>
         );
-        fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-sala' } });
+        fireEvent.change(screen.getByRole("combobox"), { target: { value: "Fútbol-7" } });
+    
         await waitFor(() => {
-            // Assuming mockResults only has 'Fútbol-7', checking for its absence after filtering for 'Fútbol-sala'
-            expect(screen.queryByRole('cell', { name: /Fútbol-7/i })).not.toBeInTheDocument();
+            const rows = screen.getAllByRole("row").slice(1); // skip header
+            const rounds = rows.map(row => row.firstChild.textContent);
+            expect(rounds).toEqual(['1', '2']);
         });
     });
 
@@ -189,6 +227,8 @@ describe("Results Component", () => {
                 <Results />
             </BrowserRouter>
         );
+        fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
+
         await waitFor(() => {
         const editButton = document.querySelector('.editPencil');
         fireEvent.click(editButton);
@@ -212,6 +252,7 @@ describe("Results Component", () => {
                     <Results />
                 </BrowserRouter>
             );
+            fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
 
             await waitFor(() => expect(screen.getByText('Local Team')).toBeInTheDocument());
             const deleteButton = document.querySelector('.deleteTrash');
@@ -240,6 +281,8 @@ describe("Results Component", () => {
                 </BrowserRouter>
             );
 
+            fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
+
             await waitFor(() => expect(screen.getByText('Local Team')).toBeInTheDocument());
             const deleteButton = document.querySelector('.deleteTrash');
             fireEvent.click(deleteButton);
@@ -266,6 +309,8 @@ describe("Results Component", () => {
                     <Results />
                 </BrowserRouter>
             );
+
+            fireEvent.change(screen.getByRole('combobox'), { target: { value: 'Fútbol-7' } });
 
             await waitFor(() => {
                 expect(screen.getByText('Local Team')).toBeInTheDocument();

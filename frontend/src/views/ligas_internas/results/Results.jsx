@@ -16,7 +16,7 @@ import { getPrettyDate } from "../../../utils/dates";
 const Results = () => {
     const { user, isAdmin } = useAuth();
     const { results, fetchResults, deleteResult } = useTeamsAndResults();
-    const [selectedSport, setSelectedSport] = useState('Fútbol-7');
+    const [selectedSport, setSelectedSport] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [popupData, setPopupData] = useState(null);
     const [isNewResult, setIsNewResult] = useState(false);
@@ -32,20 +32,21 @@ const Results = () => {
         setSelectedSport(event.target.value);
     };
 
-    const filteredResults = results?.filter((results) => {
-        return selectedSport === 'Fútbol-7' || results.sport === selectedSport;
-    });
+    const filteredResults = results?.filter(result => selectedSport && result.sport === selectedSport);
+    // Sort the results by round
+    const sortedResults = filteredResults?.sort((a, b) => a.round - b.round);
 
     const openModal = async (result) => {
         if (!result) {
             setPopupData({
                 sport: '',
-                round: '',
+                round: 1,
+                localTeam: '',
                 localTeamId: '',
-                localGoals: '',
-                visitorTeam: 0,
-                visitorTeamId: 0,
-                visitorGoals: '',
+                localGoals: 0,
+                visitorTeam: '',
+                visitorTeamId: '',
+                visitorGoals: 0,
                 date: '',
                 hour: '',
                 place: ''
@@ -101,14 +102,18 @@ const Results = () => {
             )}
             <section className="table-responsive">
                 <select value={selectedSport} onChange={handleDeporteChange}>
+                    <option value="">Elige un deporte</option>
                     <option value="Fútbol-7">Fútbol-7</option>
                     <option value="Fútbol-sala">Fútbol-sala</option>
                     <option value="Básket 3x3">Básket 3x3</option>
                     <option value="Voleibol">Voleibol</option>
                 </select>
 
-                {filteredResults?.length === 0 ?
-                    <p>No hay resultados de {selectedSport} para mostrar</p> :
+                {!selectedSport ? (
+                    <p>Selecciona un deporte para ver sus resultados</p>
+                ) : sortedResults?.length === 0 ? (
+                    <p>No hay resultados de {selectedSport} para mostrar</p>
+                ) : (
                     <table>
                         <thead>
                             <tr>
@@ -123,7 +128,7 @@ const Results = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredResults?.map((results) => (
+                            {sortedResults?.map((results) => (
                                 <tr key={results._id}>
                                     <td>{results.round}</td>
                                     <td>{results.localTeam}</td>
@@ -144,7 +149,7 @@ const Results = () => {
                             ))}
                         </tbody>
                     </table>
-                }
+                )}
             </section>
         </div>
     );
