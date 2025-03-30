@@ -4,6 +4,7 @@ import { IoMdClose } from "react-icons/io";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalTeams.css";
 import { useForm } from "react-hook-form";
+import { teamSports } from '../../../utils/constants/sports';
 
 const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
     const { addTeam, updateTeam, updateResultsWithNewTeamName  } = useTeamsAndResults();
@@ -13,9 +14,6 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         handleSubmit: handleSubmitResults,
         formState: { errors: errorTeams },
     } = useForm();
-
-    // Obtain unique sports from the teams
-    const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
 
     const initialValues = {
         sport: popupData?.sport || "",
@@ -81,7 +79,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 defaultValue={initialValues.sport}
                             >
                                 <option value="">Selecciona un deporte</option>
-                                {uniqueSports.map((sport) => (
+                                {teamSports.map((sport) => (
                                     <option key={sport} value={sport}>
                                         {sport}
                                     </option>

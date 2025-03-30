@@ -38,6 +38,11 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
         initDate: new Date(data.initDate).toISOString(),
         endDate: new Date(data.endDate).toISOString(),
       };
+      
+      if (reservationData.endDate <= reservationData.initDate) {
+        toast.error("La fecha de fin debe ser posterior a la fecha de inicio.");
+        return;
+      }
 
       if (popupData?._id) {
         const updateRes = await updateReservation(popupData._id, reservationData);

@@ -20,7 +20,7 @@ const WalletReload = () => {
             setIsLoading(true);
 
             try {
-                // Actualiza el saldo del usuario
+                // Update user balance
                 const updatedUserData = { ...user };
                 updatedUserData.balance = user.balance + Number(amount);
                 const response = await updateUser(user._id, updatedUserData);
@@ -36,7 +36,7 @@ const WalletReload = () => {
                         toast.error('Error al recargar el monedero. Inténtalo de nuevo más tarde.');
                     }
 
-                    // Envía los datos de la compra al correo del usuario
+                    // Send email to user with the receipt
                     sendEmail(
                         user.email, 
                         "Deportes URJC - Recarga de monedero con éxito",
@@ -46,7 +46,7 @@ const WalletReload = () => {
                     );
                     
                     setImporte("");
-                }); // Simulamos 1 segundo de espera
+                });
 
             } catch (error) {
                 setIsLoading(false);
