@@ -186,6 +186,23 @@ const Facilities = () => {
         );
     };
 
+    const checkSubscriptionForFacility = (facilityName) => {
+        if (facilityName === 'Gimnasio' && !user?.subscription?.gym?.isActive) {
+          toast.warning('No tienes una suscripción activa en Gimnasio.');
+          return false;
+        }
+      
+        if (facilityName === 'Atletismo' && !user?.subscription?.athletics?.isActive) {
+          toast.warning('No tienes una suscripción activa en Atletismo.');
+          return false;
+        }
+        return true;
+    };
+
+      console.log('--user--', user);
+      console.log('--completeFacility--', completeFacility);
+      console.log('---selectedInstalacionId---', selectedInstalacionId);
+ 
     return (
         <div className="content">
             <h1>Instalaciones</h1>
@@ -193,7 +210,6 @@ const Facilities = () => {
                 <br />Recuerde que el pago de las instalaciones se debe efectuar en efectivo al llegar.
                 <br />Las reservas son de media hora en media hora.
             </p>
-
             {user ?
                 <form onSubmit={handleSubmit(onSubmit)} className="form-reservar" data-testid="reservation-form">
                     <div>
@@ -202,13 +218,30 @@ const Facilities = () => {
                                 {...register("facilityId", { required: "Por favor, selecciona un deporte" })}
                                 value={selectedInstalacionId}
                                 onChange={(e) => {
-                                    setSelectedInstalacionId(e.target.value);
+                                    const value = e.target.value;
+                                    setSelectedInstalacionId(value);
+                                    console.log('---value---', value);
+
+                                    if (value === '') {
+                                        setCompleteFacility({});
+                                        return;
+                                      }
+                                    const selectedFacility = facilities.find(f => f._id === value);
+                                    console.log('selectedFacility', selectedFacility);
+                                    console.log('---checkSubscriptionForFacility(selectedFacility?.name)---', checkSubscriptionForFacility(selectedFacility?.name));
+                                    if (!checkSubscriptionForFacility(selectedFacility?.name)) {
+                                        // Reset the selected installation if the user doesn't have a subscription
+                                        setSelectedInstalacionId('');
+                                        return;
+                                    }
+
                                     getMinTime(); // update minTime
                                     getMaxTime(); // update maxTime
                                     getCompleteFacility(e.target.value);
                                 }
                                 }
                             >
+                                <option value="">Escoge una instalación</option>
                                 {facilities.map(facility => (
                                     <option key={facility?._id} value={facility?._id}>
                                         {facility.name}
@@ -218,10 +251,19 @@ const Facilities = () => {
                         </label>
                     </div>
                     <div>
-                        <>Horario de inicio: {completeFacility.schedule && completeFacility.schedule.initialHour ? getHoursAndMinutes(completeFacility.schedule.initialHour) : 'No definido'}<br />
-                            Horario de fin: {completeFacility.schedule && completeFacility.schedule.endHour ? getHoursAndMinutes(completeFacility.schedule.endHour) : 'No definido'}</>
+                        {completeFacility && completeFacility.schedule ? (
+                            <>
+                                Horario de inicio: {completeFacility.schedule.initialHour ? getHoursAndMinutes(completeFacility.schedule.initialHour) : 'No definido'}<br />
+                                Horario de fin: {completeFacility.schedule.endHour ? getHoursAndMinutes(completeFacility.schedule.endHour) : 'No definido'}
+                            </>
+                        ) : (
+                        <p>Selecciona una instalación para ver el horario.</p>
+                        )}
+
                         {selectedInstalacionId && (<p>Precio por media hora: {completeFacility?.priceForHalfHour}€.</p>)}
-                        {completeFacility && <p>Capacidad por reserva para {completeFacility.name}: {completeFacility.capacity}</p>}
+                        {selectedInstalacionId && completeFacility?.capacity !== undefined && (
+                            <p>Capacidad por reserva para {completeFacility.name}: {completeFacility.capacity}</p>
+                        )}
                     </div>
 
                     {selectedInstalacionId ? (

@@ -8,7 +8,7 @@ const FitnessRoomsContent = () => {
             <h1>Salas de preparación</h1>
             <p>Bienvenido a la página de Salas de preparación de URJC Deportes.
             <br />Aquí podrás darte de alta en las salas de preparación (atletismo y gimnasio) y recargar tu mensualidad.
-            <br />Además, podrás reservar espacio.</p>
+            <br />Además, si quieres reservar espacio, puedes hacerlo <Link to="/instalaciones">aquí</Link>.</p>
             <section>
                 <div className='ligas-internas'>
                     <Link to="/salas-preparacion/alta">
