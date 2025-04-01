@@ -4,6 +4,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../utils/mocks";
 import { toast } from 'sonner';
+import { useNavigate } from "react-router-dom";
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
@@ -18,6 +19,11 @@ jest.mock('sonner', () => ({
         success: jest.fn(),
         error: jest.fn(),
     },
+}));
+
+jest.mock("react-router-dom", () => ({
+    ...jest.requireActual("react-router-dom"),
+    useNavigate: jest.fn()
 }));
 
 describe("MyReservations Component", () => {
