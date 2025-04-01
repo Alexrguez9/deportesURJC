@@ -199,10 +199,6 @@ const Facilities = () => {
         return true;
     };
 
-      console.log('--user--', user);
-      console.log('--completeFacility--', completeFacility);
-      console.log('---selectedInstalacionId---', selectedInstalacionId);
- 
     return (
         <div className="content">
             <h1>Instalaciones</h1>
@@ -220,15 +216,12 @@ const Facilities = () => {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     setSelectedInstalacionId(value);
-                                    console.log('---value---', value);
 
                                     if (value === '') {
                                         setCompleteFacility({});
                                         return;
                                       }
                                     const selectedFacility = facilities.find(f => f._id === value);
-                                    console.log('selectedFacility', selectedFacility);
-                                    console.log('---checkSubscriptionForFacility(selectedFacility?.name)---', checkSubscriptionForFacility(selectedFacility?.name));
                                     if (!checkSubscriptionForFacility(selectedFacility?.name)) {
                                         // Reset the selected installation if the user doesn't have a subscription
                                         setSelectedInstalacionId('');

@@ -24,8 +24,6 @@ exports.insertData = async (req, res) => {
             isPaid
         });
 
-        console.log('---newReserva---', newReserva);
-
         const savedReservation = await newReserva.save();
         res.status(201).json(savedReservation);
 
