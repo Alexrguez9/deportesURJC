@@ -221,15 +221,6 @@ button.navbar-button {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
-#component-content{
-  position: relative;
-  text-align: center;
-  display: inline-grid;
-  justify-content: center;
-  justify-items: center;
-  margin-bottom: 2rem;
-}
-
 .back-button {
   background-color: var(--white-color);
   color: var(--primary-color);
