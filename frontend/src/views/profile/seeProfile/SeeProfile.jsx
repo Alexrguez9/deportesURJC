@@ -4,6 +4,7 @@ import './SeeProfile.css';
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from 'react-router-dom';
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
+import BackButton from "../../../components/backButton/BackButton";
 
 const SeeProfile = () => {
     const { user, updateUserAndCookie, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
@@ -72,6 +73,9 @@ const SeeProfile = () => {
 
     return (
         <Fragment>
+            <div className="top-buttons-content">
+                <BackButton />
+            </div>
             <div className="profile-content">
                 <div id="profile-card">
                     <div className="card-no-hover">

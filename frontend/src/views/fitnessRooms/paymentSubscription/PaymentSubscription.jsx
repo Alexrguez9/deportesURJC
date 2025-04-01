@@ -81,7 +81,7 @@ const PaymentSubscription = () => {
 
     return (
         <div id="component-content" className="content">
-            <div className="back-button-div">
+            <div className="top-buttons-content">
                 <BackButton />
             </div>
             <h1>Pago Abono</h1>

@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import "./ContentAdminPanel.css";
-import BackButton from "../../components/backButton/BackButton";
 import AccessDenied from "../accessDenied/AccessDenied";
 
 const ContentAdminPanel = () => {
@@ -13,7 +12,6 @@ const ContentAdminPanel = () => {
             {user && isAdmin() ? (
                 <div id="component-content">
                     <div className="view-header">
-                        <BackButton />
                         <h1>Panel de administrador</h1>
                         <p>
                             Bienvenido a la portada de administrador de la Liga Interna de URJC Deportes.
