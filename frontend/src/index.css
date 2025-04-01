@@ -35,45 +35,56 @@ a:hover {
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: var(--secondary-color);
-}
-
-h2 {
   font-size: 2rem;
-  margin-bottom: 18px;
-  color: var(--secondary-color);
-}
-
-h3 {
-  font-size: 1.75rem;
   margin-bottom: 16px;
   color: var(--secondary-color);
 }
 
-h4 {
-  font-size: 1.5rem;
+h2 {
+  font-size: 1.75rem;
   margin-bottom: 14px;
   color: var(--secondary-color);
 }
 
-h5 {
-  font-size: 1.25rem;
+h3 {
+  font-size: 1.5rem;
   margin-bottom: 12px;
   color: var(--secondary-color);
 }
 
-h6 {
-  font-size: 1.2rem;
+h4 {
+  font-size: 1.25rem;
   margin-bottom: 10px;
+  color: var(--secondary-color);
+}
+
+h5 {
+  font-size: 1.125rem;
+  margin-bottom: 8px;
+  color: var(--secondary-color);
+}
+
+h6 {
+  font-size: 1rem;
+  margin-bottom: 6px;
   color: var(--secondary-color);
 }
 
 p {
   font-size: 1rem;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  line-height: 1.5;
   color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.375rem; }
+  h3 { font-size: 1.25rem; }
+  h4 { font-size: 1.125rem; }
+  h5 { font-size: 1rem; }
+  h6 { font-size: 0.9375rem; }
+  p { font-size: 0.9375rem; }
 }
 
 ul, ol {
