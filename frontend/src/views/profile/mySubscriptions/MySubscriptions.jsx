@@ -33,15 +33,14 @@ const MySubscriptions = () => {
     const athleticsRegistrationDateInit = getPrettyDate(user?.registration?.athletics?.initDate);
 
     // Subscriptions
-    const subscriptionStateAtletismo = user?.subscription?.athletics?.isActive;
-    const subscriptionStateGimnasio = user?.subscription?.gym?.isActive;
+    const subscriptionIsActiveGimnasio = user?.subscription?.gym?.isActive;
+    const subscriptionIsActiveAtletismo = user?.subscription?.athletics?.isActive;
     const gymSubsDateInit = getPrettyDate(user?.subscription?.gym?.initDate);
     const gymSubsDateEnd = getPrettyDate(user?.subscription?.gym?.endDate);
     const athleticsSubsDateInit = getPrettyDate(user?.subscription?.athletics?.initDate);
     const athleticsSubsDateEnd = getPrettyDate(user?.subscription?.athletics?.endDate);
     const isGymExpired = isSubscriptionExpired(user?.subscription?.gym);
     const isAthleticsExpired = isSubscriptionExpired(user?.subscription?.athletics);
-
 
     return (
         <div>
@@ -53,15 +52,11 @@ const MySubscriptions = () => {
                             <p>Usuario: {user?.name}</p>
                             <p>Fecha alta: { registrationGym ? gymRegistrationDateInit : 'No estás dado de alta'}</p>
                             <h2>GIMNASIO MENSUAL</h2>
-                            { subscriptionStateGimnasio ? (
-                                isGymExpired ? (
-                                    <p>Abono caducado</p>
-                                ) : (
+                            { subscriptionIsActiveGimnasio ? (
                                     <Fragment>
                                         <p>Abono activo</p>
                                         <p>Fecha alta: { gymSubsDateInit }</p>
                                         <p>Fecha caducidad: { gymSubsDateEnd }</p>
-                                        {/* <p>{ user?.registration?.gym?.initDate?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                         <button
                                             onClick={()=> {
                                                 toast.promise(handleUnsubscribe('gym'), {
@@ -74,24 +69,24 @@ const MySubscriptions = () => {
                                                 })
                                             }}>Darme de baja</button>
                                     </Fragment>
+                                ) : (
+                                    isGymExpired ? (
+                                        <p>Abono caducado</p>
+                                    ) : (
+                                    <p>Abono inactivo</p>
+                                    )
                                 )
-                            ) : (
-                                <p>Abono inactivo</p>
-                            )}
+                            }
                         </div>
                         <div className="card-no-hover">
                             <p>Usuario: {user?.name}</p>
                             <p>Fecha de alta: { registrationAthletics ? athleticsRegistrationDateInit : 'No estás dado de alta' }</p>
                             <h2>ATLETISMO MENSUAL</h2>
-                            { subscriptionStateAtletismo ? (
-                                isAthleticsExpired ? (
-                                    <p>Abono caducado</p>
-                                ) : (
+                            { subscriptionIsActiveAtletismo  ? (
                                     <Fragment>
                                         <p>Abono activo</p>
                                         <p>Fecha inicio: { athleticsSubsDateInit }</p>
                                         <p>Fecha caducidad: { athleticsSubsDateEnd }</p>
-                                        {/* <p>{ user?.registration?.athletics?.initDate?.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p> */}
                                         <button
                                             onClick={()=> {
                                                 toast.promise(handleUnsubscribe('athletics'), {
@@ -104,10 +99,14 @@ const MySubscriptions = () => {
                                                 })
                                             }}>Darme de baja</button>
                                     </Fragment>
+                                ) : (
+                                    isAthleticsExpired ? (
+                                        <p>Abono caducado</p>
+                                    ) : (
+                                        <p>Abono inactivo</p>
+                                    )
                                 )
-                            ) : (
-                                <p>Abono inactivo</p>
-                            )}
+                            }
                         </div>
                     </div>
                 ): <p>Debes iniciar sesión para acceder a tus abonos</p>}
