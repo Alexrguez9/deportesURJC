@@ -44,7 +44,6 @@ const AdminUsers = () => {
             return;
         }
         const newPopupData = { ...user };
-        console.log('---newPopupData---', newPopupData);
         setPopupData(newPopupData);
         setIsModalOpen(true);
     };

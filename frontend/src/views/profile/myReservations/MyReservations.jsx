@@ -5,6 +5,7 @@ import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
 import { useAuth } from '../../../context/AuthContext';
 import { useFacilitiesAndReservations } from '../../../context/FacilitiesAndReservationsContext';
 import { getPrettyDate } from '../../../utils/dates';
+import BackButton from '../../../components/backButton/BackButton';
 
 const MyReservations = () => {
     const { user } = useAuth();
@@ -38,7 +39,10 @@ const MyReservations = () => {
     };
 
     return (
-        <div>
+        <div id="component-content" className="content">
+            <div className="top-buttons-content">
+                <BackButton />
+            </div>
             <h1>Mis Reservas</h1>
             <div className='content-mis-reservas'>
                 {user ? ( 

@@ -21,15 +21,13 @@ const Rankings = () => {
 
     return (
         <div id="component-content" className="content">
-            <div className="back-button-div">
+            <div className="top-buttons-content">
                 <BackButton />
             </div>
-            
             <div className="view-header">
                 <h1>Clasificaciones Ligas Internas</h1>
                 <p>Consulta las clasificaciones de las ligas internas de la URJC</p>
             </div>
-
             <select value={selectedSport} onChange={handleDeporteChange}>
                 <option value="Todos">Todos</option>
                 <option value="Fútbol-7">Fútbol-7</option>

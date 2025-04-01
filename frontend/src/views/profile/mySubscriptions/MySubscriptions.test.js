@@ -10,6 +10,10 @@ import { useAuth } from "../../../context/AuthContext";
 import { mockAuthContext } from "../../../utils/mocks";
 import { BrowserRouter } from "react-router-dom";
 import { toast } from "sonner";
+jest.mock("../../../utils/user", () => ({
+    isSubscriptionExpired: jest.fn()
+  }));
+import { mockIsSubscriptionExpired } from "../../../utils/testUtils";
 
 jest.mock("../../../context/AuthContext", () => ({
     useAuth: jest.fn()
@@ -45,12 +49,15 @@ describe("MySubscriptions Component", () => {
                 athletics: { isActive: true, initDate: "2024-02-01", endDate: "2024-12-31" }
             },
             subscription: {
-                gym: { isActive: true, initDate: "2025-03-01", endDate: "2025-03-30" },
+                gym: { isActive: true, initDate: "2024-03-01", endDate: "2024-04-01" },
                 athletics: { isActive: false, initDate: null, endDate: null }
             }
         };
         mockAuthContext.updateUser = jest.fn().mockResolvedValue({ status: 200 });
         useAuth.mockReturnValue(mockAuthContext);
+
+        mockIsSubscriptionExpired(false, false);
+
     });
 
     it("displays message if user is not logged in", () => {
@@ -169,32 +176,34 @@ describe("MySubscriptions Component", () => {
 
     it("render subscription dates correctly", () => {
         render(<BrowserRouter><MySubscriptions /></BrowserRouter>);
-        expect(screen.getByText((content) =>
-            content.includes("Fecha alta:") && content.includes("1 de marzo de 2025")
+
+        const gymCard = screen.getByText("GIMNASIO MENSUAL").closest(".card-no-hover");
+        expect(within(gymCard).getByText((text) =>
+            text.includes("Fecha alta:") && text.includes("1 de marzo de 2024")
         )).toBeInTheDocument();
-    
-        expect(screen.getByText((content) =>
-            content.includes("Fecha caducidad:") && content.includes("30 de marzo de 2025")
+          
+          expect(within(gymCard).getByText((text) =>
+            text.includes("Fecha caducidad:") && text.includes("1 de abril de 2024")
         )).toBeInTheDocument();
     });
 
     it("renders correctly 'Abono inactivo' in athletics", () => {
         mockAuthContext.user.subscription.gym.isActive = false;
+
         useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MySubscriptions /></BrowserRouter>);
     
-        const atletismoCard = screen.getByText("GIMNASIO MENSUAL").closest(".card-no-hover");
-        expect(within(atletismoCard).getByText("Abono inactivo")).toBeInTheDocument();
+        const gymCard = screen.getByText("GIMNASIO MENSUAL").closest(".card-no-hover");
+        expect(within(gymCard).getByText("Abono inactivo")).toBeInTheDocument();
     });
 
     it("show 'Abono caducado' for gym if end date is past", () => {
-        const pastDate = new Date();
-        pastDate.setDate(pastDate.getDate() - 1);
+        mockIsSubscriptionExpired(true, false);
     
         mockAuthContext.user.subscription.gym = {
-            isActive: true,
+            isActive: false,
             initDate: "2025-01-01",
-            endDate: "2025-01-31",
+            endDate: "2025-02-01",
         };
     
         useAuth.mockReturnValue(mockAuthContext);
@@ -205,16 +214,14 @@ describe("MySubscriptions Component", () => {
     });
     
     it("show 'Abono caducado' for athletics if end date is past", () => {
-        const pastDate = new Date();
-        pastDate.setDate(pastDate.getDate() - 1);
+        mockIsSubscriptionExpired(false, true);
     
         mockAuthContext.user.subscription.athletics = {
-            isActive: true,
+            isActive: false,
             initDate: "2025-01-01",
-            endDate:  "2025-01-31",
+            endDate: "2025-02-01",
         };
     
-        useAuth.mockReturnValue(mockAuthContext);
         render(<BrowserRouter><MySubscriptions /></BrowserRouter>);
     
         const atletismoCard = screen.getByText("ATLETISMO MENSUAL").closest(".card-no-hover");

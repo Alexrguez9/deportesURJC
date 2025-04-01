@@ -56,7 +56,6 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
     };
 
     const addReservation = async (reserva) => {
-        console.log('---addReservation reserva---', reserva);
         try {
             const response = await fetch('http://localhost:4000/reservations', {
                 method: 'POST',

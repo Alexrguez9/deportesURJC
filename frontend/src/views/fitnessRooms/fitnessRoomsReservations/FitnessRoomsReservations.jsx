@@ -27,8 +27,8 @@ const FitnessRoomsReservations = () => {
     // (también nos sirve para la view de reservas de instalaciones deportivas)
 
     return (
-        <div id="component-content">
-            <div className="back-button-div">
+        <div id="component-content" className="content">
+            <div className="top-buttons-content">
                 <BackButton />
             </div>
             <h1>Reservas de sala de preparación física</h1>
