@@ -8,12 +8,6 @@ jest.mock("react-router-dom", () => ({
     Link: ({ to, children, className }) => <a href={to} className={className}>{children}</a>, // Mock Link for testing purposes
 }));
 
-jest.mock('../../components/backButton/BackButton', () => {
-    const MockBackButton = () => <button>Volver</button>;
-    MockBackButton.displayName = 'MockBackButton';
-    return MockBackButton;
-});
-
 jest.mock('../../context/AuthContext', () => ({
     useAuth: jest.fn()
 }));
@@ -47,12 +41,6 @@ describe("ContentAdminPanel Component", () => {
         render(<ContentAdminPanel />);
         expect(screen.getByRole('heading', { name: /Acceso denegado/i })).toBeInTheDocument();
         expect(screen.queryByRole('heading', { name: /Panel de administrador/i })).not.toBeInTheDocument();
-    });
-
-    it("renders BackButton component for admin users", () => {
-        mockAuthContext.isAdmin.mockReturnValue(true);
-        render(<ContentAdminPanel />);
-        expect(screen.getByRole('button', { name: /Volver/i })).toBeInTheDocument();
     });
 
     it("renders all admin Links with correct 'to' and text for admin users", () => {

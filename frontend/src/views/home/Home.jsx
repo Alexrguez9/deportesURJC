@@ -1,6 +1,8 @@
 import './Home.css';
-import Card from '../../components/card/Card';
 import { Link } from 'react-router-dom';
+import { PiRankingLight, PiWallet, PiCalendarCheck } from "react-icons/pi";
+import { CgGym } from "react-icons/cg";
+import { MdEmojiEvents } from "react-icons/md";
 
 const Home = () => {
     return (
@@ -11,32 +13,43 @@ const Home = () => {
                 <h2>Ligas Internas</h2>
                 <div className='ligas-internas'>
                     <Link to="/ligas-internas/encuentros">
-                        <Card className="home-card"  description={"Consulta de encuentros Ligas Internas"}/>
+                        <div className='horizontal-card'>
+                            <MdEmojiEvents style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Encuentros</p>
+                        </div>
                     </Link>
                     <Link to="/ligas-internas/clasificaciones">
-                        <Card className="home-card"   description={"Consulta de clasificaciones Ligas Internas"} />
+                        <div className='horizontal-card'>
+                            <PiRankingLight style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Clasificaciones</p>
+                        </div>
                     </Link>
                 </div>
 
-                <h2>Salas de preparación y gimnasio</h2>
+                <h2>Salas de preparación</h2>
                 <div className='salas-gimnasio'>
                     <Link to="/salas-preparacion/alta">
-                        <Card className="home-card" description={"Alta de usuarios - Salas de preparación física"} />
+                        <div className='horizontal-card'>
+                            <CgGym style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Altas</p>
+                        </div>
                     </Link>
                     <Link to="/salas-preparacion/pago-abono">
-                        <Card className="home-card" description={"Pago mensual Abono Gimnasio"} />
-                    </Link>
-                    <Link to="/salas-preparacion/reservas-preparacion">
-                        <Card className="home-card" description={"Reserva de espacio - Salas de preparación física"} />
+                        <div className='horizontal-card'>
+                            <PiWallet style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Pago mensual abonos</p>
+                        </div>
                     </Link>
                 </div>
                 
                 <h2>Instalaciones deportivas</h2>
                 <div className='instalaciones'>
                     <Link to="/instalaciones">
-                        <Card className="home-card" description={"Reservas instalaciones deportivas URJC"} />
+                        <div className='horizontal-card'>
+                            <PiCalendarCheck style={{ padding: '1rem', height: '2rem', width: '2rem' }}/>
+                            <p>Reservas</p>
+                        </div>
                     </Link>
-                    
                 </div>
             </section>
         </div>

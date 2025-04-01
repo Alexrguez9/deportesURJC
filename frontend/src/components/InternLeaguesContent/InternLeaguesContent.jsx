@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import Card from "../../components/card/Card";
 import "./InternLeaguesContent.css";
+import { MdEmojiEvents } from "react-icons/md";
+import { PiRankingLight } from "react-icons/pi";
 
 const MainLigasInternas = () => {
     return (
@@ -9,11 +10,17 @@ const MainLigasInternas = () => {
             <p>Bienvenido a la página de Ligas Internas de URJC Deportes. Aquí podrás consultar los encuentros y clasificaciones de las Ligas Internas.</p>
             <section>
                 <div className='ligas-internas'>
-                    <Link to="encuentros">
-                        <Card className="encuentros-card" description={"Consulta de encuentros Ligas Internas"}/>
+                    <Link to="/ligas-internas/encuentros">
+                        <div className='horizontal-card'>
+                            <MdEmojiEvents style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
+                            <p>Encuentros</p>
+                        </div>
                     </Link>
-                    <Link to="clasificaciones" >
-                        <Card className="clasificaciones-card"  description={"Consulta de clasificaciones Ligas Internas"} />
+                    <Link to="/ligas-internas/clasificaciones">
+                        <div className='horizontal-card'>
+                            <PiRankingLight style={{ padding: '1rem', height: '2rem', width: '2rem'  }}/>
+                            <p>Clasificaciones</p>
+                        </div>
                     </Link>
                 </div>
             </section>

@@ -32,7 +32,7 @@ describe("AdminModalFacilities Component", () => {
         });
 
         it("renders the component in 'Editar instalación' mode", () => {
-            render(<AdminModalFacilities closeModal={mockCloseModal} popupData={{ nombre: 'Pista 1', descripcion: 'Descripción de Pista 1' }} />);
+            render(<AdminModalFacilities closeModal={mockCloseModal} popupData={{ name: 'Pista 1', description: 'Descripción de Pista 1' }} />);
             expect(screen.getByRole('heading', { name: /Editar instalación/i })).toBeInTheDocument();
         });
 
@@ -51,24 +51,24 @@ describe("AdminModalFacilities Component", () => {
         it("fills in initial values when in 'Editar instalación' mode", () => {
             const popupData = {
                 _id: '1',
-                nombre: 'Pista Test',
-                descripcion: 'Descripción prueba',
-                capacidad: 10,
-                precioPorMediaHora: 25,
+                name: 'Pista Test',
+                description: 'Descripción prueba',
+                capacity: 10,
+                priceForHalfHour: 25,
                 isInternSport: true,
-                horario: {
-                    horarioInicio: new Date('2024-08-03T09:00'),
-                    horarioFin: new Date('2024-08-03T21:00')
+                schedule: {
+                    initialHour: new Date('2024-08-03T09:00'),
+                    endHour: new Date('2024-08-03T21:00')
                 }
             };
             render(<AdminModalFacilities closeModal={mockCloseModal} popupData={popupData} />);
-            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.nombre);
-            expect(screen.getByLabelText(/Descripción:/i)).toHaveValue(popupData.descripcion);
-            expect(screen.getByLabelText(/Capacidad:/i)).toHaveValue(popupData.capacidad);
-            expect(screen.getByLabelText(/Precio por 30 minutos:/i)).toHaveValue(popupData.precioPorMediaHora);
+            expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.name);
+            expect(screen.getByLabelText(/Descripción:/i)).toHaveValue(popupData.description);
+            expect(screen.getByLabelText(/Capacidad:/i)).toHaveValue(popupData.capacity);
+            expect(screen.getByLabelText(/Precio por 30 minutos:/i)).toHaveValue(popupData.priceForHalfHour);
             expect(screen.getByLabelText("¿Deporte interno?:")).toHaveValue(String(popupData.isInternSport));
-            expect(screen.getByLabelText(/Horario de Inicio:/i)).toHaveValue(popupData.horario.horarioInicio.toISOString().slice(0, 16));
-            expect(screen.getByLabelText(/Horario de Fin:/i)).toHaveValue(popupData.horario.horarioFin.toISOString().slice(0, 16));
+            expect(screen.getByLabelText(/Horario de Inicio:/i)).toHaveValue(popupData.schedule.initialHour.toISOString().slice(0, 16));
+            expect(screen.getByLabelText(/Horario de Fin:/i)).toHaveValue(popupData.schedule.endHour.toISOString().slice(0, 16));
         });
     });
 

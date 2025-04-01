@@ -25,6 +25,7 @@ const mockTeamsAndResultsContext = {
     teams: [],
     addTeam: jest.fn(),
     updateTeam: jest.fn(),
+    updateResultsWithNewTeamName: jest.fn().mockResolvedValue({ ok: true }),
 };
 
 describe("AdminModalTeams Component", () => {
@@ -61,14 +62,14 @@ describe("AdminModalTeams Component", () => {
         it("fills in initial values when in Edit Team mode", () => {
             const popupData = {
                 sport: 'Fútbol-sala', name: 'Existing Team', points: 50,
-                results: { partidos_ganados: 10, partidos_perdidos: 2, partidos_empatados: 3 }
+                results: { wins: 10, losses: 2, draws: 3 }
             };
             render(<AdminModalTeams closeModal={mockCloseModal} isNewTeam={false} popupData={popupData} />);
             expect(screen.getByLabelText(/Deporte:/i)).toHaveValue(popupData.sport);
             expect(screen.getByLabelText(/Nombre del equipo:/i)).toHaveValue(popupData.name);
-            expect(screen.getByLabelText(/Partidos ganados:/i)).toHaveValue(Number(popupData.results.partidos_ganados));
-            expect(screen.getByLabelText(/Partidos perdidos:/i)).toHaveValue(Number(popupData.results.partidos_perdidos));
-            expect(screen.getByLabelText(/Partidos empatados:/i)).toHaveValue(Number(popupData.results.partidos_empatados));
+            expect(screen.getByLabelText(/Partidos ganados:/i)).toHaveValue(Number(popupData.results.wins));
+            expect(screen.getByLabelText(/Partidos perdidos:/i)).toHaveValue(Number(popupData.results.losses));
+            expect(screen.getByLabelText(/Partidos empatados:/i)).toHaveValue(Number(popupData.results.draws));
             expect(screen.getByLabelText(/Puntos:/i)).toHaveValue(Number(popupData.points));
         });
     });
@@ -138,7 +139,7 @@ describe("AdminModalTeams Component", () => {
                     sport: 'Fútbol-7',
                     name: 'Existing Team',
                     points: 50,
-                    results: { partidos_ganados: 10, partidos_perdidos: 2, partidos_empatados: 3 },
+                    results: { wins: 10, losses: 2, draws: 3 },
                 }}
             />);
 
@@ -179,7 +180,7 @@ describe("AdminModalTeams Component", () => {
                     sport: 'Fútbol-7',
                     name: 'Existing Team',
                     points: 50,
-                    results: { partidos_ganados: 10, partidos_perdidos: 2, partidos_empatados: 3 },
+                    results: { wins: 10, losses: 2, draws: 3 },
                 }}
             />);
 
@@ -206,6 +207,37 @@ describe("AdminModalTeams Component", () => {
                 expect(toast.error).toHaveBeenCalledWith('Ocurrió un error al procesar la solicitud.');
             });
         });
+
+        it("llama a updateResultsWithNewTeamName si el nombre del equipo ha cambiado", async () => {
+            mockAuthContext.user = { _id: "123", email: "admin@test.com", role: "admin" };
+        
+            mockTeamsAndResultsContext.updateTeam.mockResolvedValue({ ok: true });
+            mockTeamsAndResultsContext.updateResultsWithNewTeamName.mockResolvedValue({ ok: true });
+        
+            const popupData = {
+                _id: 'team123',
+                sport: 'Fútbol-7',
+                name: 'Equipo Antiguo',
+                points: 20,
+                results: {
+                    wins: 3,
+                    losses: 1,
+                    draws: 2
+                }
+            };
+        
+            render(<AdminModalTeams closeModal={mockCloseModal} isNewTeam={false} popupData={popupData} />);
+        
+            fireEvent.change(screen.getByLabelText(/Nombre del equipo:/i), { target: { value: 'Equipo Nuevo' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
+            await waitFor(() => {
+                expect(mockTeamsAndResultsContext.updateTeam).toHaveBeenCalledWith('team123', expect.anything());
+                expect(mockTeamsAndResultsContext.updateResultsWithNewTeamName).toHaveBeenCalledWith('team123', 'Equipo Nuevo');
+                expect(toast.success).toHaveBeenCalledWith('Equipo actualizado correctamente');
+            });
+        });
+        
     });
 
     describe("Modal Close Functionality", () => {

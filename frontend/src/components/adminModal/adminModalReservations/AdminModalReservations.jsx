@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { toast } from "sonner";
 import { IoMdClose } from "react-icons/io";
+import { MdAttachMoney, MdMoneyOff } from "react-icons/md";
 import { useForm } from "react-hook-form";
 import "./AdminModalReservations.css";
 import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndReservationsContext";
@@ -10,22 +11,23 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
 
   const formatDateForInput = (date) => {
     if (!date) return "";
-    return new Date(date).toISOString().slice(0, 16).replace("Z", ""); // Eliminar "Z" para evitar UTC
+    return new Date(date).toISOString().slice(0, 16).replace("Z", "");
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     defaultValues: popupData
       ? {
         ...popupData,
-        fechaInicio: formatDateForInput(popupData.fechaInicio),
-        fechaFin: formatDateForInput(popupData.fechaFin),
+        initDate: formatDateForInput(popupData.initDate),
+        endDate: formatDateForInput(popupData.endDate),
       }
       : {
         userId: "",
-        instalacionId: "",
-        fechaInicio: "",
-        fechaFin: "",
-        precioTotal: 0,
+        facilityId: "",
+        initDate: "",
+        endDate: "",
+        totalPrice: 0,
+        isPaid: false,
       },
   });
 
@@ -33,9 +35,14 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
     try {
       const reservationData = {
         ...data,
-        fechaInicio: new Date(data.fechaInicio + "Z"), // Agregar "Z" para conservar la zona horaria local
-        fechaFin: new Date(data.fechaFin + "Z"),
+        initDate: new Date(data.initDate).toISOString(),
+        endDate: new Date(data.endDate).toISOString(),
       };
+      
+      if (reservationData.endDate <= reservationData.initDate) {
+        toast.error("La fecha de fin debe ser posterior a la fecha de inicio.");
+        return;
+      }
 
       if (popupData?._id) {
         const updateRes = await updateReservation(popupData._id, reservationData);
@@ -82,9 +89,9 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
               Instalación ID:
               <input
                 type="text"
-                {...register("instalacionId", { required: "Introduce un ID de instalación válido" })}
+                {...register("facilityId", { required: "Introduce un ID de instalación válido" })}
               />
-              {errors.instalacionId && <span className="error-message">{errors.instalacionId.message}</span>}
+              {errors.facilityId && <span className="error-message">{errors.facilityId.message}</span>}
             </label>
           </div>
           <div className="input-container">
@@ -92,10 +99,10 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
               Fecha inicio:
               <input
                 type="datetime-local"
-                {...register("fechaInicio", { required: "Introduce una fecha de inicio" })}
+                {...register("initDate", { required: "Introduce una fecha de inicio" })}
               />
-              {errors.fechaInicio && (
-                <span className="error-message">{errors.fechaInicio.message}</span>
+              {errors.initDate && (
+                <span className="error-message">{errors.initDate.message}</span>
               )}
             </label>
           </div>
@@ -104,9 +111,9 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
               Fecha fin:
               <input
                 type="datetime-local"
-                {...register("fechaFin", { required: "Introduce una fecha de fin" })}
+                {...register("endDate", { required: "Introduce una fecha de fin" })}
               />
-              {errors.fechaFin && <span className="error-message">{errors.fechaFin.message}</span>}
+              {errors.endDate && <span className="error-message">{errors.endDate.message}</span>}
             </label>
           </div>
           <div className="input-container">
@@ -114,16 +121,30 @@ const AdminModalReservations = ({ closeModal, popupData }) => {
               Precio total:
               <input
                 type="number"
-                {...register("precioTotal", {
+                {...register("totalPrice", {
                   required: "Introduce un precio total",
                   min: { value: 0, message: "El precio no puede ser negativo" },
                 })}
               />
-              {errors.precioTotal && (
-                <span className="error-message">{errors.precioTotal.message}</span>
+              {errors.totalPrice && (
+                <span className="error-message">{errors.totalPrice.message}</span>
               )}
             </label>
           </div>
+          <div className="input-container">
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexDirection: 'column' }}>
+            <input type="checkbox" {...register("isPaid")} aria-label="isPaid" />
+            {/* Opcional: Icono visual */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span>Reserva pagada</span>
+              {watch("isPaid") ? (
+                <MdAttachMoney title="Pagado" color="green" style={{ marginLeft: '0.5rem', width: '1.5em', height: '1.5em'  }} />
+              ) : (
+                <MdMoneyOff title="Pendiente de pago" color="red" style={{ marginLeft: '0.5rem', width: '1.5em', height: '1.5em'  }}/>
+              )}
+            </div>
+          </label>
+        </div>
         </div>
         <div>
           <button type="submit" className="button-light">Guardar</button>
@@ -139,10 +160,11 @@ AdminModalReservations.propTypes = {
   popupData: PropTypes.shape({
     _id: PropTypes.string,
     userId: PropTypes.string,
-    instalacionId: PropTypes.string,
-    fechaInicio: PropTypes.string,
-    fechaFin: PropTypes.string,
-    precioTotal: PropTypes.number,
+    facilityId: PropTypes.string,
+    initDate: PropTypes.string,
+    endDate: PropTypes.string,
+    totalPrice: PropTypes.number,
+    isPaid: PropTypes.bool,
   }),
 };
 

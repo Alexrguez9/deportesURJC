@@ -6,6 +6,7 @@ import { getDateWithoutTime } from "../../../utils/dates.js";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalResults.css";
 import { useForm } from "react-hook-form";
+import { teamSports } from '../../../utils/constants/sports';
 
 const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     const { teams, addResult, updateResult } = useTeamsAndResults();
@@ -13,17 +14,17 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     const [filteredTeams, setFilteredTeams] = useState([]);
     const initialValues = {
         sport: popupData?.sport || "",
-        jornada: popupData?.jornada || 1,
-        equipo_local: popupData?.equipo_local || "",
-        goles_local: popupData?.goles_local || 0,
-        equipo_visitante: popupData?.equipo_visitante || "",
-        goles_visitante: popupData?.goles_visitante || 0,
-        fecha: popupData?.fecha ? getDateWithoutTime(popupData.fecha) : "",
-        hora: popupData?.hora || "",
-        lugar: popupData?.lugar || "",
+        round: popupData?.round || 1,
+        localTeam: popupData?.localTeam || "",
+        localGoals: popupData?.localGoals || 0,
+        visitorTeam: popupData?.visitorTeam || "",
+        visitorGoals: popupData?.visitorGoals || 0,
+        date: popupData?.date ? getDateWithoutTime(popupData.date) : "",
+        hour: popupData?.hour || "",
+        place: popupData?.place || "",
     };
-    const [equipoLocal, setEquipoLocal] = useState(initialValues.equipo_local);
-    const [equipoVisitante, setEquipoVisitante] = useState(initialValues.equipo_visitante);
+    const [localTeam, setLocalTeam] = useState(initialValues.localTeam);
+    const [visitorTeam, setVisitorTeam] = useState(initialValues.visitorTeam);
     const {
         register,
         handleSubmit: handleSubmitEncuentros,
@@ -31,35 +32,33 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     } = useForm({
         defaultValues: {
             sport: popupData?.sport || "",
-            jornada: popupData?.jornada || 1,
-            equipo_local: popupData?.equipo_local || "",
-            goles_local: popupData?.goles_local || 0,
-            equipo_visitante: popupData?.equipo_visitante || "",
-            goles_visitante: popupData?.goles_visitante || 0,
-            fecha: popupData?.fecha ? getDateWithoutTime(popupData.fecha) : "",
-            hora: popupData?.hora || "",
-            lugar: popupData?.lugar || "",
+            round: popupData?.round || 1,
+            localTeam: popupData?.localTeam || "",
+            localGoals: popupData?.localGoals || 0,
+            visitorTeam: popupData?.visitorTeam || "",
+            visitorGoals: popupData?.visitorGoals || 0,
+            date: popupData?.date ? getDateWithoutTime(popupData.date) : "",
+            hour: popupData?.hour || "",
+            place: popupData?.place || "",
         },
     });
 
     useEffect(() => {
         async function fetchTeams() {
-            if (popupData?.equipo_local) {
-                setEquipoLocal(popupData.equipo_local);
-            } else if (popupData?.equipo_visitante) {
-                setEquipoVisitante(popupData.equipo_visitante);
+            if (popupData?.localTeam) {
+                setLocalTeam(popupData.localTeam);
+            } else if (popupData?.visitorTeam) {
+                setVisitorTeam(popupData.visitorTeam);
             } else {
-                setEquipoLocal("");
-                setEquipoVisitante("");
+                setLocalTeam("");
+                setVisitorTeam("");
             }
-            // Filtrar equipos basados en el deporte seleccionado
+            // Filter teams by selected sport
             const newFilteredTeams = teams.filter(team => team.sport === selectedSport);
             await setFilteredTeams(newFilteredTeams);
         }
         fetchTeams();
     }, [selectedSport, teams, popupData]);
-
-    const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
 
     const combineDateAndTime = (date, time) => {
         const dateObj = new Date(date);
@@ -69,15 +68,15 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
     };
 
     const onSubmit = handleSubmitEncuentros(async (data) => {
-        const equipoLocal = filteredTeams.find(team => team.name === data.equipo_local);
-        const equipoVisitante = filteredTeams.find(team => team.name === data.equipo_visitante);
-        const fullDate = combineDateAndTime(data.fecha, data.hora);
+        const localTeam = filteredTeams.find(team => team.name === data.localTeam);
+        const visitorTeam = filteredTeams.find(team => team.name === data.visitorTeam);
+        const fullDate = combineDateAndTime(data.date, data.hour);
         data = {
             ...data,
-            equipo_local_id: equipoLocal?._id,
-            equipo_visitante_id: equipoVisitante?._id,
-            resultado: data.goles_local > data.goles_visitante ? "local" : data.goles_local < data.goles_visitante ? "visitante" : "Empate",
-            fecha: fullDate.toISOString(),
+            localTeamId: localTeam?._id,
+            visitorTeamId: visitorTeam?._id,
+            result: data.localGoals > data.visitorGoals ? "local" : data.localGoals < data.visitorGoals ? "visitante" : "Empate",
+            date: fullDate.toISOString(),
         };
 
         try {
@@ -121,7 +120,7 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                                 }}
                             >
                                 <option value="">Selecciona un deporte</option>
-                                {uniqueSports.map((sport) => (
+                                {teamSports.map((sport) => (
                                     <option key={sport} value={sport}>
                                         {sport}
                                     </option>
@@ -135,19 +134,19 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Jornada:
                             <input
                                 type="number"
-                                {...register("jornada", { required: "Por favor, introduce el número de la jornada" })}
-                                defaultValue={initialValues.jornada}
+                                {...register("round", { required: "Por favor, introduce el número de la round" })}
+                                defaultValue={initialValues.round}
                             />
-                            {errorResults.jornada && <span className="error-message">{errorResults.jornada.message}</span>}
+                            {errorResults.round && <span className="error-message">{errorResults.round.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
                         <label>
                             Equipo local:&nbsp;
                             <select
-                                {...register("equipo_local", { required: "Por favor, selecciona un equipo local" })}
-                                value={equipoLocal}
-                                onChange={(e) => setEquipoLocal(e.target.value)}
+                                {...register("localTeam", { required: "Por favor, selecciona un equipo local" })}
+                                value={localTeam}
+                                onChange={(e) => setLocalTeam(e.target.value)}
                             >
                                 <option value="">Selecciona un equipo</option>
                                 {filteredTeams.map(team => (
@@ -156,7 +155,7 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                                     </option>
                                 ))}
                             </select>
-                            {errorResults.equipo_local && <span className="error-message">{errorResults.equipo_local.message}</span>}
+                            {errorResults.localTeam && <span className="error-message">{errorResults.localTeam.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -164,22 +163,22 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Goles del equipo local:
                             <input
                                 type="number"
-                                {...register("goles_local", { 
+                                {...register("localGoals", { 
                                     required: "Por favor, introduce los goles del equipo local",
                                     validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
                                 })}
-                                defaultValue={initialValues.goles_local}
+                                defaultValue={initialValues.localGoals}
                             />
-                            {errorResults.goles_local && <span className="error-message">{errorResults.goles_local.message}</span>}
+                            {errorResults.localGoals && <span className="error-message">{errorResults.localGoals.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
                         <label>
                             Equipo visitante:&nbsp;
                             <select
-                                {...register("equipo_visitante", { required: "Por favor, selecciona un equipo visitante" })}
-                                value={equipoVisitante}
-                                onChange={(e) => setEquipoVisitante(e.target.value)}
+                                {...register("visitorTeam", { required: "Por favor, selecciona un equipo visitante" })}
+                                value={visitorTeam}
+                                onChange={(e) => setVisitorTeam(e.target.value)}
                             >
                                 <option value="">Selecciona un equipo</option>
                                 {filteredTeams.map(team => (
@@ -188,7 +187,7 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                                     </option>
                                 ))}
                             </select>
-                            {errorResults.equipo_visitante && <span className="error-message">{errorResults.equipo_visitante.message}</span>}
+                            {errorResults.visitorTeam && <span className="error-message">{errorResults.visitorTeam.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -196,13 +195,13 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Goles del equipo visitante:
                             <input
                                 type="number"
-                                {...register("goles_visitante", {
+                                {...register("visitorGoals", {
                                     required: "Por favor, introduce los goles del equipo visitante",
                                     validate: (value) => parseInt(value, 10) >= 0 || "Los goles no pueden ser negativos",
                                 })}
-                                defaultValue={initialValues.goles_visitante}
+                                defaultValue={initialValues.visitorGoals}
                             />
-                            {errorResults.goles_visitante && <span className="error-message">{errorResults.goles_visitante.message}</span>}
+                            {errorResults.visitorGoals && <span className="error-message">{errorResults.visitorGoals.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -210,10 +209,10 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Fecha:
                             <input
                                 type="date"
-                                {...register("fecha", { required: "Por favor, introduce la fecha" })}
-                                defaultValue={initialValues.fecha}
+                                {...register("date", { required: "Por favor, introduce la fecha" })}
+                                defaultValue={initialValues.date}
                             />
-                            {errorResults.fecha && <span className="error-message">{errorResults.fecha.message}</span>}
+                            {errorResults.date && <span className="error-message">{errorResults.date.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -221,10 +220,10 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Hora:
                             <input
                                 type="time"
-                                {...register("hora", { required: "Por favor, introduce la hora" })}
-                                defaultValue={initialValues.hora}
+                                {...register("hour", { required: "Por favor, introduce la hora" })}
+                                defaultValue={initialValues.hour}
                             />
-                            {errorResults.hora && <span className="error-message">{errorResults.hora.message}</span>}
+                            {errorResults.hour && <span className="error-message">{errorResults.hour.message}</span>}
                         </label>
                     </div>
                     <div className="input-container">
@@ -232,10 +231,10 @@ const AdminModalResults = ({ closeModal, popupData, isNewResult }) => {
                             Lugar:
                             <input
                                 type="text"
-                                {...register("lugar", { required: "Por favor, introduce el lugar" })}
-                                defaultValue={initialValues.lugar}
+                                {...register("place", { required: "Por favor, introduce el place" })}
+                                defaultValue={initialValues.place}
                             />
-                            {errorResults.lugar && <span className="error-message">{errorResults.lugar.message}</span>}
+                            {errorResults.place && <span className="error-message">{errorResults.place.message}</span>}
                         </label>
                     </div>
                 </div>
@@ -250,14 +249,14 @@ AdminModalResults.propTypes = {
     closeModal: PropTypes.func.isRequired,
     popupData: PropTypes.shape({
         sport: PropTypes.string,
-        jornada: PropTypes.number,
-        equipo_local: PropTypes.string,
-        goles_local: PropTypes.number,
-        equipo_visitante: PropTypes.string,
-        goles_visitante: PropTypes.number,
-        fecha: PropTypes.string,
-        hora: PropTypes.string,
-        lugar: PropTypes.string,
+        round: PropTypes.number,
+        localTeam: PropTypes.string,
+        localGoals: PropTypes.number,
+        visitorTeam: PropTypes.string,
+        visitorGoals: PropTypes.number,
+        date: PropTypes.string,
+        hour: PropTypes.string,
+        place: PropTypes.string,
         _id: PropTypes.string,
     }),
     isNewResult: PropTypes.bool.isRequired,

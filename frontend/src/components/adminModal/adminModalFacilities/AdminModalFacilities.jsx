@@ -13,21 +13,21 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
     defaultValues: popupData
       ? {
         ...popupData,
-        horarioInicio: popupData.horario?.horarioInicio
-          ? new Date(popupData.horario.horarioInicio).toISOString().slice(0, 16).replace("Z", "")
+        initialHour: popupData.schedule?.initialHour
+          ? new Date(popupData.schedule.initialHour).toISOString().slice(0, 16).replace("Z", "")
           : "",
-        horarioFin: popupData.horario?.horarioFin
-          ? new Date(popupData.horario.horarioFin).toISOString().slice(0, 16).replace("Z", "")
+        endHour: popupData.schedule?.endHour
+          ? new Date(popupData.schedule.endHour).toISOString().slice(0, 16).replace("Z", "")
           : "",
       }
       : {
-        nombre: "",
-        descripcion: "",
-        capacidad: 0,
-        precioPorMediaHora: 0,
+        name: "",
+        description: "",
+        capacity: 0,
+        priceForHalfHour: 0,
         isInternSport: false,
-        horarioInicio: "",
-        horarioFin: "",
+        initialHour: "",
+        endHour: "",
       },
   });
 
@@ -39,10 +39,10 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
     try {
       const facilityData = {
         ...data,
-        isInternSport: data.isInternSport === "true", // Convertir a booleano
-        horario: {
-          horarioInicio: new Date(data.horarioInicio + "Z"), // Convertir a Date, manteneniendo la zona horaria local
-          horarioFin: new Date(data.horarioFin + "Z"), // Convertir a Date, manteneniendo la zona horaria local
+        isInternSport: data.isInternSport === "true", // Convert to boolean
+        schedule: {
+          initialHour: new Date(data.initialHour + "Z"), // Convert to Date, keeping the local time zone
+          endHour: new Date(data.endHour + "Z"), // Convert to Date, keeping the local time zone
         },
       };
 
@@ -80,16 +80,16 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
           <div className="input-container">
             <label>
               Nombre:
-              <input type="text" {...register("nombre", { required: "Introduce un nombre válido" })} />
-              {errors.nombre && <span className="error-message">{errors.nombre.message}</span>}
+              <input type="text" {...register("name", { required: "Introduce un nombre válido" })} />
+              {errors.name && <span className="error-message">{errors.name.message}</span>}
             </label>
           </div>
 
           <div className="input-container">
             <label>
               Descripción:
-              <textarea {...register("descripcion", { required: "Introduce una descripción válida" })} />
-              {errors.descripcion && <span className="error-message">{errors.descripcion.message}</span>}
+              <textarea {...register("description", { required: "Introduce una descripción válida" })} />
+              {errors.description && <span className="error-message">{errors.description.message}</span>}
             </label>
           </div>
 
@@ -98,12 +98,12 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
               Capacidad:
               <input
                 type="number"
-                {...register("capacidad", {
+                {...register("capacity", {
                   required: "Introduce una capacidad válida",
                   min: { value: 1, message: "La capacidad debe ser mayor a 0" },
                 })}
               />
-              {errors.capacidad && <span className="error-message">{errors.capacidad.message}</span>}
+              {errors.capacity && <span className="error-message">{errors.capacity.message}</span>}
             </label>
           </div>
 
@@ -112,12 +112,12 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
               Precio por 30 minutos:
               <input
                 type="number"
-                {...register("precioPorMediaHora", {
+                {...register("priceForHalfHour", {
                   required: "Introduce un precio válido",
                   min: { value: 0, message: "El precio no puede ser negativo" },
                 })}
               />
-              {errors.precioPorMediaHora && <span className="error-message">{errors.precioPorMediaHora.message}</span>}
+              {errors.priceForHalfHour && <span className="error-message">{errors.priceForHalfHour.message}</span>}
             </label>
           </div>
 
@@ -134,16 +134,16 @@ const AdminModalFacilities = ({ closeModal, popupData }) => {
           <div className="input-container">
             <label>
               Horario de Inicio:
-              <input type="datetime-local" {...register("horarioInicio", { required: "Selecciona un horario de inicio" })} />
-              {errors.horarioInicio && <span className="error-message">{errors.horarioInicio.message}</span>}
+              <input type="datetime-local" {...register("initialHour", { required: "Selecciona un horario de inicio" })} />
+              {errors.initialHour && <span className="error-message">{errors.initialHour.message}</span>}
             </label>
           </div>
 
           <div className="input-container">
             <label>
               Horario de Fin:
-              <input type="datetime-local" {...register("horarioFin", { required: "Selecciona un horario de fin" })} />
-              {errors.horarioFin && <span className="error-message">{errors.horarioFin.message}</span>}
+              <input type="datetime-local" {...register("endHour", { required: "Selecciona un horario de fin" })} />
+              {errors.endHour && <span className="error-message">{errors.endHour.message}</span>}
             </label>
           </div>
         </div>
@@ -160,14 +160,14 @@ AdminModalFacilities.propTypes = {
   closeModal: PropTypes.func.isRequired,
   popupData: PropTypes.shape({
     _id: PropTypes.string,
-    nombre: PropTypes.string,
-    descripcion: PropTypes.string,
-    capacidad: PropTypes.number,
-    precioPorMediaHora: PropTypes.number,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    capacity: PropTypes.number,
+    priceForHalfHour: PropTypes.number,
     isInternSport: PropTypes.bool,
-    horario: PropTypes.shape({
-      horarioInicio: PropTypes.string,
-      horarioFin: PropTypes.string,
+    schedule: PropTypes.shape({
+      initialHour: PropTypes.string,
+      endHour: PropTypes.string,
     }),
   }),
 };

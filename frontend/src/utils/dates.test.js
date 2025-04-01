@@ -1,56 +1,72 @@
-// functions.test.js
+import {
+    getHoursAndMinutes,
+    getDateWithoutTime,
+    getPrettyDate,
+    getMonthlyDateRange,
+    validateHours,
+    infinityDate,
+} from './dates';
 
-import { getHours, getDateWithoutTime, getPrettyDate, getMonthlyDateRange } from './dates';
-
-describe('getHours', () => {
-    it('debería retornar las horas y minutos en formato HH:MM con ceros iniciales', () => {
+// Dates in getHoursAndMinutes are in UTC, so we need to adjust them to Spain time in tests
+describe('getHoursAndMinutes', () => {
+    it('should return hours and minutes in HH:MM format with leading zeros', () => {
         const date = '2024-07-28T10:30:00';
-        expect(getHours(date)).toBe('10:30');
+        expect(getHoursAndMinutes(date)).toBe('08:30');
     });
 
-    it('debería retornar las horas y minutos correctamente para diferentes horas con ceros iniciales', () => {
-        expect(getHours('2024-07-28T09:15:00')).toBe('09:15');
-        expect(getHours('2024-07-28T23:59:00')).toBe('23:59');
-        expect(getHours('2024-07-28T00:00:00')).toBe('00:00');
-        expect(getHours('2024-07-28T05:08:00')).toBe('05:08'); // Prueba con minutos de un solo dígito
+    it('should correctly return hours and minutes for different times with leading zeros', () => {
+        expect(getHoursAndMinutes('2024-07-28T09:15:00')).toBe('07:15');
+        expect(getHoursAndMinutes('2024-07-28T23:59:00')).toBe('21:59');
+        expect(getHoursAndMinutes('2024-07-28T00:00:00')).toBe('22:00');
+        expect(getHoursAndMinutes('2024-07-28T05:08:00')).toBe('03:08');
     });
 
-    it('debería funcionar con diferentes formatos de fecha que new Date() soporta', () => {
-        expect(getHours('July 28, 2024 14:45:00')).toBe('14:45');
-        expect(getHours('2024/07/28 16:20:00')).toBe('16:20');
+    it('should work with different date formats supported by new Date()', () => {
+        expect(getHoursAndMinutes('July 28, 2024 14:45:00')).toBe('12:45');
+        expect(getHoursAndMinutes('2024/07/28 16:20:00')).toBe('14:20');
     });
 
-    it('debería manejar correctamente las horas con un solo dígito añadiendo un cero inicial', () => {
-        expect(getHours('2024-07-28T01:05:00')).toBe('01:05'); // Ahora debería pasar con el formato correcto
+    it('should correctly handle single-digit hours by adding a leading zero', () => {
+        expect(getHoursAndMinutes('2024-07-28T01:05:00')).toBe('23:05');
+    });
+
+    it('should return undefined if date is null or undefined', () => {
+        expect(getHoursAndMinutes(null)).toBeUndefined();
+        expect(getHoursAndMinutes(undefined)).toBeUndefined();
     });
 });
 
 describe('getDateWithoutTime', () => {
-    it('debería retornar la fecha en formato AAAA-MM-DD', () => {
+    it('should return the date in YYYY-MM-DD format', () => {
         const date = '2024-07-28T10:30:00';
         expect(getDateWithoutTime(date)).toBe('2024-07-28');
     });
 
-    it('debería funcionar con diferentes formatos de fecha que new Date() soporta', () => {
+    it('should work with different date formats supported by new Date()', () => {
         expect(getDateWithoutTime('August 15, 2024 18:00:00')).toBe('2024-08-15');
         expect(getDateWithoutTime('2024/09/02 09:00:00')).toBe('2024-09-02');
     });
 
-    it('debería retornar la fecha correctamente para diferentes meses y días', () => {
-        expect(getDateWithoutTime('2024-01-01T12:00:00')).toBe('2024-01-01'); // Inicio de año
-        expect(getDateWithoutTime('2024-12-31T12:00:00')).toBe('2024-12-31'); // Fin de año
-        expect(getDateWithoutTime('2024-02-29T12:00:00')).toBe('2024-02-29'); // Año bisiesto
+    it('should return the correct date for different months and days', () => {
+        expect(getDateWithoutTime('2024-01-01T12:00:00')).toBe('2024-01-01'); // Start of year
+        expect(getDateWithoutTime('2024-12-31T12:00:00')).toBe('2024-12-31'); // End of year
+        expect(getDateWithoutTime('2024-02-29T12:00:00')).toBe('2024-02-29'); // Leap year
+    });
+
+    it('should return undefined if date is null or undefined', () => {
+        expect(getDateWithoutTime(null)).toBeUndefined();
+        expect(getDateWithoutTime(undefined)).toBeUndefined();
     });
 });
 
 describe('getPrettyDate', () => {
-    it('debería retornar la fecha en formato legible en español con fecha y hora', () => {
+    it('should return a human-readable date in Spanish with date and time', () => {
         const date = new Date('2024-07-28T10:30:00');
         const expectedPrettyDate = new Date('2024-07-28T10:30:00').toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(date)).toBe(expectedPrettyDate);
     });
 
-    it('debería funcionar con diferentes objetos Date', () => {
+    it('should work with different Date objects', () => {
         const date1 = new Date('2024-08-15T18:45:30');
         const expected1 = date1.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(date1)).toBe(expected1);
@@ -60,7 +76,7 @@ describe('getPrettyDate', () => {
         expect(getPrettyDate(date2)).toBe(expected2);
     });
 
-    it('debería retornar la fecha y hora correctamente para diferentes meses, días y horas', () => {
+    it('should return the correct date and time for different months, days, and hours', () => {
         const dateStartOfYear = new Date('2024-01-01T00:00:00');
         const expectedStartOfYear = dateStartOfYear.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(dateStartOfYear)).toBe(expectedStartOfYear);
@@ -74,27 +90,27 @@ describe('getPrettyDate', () => {
         expect(getPrettyDate(dateLeapYear)).toBe(expectedLeapYear);
     });
 
-    it('debería manejar correctamente minutos y horas de un solo dígito', () => {
+    it('should correctly handle single-digit minutes and hours', () => {
         const dateSingleDigitTime = new Date('2024-07-28T05:08:00');
         const expectedSingleDigitTime = dateSingleDigitTime.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(dateSingleDigitTime)).toBe(expectedSingleDigitTime);
     });
 
-    it('debería funcionar con diferentes formatos de entrada de fecha (string)', () => {
+    it('should work with different input date formats (string)', () => {
         const dateStringISO = '2024-10-20T15:22:10';
         const expectedStringISO = new Date(dateStringISO).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(dateStringISO)).toBe(expectedStringISO);
 
-        const dateStringUS = 'October 20, 2024 08:30:00'; // Formato US
+        const dateStringUS = 'October 20, 2024 08:30:00';
         const expectedStringUS = new Date(dateStringUS).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
         expect(getPrettyDate(dateStringUS)).toBe(expectedStringUS);
     });
 });
 
 describe('getMonthlyDateRange', () => {
-    it('debería retornar un rango de fechas para el usuario, con la fecha de fin siendo un mes después de la fecha de inicio', () => {
-        const mockUser = {}; // Un objeto de usuario simulado
-        const [startDate, endDate] = getMonthlyDateRange(mockUser);
+    it('should return a date range for the user, with the end date being one month after the start date', () => {
+        const mockUser = {};
+        const {startDate, endDate} = getMonthlyDateRange(mockUser);
 
         expect(startDate).toBeDefined();
         expect(endDate).toBeDefined();
@@ -104,14 +120,76 @@ describe('getMonthlyDateRange', () => {
         const start = new Date(startDate);
         const end = new Date(endDate);
 
-        // Verificar que la fecha de fin es exactamente un mes después de la fecha de inicio
         const expectedEndDate = new Date(start);
         expectedEndDate.setMonth(expectedEndDate.getMonth() + 1);
         expect(end.toISOString()).toBe(expectedEndDate.toISOString());
     });
 
-    it('debería retornar [null, null] si el usuario no está definido', () => {
-        expect(getMonthlyDateRange(null)).toEqual([null, null]);
-        expect(getMonthlyDateRange(undefined)).toEqual([null, null]);
+    it('should return [null, null] if the user is not defined', () => {
+        expect(getMonthlyDateRange(null)).toStrictEqual({startDate: null, endDate: null});
+        expect(getMonthlyDateRange(undefined)).toStrictEqual({startDate: null, endDate: null});
     });
 });
+
+describe('validateHours', () => {
+    const minTime = new Date('2024-07-28T08:30:00');
+    const maxTime = new Date('2024-07-28T18:00:00');
+
+    it('should return true for a time within the range', () => {
+        const date = new Date('2024-07-28T10:00:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(true);
+    });
+
+    it('should return false if the time is before the minimum', () => {
+        const date = new Date('2024-07-28T07:00:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(false);
+    });
+
+    it('should return false if the time is after the maximum', () => {
+        const date = new Date('2024-07-28T19:00:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(false);
+    });
+
+    it('should return false if the time is equal to the minimum but minutes are less', () => {
+        const date = new Date('2024-07-28T08:15:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(false);
+    });
+
+    it('should return false if the time is equal to the maximum but minutes are more', () => {
+        const date = new Date('2024-07-28T18:30:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(false);
+    });
+
+    it('should return true if the time is exactly the minimum', () => {
+        const date = new Date('2024-07-28T08:30:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(true);
+    });
+
+    it('should return true if the time is exactly the maximum', () => {
+        const date = new Date('2024-07-28T18:00:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(true);
+    });
+
+    it('should return true if minutes are just within the upper limit', () => {
+        const date = new Date('2024-07-28T17:59:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(true);
+    });
+
+    it('should return true if minutes are just within the lower limit', () => {
+        const date = new Date('2024-07-28T08:30:00');
+        expect(validateHours(date, minTime, maxTime)).toBe(true);
+    });
+});
+
+describe('infinityDate', () => {
+  it('should equal the maximum valid ISO date', () => {
+    expect(infinityDate).toBe(new Date(8640000000000000).toISOString());
+  });
+
+  it('should represent a date in the year 275760 or later', () => {
+    const dateObj = new Date(infinityDate);
+    expect(dateObj instanceof Date && !isNaN(dateObj)).toBe(true);
+    expect(dateObj.getFullYear()).toBeGreaterThanOrEqual(275760);
+  });
+});
+

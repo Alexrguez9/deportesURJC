@@ -3,12 +3,12 @@ const sgMail = require('@sendgrid/mail');
 const initMails = () => {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    // Función para enviar correos
+    // Function to verify and send the email
     const sendEmail = async (to, subject, message) => {
         try {
             await sgMail.send({
                 to,
-                from: 'alexrguez9@gmail.com', // Actualmente (Enero 2025) único email verificado en SendGrid
+                from: 'alexrguez9@gmail.com', // January 2025: Unique mail verified in Sendgrid
                 subject,
                 text: message,
             });

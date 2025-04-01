@@ -1,23 +1,37 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const { cleanExpiredSubscriptions } = require('../utils/subscription');
 // const jwt = require('jsonwebtoken');
 
-// Obtener data de users
+// Obtain all users
 exports.getData = async (req, res) => {
     try {
-        const userData = await User.find();
-        res.json(userData);
+        let users = await User.find();
+
+        const updatedUsers = await Promise.all(users.map(async (user) => {
+            const updated = cleanExpiredSubscriptions(user);
+            return updated.save();
+        }));
+
+        res.json(updatedUsers);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener los datos de los usuarios', message: error.message });
     }
 };
 
-// Obtener un usuario por su id
+// Obtain one user by id
 exports.getOne = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+        let user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        user = cleanExpiredSubscriptions(user);
+        await user.save();
+
         res.json(user);
     } catch (error) {
         console.error(error);
@@ -25,19 +39,15 @@ exports.getOne = async (req, res) => {
     }
 };
 
-// Registrar un nuevo usuario
+// Register a new user
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role, alta, balance } = req.body;
-        console.log('----REGISTER----');
-        console.log('---name:', name);
-        console.log('---email:', email);
+        const { name, email, password, role, registration, balance } = req.body;
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
         }
-        console.log('---existingUser:', existingUser);
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -45,36 +55,46 @@ exports.register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            alta: {
-                gimnasio: {
-                  estado: alta?.gimnasio.estado || null,
-                  fechaInicio: alta?.gimnasio.fechaInicio || null,
-                  fechaFin: alta?.gimnasio.fechaFin || null,
+            registration: {
+                gym: {
+                  isActive: registration?.gym.isActive || null,
+                  initDate: registration?.gym.initDate || null,
+                  endDate: registration?.gym.endDate || null,
                 },
-                atletismo: {
-                  estado: alta?.atletismo.estado || null,
-                  fechaInicio: alta?.atletismo.fechaInicio || null,
-                  fechaFin: alta?.atletismo.fechaFin || null,
+                athletics: {
+                  isActive: registration?.athletics.isActive || null,
+                  initDate: registration?.athletics.initDate || null,
+                  endDate: registration?.athletics.endDate || null,
                 },
             },
-            abono_renovado: false,
+            subscription: {
+                gym: {
+                  isActive: registration?.gym.isActive || null,
+                  initDate: registration?.gym.initDate || null,
+                  endDate: registration?.gym.endDate || null,
+                },
+                athletics: {
+                  isActive: registration?.athletics.isActive || null,
+                  initDate: registration?.athletics.initDate || null,
+                  endDate: registration?.athletics.endDate || null,
+                },
+            },
             balance: balance || 0,
             role: role || 'user',
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser); // Incluimos el _id
+        res.status(201).json(savedUser);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });
     }
 };
 
-// Iniciar sesión
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        let user = await User.findOne({ email });
         
         if (!user) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -86,15 +106,17 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
+        user = cleanExpiredSubscriptions(user);
+        await user.save();
+
         // TODO: const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
 
         res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
-                estado_alta: user.estado_alta,
-                abono_renovado: user.abono_renovado,
-                alta: user.alta,
+                subscription: user.subscription,
+                registration: user.registration,
                 balance: user.balance,
                 role: user.role,
                 //token
@@ -105,7 +127,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// Cerrar sesión
 exports.logout = async (req, res) => {
     try {
         req.session.destroy();
@@ -116,7 +137,7 @@ exports.logout = async (req, res) => {
     }
 };
 
-// Actualizar un usuario
+// Update an user
 exports.updateOne = async (req, res) => {
     try {
         const { id } = req.params;
@@ -142,33 +163,38 @@ exports.updatePasswordAndName = async (req, res) => {
 
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({ message: "Usuario no encontrado" });
+            return res.status(404).json({ ok: false, message: "Usuario no encontrado" });
         }
 
-        // Verificar la contraseña actual
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: "Contraseña actual incorrecta" });
+            return res.status(401).json({ ok: false, message: "Contraseña actual incorrecta" });
         }
 
-        // Actualizar la contraseña si se proporciona una nueva
         if (newPassword) {
             user.password = await bcrypt.hash(newPassword, 10);
         }
-        // Actualizar el nombre si se proporciona
+
         if (name) {
             user.name = name;
         }
+
         const updatedUser = await user.save();
-        res.json({ message: "Perfil actualizado correctamente", updatedUser });
+
+        res.status(200).json({
+            ok: true,
+            message: "Perfil actualizado correctamente",
+            user: updatedUser
+        });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al actualizar el perfil", message: error.message });
+        res.status(500).json({ ok: false, message: "Error al actualizar el perfil", error: error.message });
     }
 };
 
-// Eliminar un usuario
+
+// Delete an user
 exports.deleteOne = async (req, res) => {
     try {
         const { id } = req.params;
@@ -185,12 +211,13 @@ exports.deleteOne = async (req, res) => {
     }
 };
 
-require("dotenv").config(); // Asegurar que se carguen las variables de entorno
+require("dotenv").config(); // Import dotenv to use environment variables
 
-// Función para comprobar si el email es igual al ADMIN_EMAIL
+// Function to verify if email is equal to ADMIN_EMAIL from .env
 exports.checkIfAdmin = (req, res) => {
     try {
         const { email } = req.body;
+        const adminEmail = process.env.ADMIN_EMAIL;
 
         if (!email) {
             return res.status(400).json({ error: "Email es requerido" });

@@ -5,7 +5,7 @@ const Profile = () => {
 
     return (
         <>
-            <div id="ligas-internas-content">
+            <div id="profile-content" className="content">
                 <Outlet />
             </div>
 

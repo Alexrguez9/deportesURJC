@@ -1,13 +1,13 @@
 import { IoMdClose } from "react-icons/io";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../context/AuthContext";
-import "./AdminModalUsers.css";
 import PropTypes from "prop-types";
 import { toast } from 'sonner';
-import { getMonthlyDateRange } from "../../../utils/dates";
+import { getMonthlyDateRange, infinityDate } from "../../../utils/dates";
+import { useAuth } from "../../../context/AuthContext";
+import "./AdminModalUsers.css";
 
 const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
-    const { user, addUser, updateUser, handleAdmin } = useAuth();
+    const { addUser, updateUser } = useAuth();
 
     const {
         register,
@@ -21,33 +21,50 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
         password: "",
         role: popupData?.role || "user",
         balance: popupData?.balance || 0,
-        gimnasio: popupData?.alta?.gimnasio?.estado || false,
-        atletismo: popupData?.alta?.atletismo?.estado || false,
+        gymRegistration: popupData?.registration?.gym?.isActive || false,
+        athleticsRegistration: popupData?.registration?.athletics?.isActive || false,
+        subs_gimnasio: popupData?.subscription?.gym?.isActive || false,
+        subs_atletismo: popupData?.subscription?.athletics?.isActive || false,
     };
 
     const onSubmit = async (data) => {
+        const { startDate, endDate } = await getMonthlyDateRange(data);
         const formattedData = {
             ...data,
-            alta: {
-                gimnasio: {
-                    estado: data.gimnasio,
-                    fechaInicio: data.gimnasio ? getMonthlyDateRange(user)[0] : null,
-                    fechaFin: data.gimnasio ? getMonthlyDateRange(user)[1] : null
+            registration: {
+                gym: {
+                    isActive: data.gymRegistration,
+                    initDate: data.gymRegistration ? startDate : null,
+                    endDate: data.gymRegistration ? infinityDate : null
                 },
-                atletismo: {
-                    estado: data.atletismo,
-                    fechaInicio: data.atletismo ? getMonthlyDateRange(user)[0] : null,
-                    fechaFin: data.atletismo ? getMonthlyDateRange(user)[1] : null
+                athletics: {
+                    isActive: data.athleticsRegistration,
+                    initDate: data.athleticsRegistration ? startDate : null,
+                    endDate: data.athleticsRegistration ? infinityDate : null
+                },
+            },
+            subscription: {
+                gym: {
+                    isActive: data.subs_gimnasio,
+                    initDate: data.subs_gimnasio ? startDate : null,
+                    endDate: data.subs_gimnasio ? endDate : null
+                },
+                athletics: {
+                    isActive: data.subs_atletismo,
+                    initDate: data.subs_atletismo ? startDate : null,
+                    endDate: data.subs_atletismo ? endDate : null
                 },
             },
         };
-        delete formattedData.gimnasio;
-        delete formattedData.atletismo;
+        // Delete props not in registration object
+        delete formattedData.gymRegistration;
+        delete formattedData.athleticsRegistration;
+        delete formattedData.subs_gimnasio;
+        delete formattedData.subs_atletismo;
 
         try {
             if (isNewUser) {
-                const updatedData = handleAdmin(formattedData);
-                const res = await addUser(updatedData);
+                const res = await addUser(formattedData);
                 if (res.status === 409) {
                     toast.error('El correo ya está registrado. Por favor, usa uno diferente.');
                     return;
@@ -151,21 +168,41 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
                     </div>
                     <div className="input-container">
                         <label>
-                            Gimnasio:
+                            Alta gimnasio:
                             <input
                                 type="checkbox"
-                                {...register("gimnasio")}
-                                defaultChecked={initialValues.gimnasio}
+                                {...register("gymRegistration")}
+                                defaultChecked={initialValues.gymRegistration}
                             />
                         </label>
                     </div>
                     <div className="input-container">
                         <label>
-                            Atletismo:
+                            Alta atletismo:
                             <input
                                 type="checkbox"
-                                {...register("atletismo")}
-                                defaultChecked={initialValues.atletismo}
+                                {...register("athleticsRegistration")}
+                                defaultChecked={initialValues.athleticsRegistration}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Suscripción gimnasio:
+                            <input
+                                type="checkbox"
+                                {...register("subs_gimnasio")}
+                                defaultChecked={initialValues.subs_gimnasio}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Suscripción atletismo:
+                            <input
+                                type="checkbox"
+                                {...register("subs_atletismo")}
+                                defaultChecked={initialValues.subs_atletismo}
                             />
                         </label>
                     </div>
@@ -181,16 +218,25 @@ const AdminModalUsers = ({ closeModal, popupData, isNewUser }) => {
 AdminModalUsers.propTypes = {
     closeModal: PropTypes.func.isRequired,
     popupData: PropTypes.shape({
+        _id: PropTypes.string,
         name: PropTypes.string,
         email: PropTypes.string,
         role: PropTypes.string,
         balance: PropTypes.number,
-        alta: PropTypes.shape({
-            gimnasio: PropTypes.shape({
-                estado: PropTypes.bool,
+        registration: PropTypes.shape({
+            gym: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
-            atletismo: PropTypes.shape({
-                estado: PropTypes.bool,
+            athletics: PropTypes.shape({
+                isActive: PropTypes.bool,
+            }),
+        }),
+        subscription: PropTypes.shape({
+            gym: PropTypes.shape({
+                isActive: PropTypes.bool,
+            }),
+            athletics: PropTypes.shape({
+                isActive: PropTypes.bool,
             }),
         }),
     }),

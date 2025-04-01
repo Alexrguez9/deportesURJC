@@ -2,13 +2,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AdminModalUsers from "./AdminModalUsers";
 import { useAuth } from "../../../context/AuthContext";
 import { mockAuthContext } from "../../../utils/mocks";
-import * as sonner from 'sonner'; // Import sonner to mock toast
+import * as sonner from 'sonner';
 
 jest.mock('../../../context/AuthContext', () => ({
     useAuth: jest.fn()
 }));
 
-jest.mock('sonner', () => ({ // Mock sonner module
+jest.mock('sonner', () => ({
     toast: {
         success: jest.fn(),
         error: jest.fn(),
@@ -21,8 +21,8 @@ describe("AdminModalUsers Component", () => {
     beforeEach(() => {
         useAuth.mockReturnValue(mockAuthContext);
         jest.clearAllMocks();
-        sonner.toast.success.mockClear(); // Clear mock for success toast before each test
-        sonner.toast.error.mockClear();   // Clear mock for error toast before each test
+        sonner.toast.success.mockClear();
+        sonner.toast.error.mockClear();
     });
 
     describe("Rendering and Initial Display", () => {
@@ -43,8 +43,10 @@ describe("AdminModalUsers Component", () => {
             expect(screen.getByLabelText(/Contraseña:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Rol:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Saldo:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Atletismo:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta atletismo/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
@@ -55,8 +57,10 @@ describe("AdminModalUsers Component", () => {
             expect(screen.queryByLabelText(/Contraseña:/i)).not.toBeInTheDocument(); // Password field should not be present in edit mode
             expect(screen.getByLabelText(/Rol:/i)).toBeInTheDocument();
             expect(screen.getByLabelText(/Saldo:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeInTheDocument();
-            expect(screen.getByLabelText(/Atletismo:/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Alta atletismo/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeInTheDocument();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).toBeInTheDocument();
             expect(screen.getByRole('button', { name: /Guardar cambios/i })).toBeInTheDocument();
         });
 
@@ -67,18 +71,25 @@ describe("AdminModalUsers Component", () => {
                 email: 'existing@example.com',
                 role: 'admin',
                 balance: 100,
-                alta: {
-                    gimnasio: { estado: true },
-                    atletismo: { estado: false }
+                registration: {
+                    gym: { isActive: true },
+                    athletics: { isActive: false }
+                },
+                subscription: {
+                    gym: { isActive: true },
+                    athletics: { isActive: false }
                 }
             };
+            
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={false} popupData={popupData} />);
             expect(screen.getByLabelText(/Nombre:/i)).toHaveValue(popupData.name);
             expect(screen.getByLabelText(/Email:/i)).toHaveValue(popupData.email);
             expect(screen.getByLabelText(/Rol:/i)).toHaveValue(popupData.role);
             expect(screen.getByLabelText(/Saldo:/i)).toHaveValue(popupData.balance);
-            expect(screen.getByLabelText(/Gimnasio:/i)).toBeChecked();
-            expect(screen.getByLabelText(/Atletismo:/i)).not.toBeChecked();
+            expect(screen.getByLabelText(/Alta Gimnasio:/i)).toBeChecked();
+            expect(screen.getByLabelText(/Alta Atletismo:/i)).not.toBeChecked();
+            expect(screen.getByLabelText(/Suscripción gimnasio/i)).toBeChecked();
+            expect(screen.getByLabelText(/Suscripción atletismo/i)).not.toBeChecked();
         });
     });
 
@@ -93,11 +104,14 @@ describe("AdminModalUsers Component", () => {
 
         it("shows error message for empty Email field", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'Test User' } });
             fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
             await waitFor(() => {
                 expect(screen.getByText(/Por favor, introduce el email/i)).toBeInTheDocument();
             });
         });
+        
 
         it("shows error message for empty Password field when isNewUser is true", async () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
@@ -124,6 +138,73 @@ describe("AdminModalUsers Component", () => {
                 expect(screen.getByText(/El saldo no puede ser negativo/i)).toBeInTheDocument();
             });
         });
+
+        it("calls addUser with formatted registration and subscription data", async () => {
+            const mockDateRange = {
+                startDate: '2025-01-01T00:00:00.000Z',
+                endDate: '2025-02-01T00:00:00.000Z'
+            };
+            const infinity = require("../../../utils/dates").infinityDate;
+            jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockResolvedValue(mockDateRange);
+        
+            const userData = {
+                name: 'New User',
+                email: 'newuser@example.com',
+                password: 'password123',
+                role: 'user',
+                balance: 20,
+                registration:{
+                    gym: true,
+                    athletics: false
+                },
+                subscription:{
+                    gym: true,
+                    athletics: true
+                },
+            };
+        
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+        
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: userData.name } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: userData.email } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: userData.password } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: userData.role } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: String(userData.balance) } });
+            fireEvent.click(screen.getByLabelText(/Alta gimnasio/i));
+            fireEvent.click(screen.getByLabelText(/Suscripción gimnasio/i));
+            fireEvent.click(screen.getByLabelText(/Suscripción atletismo/i));
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+        
+            await waitFor(() => {
+                expect(mockAuthContext.addUser).toHaveBeenCalledWith(expect.objectContaining({
+                    registration: {
+                        gym: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: infinity
+                        },
+                        athletics: {
+                            isActive: false,
+                            initDate: null,
+                            endDate: null
+                        }
+                    },
+                    subscription: {
+                        gym: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: mockDateRange.endDate
+                        },
+                        athletics: {
+                            isActive: true,
+                            initDate: mockDateRange.startDate,
+                            endDate: mockDateRange.endDate
+                        }
+                    }
+                }));
+            });
+        });
+        
     });
 
     describe("Form Submission and API Calls", () => {
@@ -220,6 +301,47 @@ describe("AdminModalUsers Component", () => {
             render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
             fireEvent.click(document.querySelector('#close-menu'));
             expect(mockCloseModal).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe("Error Handling", () => {
+        it("shows error message if an unexpected error occurs during form submission", async () => {
+            // Mocking the error case in onSubmit
+            mockAuthContext.addUser.mockRejectedValue(new Error("Unexpected error"));
+
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                expect(sonner.toast.error).toHaveBeenCalledWith("Ocurrió un error al procesar la solicitud.");
+            });
+        });
+    });
+
+    describe("Mocking getMonthlyDateRange function", () => {
+        it("tests the correct usage of getMonthlyDateRange function", async () => {
+            const mockDateRange = ['2025-03-01', '2025-03-31']; // Mock the return value for getMonthlyDateRange
+            jest.spyOn(require("../../../utils/dates"), "getMonthlyDateRange").mockReturnValue(mockDateRange);
+
+            render(<AdminModalUsers closeModal={mockCloseModal} isNewUser={true} />);
+
+            fireEvent.change(screen.getByLabelText(/Nombre:/i), { target: { value: 'New User' } });
+            fireEvent.change(screen.getByLabelText(/Email:/i), { target: { value: 'newuser@example.com' } });
+            fireEvent.change(screen.getByLabelText(/Contraseña:/i), { target: { value: 'password123' } });
+            fireEvent.change(screen.getByLabelText(/Rol:/i), { target: { value: 'admin' } });
+            fireEvent.change(screen.getByLabelText(/Saldo:/i), { target: { value: '50' } });
+            fireEvent.click(screen.getByRole('button', { name: /Guardar cambios/i }));
+
+            await waitFor(() => {
+                // Ensure that getMonthlyDateRange has been called
+                expect(require("../../../utils/dates").getMonthlyDateRange).toHaveBeenCalledTimes(1);
+            });
         });
     });
 });

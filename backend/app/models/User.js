@@ -17,46 +17,66 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    alta: {
-      gimnasio: {
-        estado: {
+    registration: {
+      gym: {
+        isActive: {
           type: Boolean,
-          default: false  // Falso hasta que el usuario se de de alta
+          default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false 
         }
       },
-      atletismo: {
-        estado: {
+      athletics: {
+        isActive: {
           type: Boolean,
-          default: false  // Falso hasta que el usuario se de de alta
+          default: false
         },
-        fechaInicio: {
+        initDate: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         },
-        fechaFin: {
+        endDate: {
           type: Date,
-          required: false  // Opcional o hacer obligatorio
+          required: false
         }
       },
      
     },
-    abono_renovado: {
-      fechaInicio: {
-        type: Date,
-        required: false  // Opcional o hacer obligatorio
+    subscription: {
+      gym: {
+        isActive: {
+          type: Boolean,
+          default: false
+        },
+        initDate: {
+          type: Date,
+          required: false
+        },
+        endDate: {
+          type: Date,
+          required: false
+        },
       },
-      fechaFin: {
-        type: Date,
-        required: false  // Opcional o hacer obligatorio
-      }
+      athletics: {
+        isActive: {
+          type: Boolean,
+          default: false
+        },
+        initDate: {
+          type: Date,
+          required: false
+        },
+        endDate: {
+          type: Date,
+          required: false
+        }
+      },
     },
     balance: {
       type: Number,
@@ -70,7 +90,7 @@ const UserSchema = new mongoose.Schema(
   },
   {
     versionKey: false,
-    timestamps: true // Crea automáticamente los campos 'createdAt' y 'updatedAt' en BBDD
+    timestamps: true // Create automatically the fields createdAt and updatedAt in BBDD
   }
 );
 

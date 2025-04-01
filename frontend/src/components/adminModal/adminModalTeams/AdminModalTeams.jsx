@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import { toast } from 'sonner';
 import { IoMdClose } from "react-icons/io";
-import { useAuth } from "../../../context/AuthContext";
 import { useTeamsAndResults } from "../../../context/TeamsAndResultsContext";
 import "./AdminModalTeams.css";
 import { useForm } from "react-hook-form";
+import { teamSports } from '../../../utils/constants/sports';
 
 const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
-    const { addTeam, updateTeam } = useTeamsAndResults();
+    const { addTeam, updateTeam, updateResultsWithNewTeamName  } = useTeamsAndResults();
 
     const {
         register,
@@ -15,16 +15,12 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         formState: { errors: errorTeams },
     } = useForm();
 
-    // Obtener lista de deportes únicos
-    const uniqueSports = ['Fútbol-7', 'Fútbol-sala', 'Básket 3x3', 'Voleibol'];
-
-    // Valores iniciales del formulario
     const initialValues = {
         sport: popupData?.sport || "",
         name: popupData?.name || "",
-        partidos_ganados: popupData?.results?.partidos_ganados || 0,
-        partidos_perdidos: popupData?.results?.partidos_perdidos || 0,
-        partidos_empatados: popupData?.results?.partidos_empatados || 0,
+        wins: popupData?.results?.wins || 0,
+        losses: popupData?.results?.losses || 0,
+        draws: popupData?.results?.draws || 0,
         points: popupData?.points || 0,
     };
 
@@ -32,9 +28,9 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
         const formattedData = {
             ...data,
             results: {
-                partidos_ganados: data.partidos_ganados,
-                partidos_perdidos: data.partidos_perdidos,
-                partidos_empatados: data.partidos_empatados,
+                wins: data.wins,
+                losses: data.losses,
+                draws: data.draws,
             },
         };
 
@@ -47,11 +43,19 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                 toast.success('Equipo añadido correctamente');
                 closeModal();
             } else {
+                const oldTeamName = popupData.name;
+                const newTeamName = data.name;
+
                 const updateRes = await updateTeam(popupData._id, formattedData);
                 if (!updateRes?.ok) {
                     toast.error('Error actualizando el equipo');
                     return;
                 }
+
+                if (oldTeamName !== newTeamName) {
+                    await updateResultsWithNewTeamName(popupData._id, newTeamName);
+                }
+
                 toast.success('Equipo actualizado correctamente');
                 closeModal();
             }
@@ -75,7 +79,7 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                                 defaultValue={initialValues.sport}
                             >
                                 <option value="">Selecciona un deporte</option>
-                                {uniqueSports.map((sport) => (
+                                {teamSports.map((sport) => (
                                     <option key={sport} value={sport}>
                                         {sport}
                                     </option>
@@ -104,14 +108,14 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                             Partidos ganados:
                             <input
                                 type="number"
-                                {...register("partidos_ganados", {
+                                {...register("wins", {
                                     required: "Por favor, introduce los partidos ganados",
                                     min: { value: 0, message: "El valor no puede ser negativo" },
                                 })}
-                                defaultValue={initialValues.partidos_ganados}
+                                defaultValue={initialValues.wins}
                             />
-                            {errorTeams.partidos_ganados && (
-                                <span className="error-message">{errorTeams.partidos_ganados.message}</span>
+                            {errorTeams.wins && (
+                                <span className="error-message">{errorTeams.wins.message}</span>
                             )}
                         </label>
                     </div>
@@ -120,14 +124,14 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                             Partidos perdidos:
                             <input
                                 type="number"
-                                {...register("partidos_perdidos", {
+                                {...register("losses", {
                                     required: "Por favor, introduce los partidos perdidos",
                                     min: { value: 0, message: "El valor no puede ser negativo" },
                                 })}
-                                defaultValue={initialValues.partidos_perdidos}
+                                defaultValue={initialValues.losses}
                             />
-                            {errorTeams.partidos_perdidos && (
-                                <span className="error-message">{errorTeams.partidos_perdidos.message}</span>
+                            {errorTeams.losses && (
+                                <span className="error-message">{errorTeams.losses.message}</span>
                             )}
                         </label>
                     </div>
@@ -136,14 +140,14 @@ const AdminModalTeams = ({ closeModal, popupData, isNewTeam }) => {
                             Partidos empatados:
                             <input
                                 type="number"
-                                {...register("partidos_empatados", {
+                                {...register("draws", {
                                     required: "Por favor, introduce los partidos empatados",
                                     min: { value: 0, message: "El valor no puede ser negativo" },
                                 })}
-                                defaultValue={initialValues.partidos_empatados}
+                                defaultValue={initialValues.draws}
                             />
-                            {errorTeams.partidos_empatados && (
-                                <span className="error-message">{errorTeams.partidos_empatados.message}</span>
+                            {errorTeams.draws && (
+                                <span className="error-message">{errorTeams.draws.message}</span>
                             )}
                         </label>
                     </div>
@@ -178,9 +182,9 @@ AdminModalTeams.propTypes = {
         sport: PropTypes.string,
         name: PropTypes.string,
         results: PropTypes.shape({
-            partidos_ganados: PropTypes.number,
-            partidos_perdidos: PropTypes.number,
-            partidos_empatados: PropTypes.number,
+            wins: PropTypes.number,
+            losses: PropTypes.number,
+            draws: PropTypes.number,
         }),
         points: PropTypes.number,
         _id: PropTypes.string,
