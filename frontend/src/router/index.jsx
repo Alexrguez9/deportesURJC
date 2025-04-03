@@ -11,7 +11,7 @@ import FitnessRooms from '../views/FitnessRooms/FitnessRooms';
 import FitnessRoomsContent from '../components/fitnessRoomsContent/FitnessRoomsContent';
 import Registration from '../views/fitnessRooms/registration/Registration';
 import FitnessRoomsReservations from '../views/fitnessRooms/fitnessRoomsReservations/FitnessRoomsReservations';
-import Facilities from '../views/instalaciones/Facilities';
+import Facilities from '../views/facilities/Facilities';
 import MyReservations from '../views/profile/myReservations/MyReservations';
 import MySubscriptions from '../views/profile/mySubscriptions/MySubscriptions';
 import SeeProfile from '../views/profile/seeProfile/SeeProfile';
