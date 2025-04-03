@@ -5,7 +5,7 @@ import {
     getMonthlyDateRange,
     validateHours,
     infinityDate,
-} from './dates';
+} from '../dates';
 
 // Dates in getHoursAndMinutes are in UTC, so we need to adjust them to Spain time in tests
 describe('getHoursAndMinutes', () => {
