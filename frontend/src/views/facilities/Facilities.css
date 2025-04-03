@@ -1,0 +1,53 @@
+.form-reservar {
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.date-picker {
+  margin: 1rem 0;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .form-reservar {
+    margin: 1.5rem;
+  }
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.slot {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.available {
+  background-color: #d4f7d4;
+}
+
+.unavailable {
+  background-color: #eeeeee;
+  cursor: not-allowed;
+}
+
+.selected {
+  background-color: #2a6ef3;
+  color: white;
+}
+
+.slot small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.7rem;
+  color: #555;
+}
