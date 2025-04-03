@@ -3,7 +3,7 @@ import AdminReservations from "./AdminReservations";
 import { useAuth } from "../../../../context/AuthContext";
 import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndReservationsContext";
 import { mockAuthContext, mockFacilitiesAndReservationsContext } from "../../../../utils/mocks";
-import{ toast } from 'sonner';
+import { toast } from 'sonner';
 
 jest.mock("react-router-dom", () => ({
     ...jest.requireActual("react-router-dom"),
@@ -215,5 +215,81 @@ describe("AdminReservations Component", () => {
             expect(consoleErrorSpy).toHaveBeenCalledWith("Error al obtener las reservas:", expect.any(Error));
         });
         consoleErrorSpy.mockRestore();
+    });
+
+    describe("Pagination", () => {
+        beforeEach(() => {
+            const manyReservations = Array.from({ length: 12 }, (_, i) => ({
+                _id: `${i + 1}`,
+                userId: `user${i + 1}`,
+                facilityId: `instalacion${i + 1}`,
+                initDate: '2024-01-01T10:00:00.000Z',
+                endDate: '2024-01-01T11:00:00.000Z',
+                totalPrice: 50 + i,
+                isPaid: i % 2 === 0,
+            }));
+            mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(manyReservations);
+        });
+
+        it("renders pagination when there are more reservations than per page", async () => {
+            render(<AdminReservations />);
+            await waitFor(() => {
+                const paginationDiv = document.querySelector(".pagination");
+                expect(paginationDiv).toBeInTheDocument();
+            });
+        });
+
+        it("renders correct number of page buttons", async () => {
+            render(<AdminReservations />);
+            await waitFor(() => {
+                const pageButtons = Array.from(document.querySelectorAll(".pagination button"))
+                    .filter(btn => /^\d+$/.test(btn.textContent)); // solo botones numéricos
+                expect(pageButtons.length).toBeGreaterThan(1); // debería haber más de una página
+            });
+        });
+
+        it("navigates to the second page", async () => {
+            render(<AdminReservations />);
+            await waitFor(() => {
+                expect(screen.getByText("user1")).toBeInTheDocument();
+            });
+
+            const pageTwoBtn = Array.from(document.querySelectorAll(".pagination button"))
+                .find(btn => btn.textContent === "2");
+
+            fireEvent.click(pageTwoBtn);
+
+            await waitFor(() => {
+                expect(screen.getByText("user11")).toBeInTheDocument();
+            });
+        });
+
+        it("disables previous button on first page", async () => {
+            render(<AdminReservations />);
+            await waitFor(() => {
+                const prevBtn = Array.from(document.querySelectorAll(".pagination button"))
+                    .find(btn => btn.textContent === "Anterior");
+                expect(prevBtn).toBeDisabled();
+            });
+        });
+
+        it("disables next button on last page", async () => {
+            render(<AdminReservations />);
+            await waitFor(() => {
+              const nextBtn = Array.from(document.querySelectorAll(".pagination button"))
+                .find(btn => btn.textContent === "Siguiente");
+          
+              const lastPageBtn = Array.from(document.querySelectorAll(".pagination button"))
+                .find(btn => btn.textContent === "2"); // Ajusta según el total de páginas en el mock
+          
+              fireEvent.click(lastPageBtn);
+            });
+          
+            await waitFor(() => {
+              const nextBtn = Array.from(document.querySelectorAll(".pagination button"))
+                .find(btn => btn.textContent === "Siguiente");
+              expect(nextBtn).toBeDisabled();
+            });
+        });
     });
 });
