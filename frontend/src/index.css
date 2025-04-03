@@ -249,13 +249,10 @@ button.navbar-button {
   white-space: nowrap
 }
 
-
-
 .back-button:hover {
   background-color: var(--tertiary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
-
 
 .centered-div {
   display: grid;
@@ -274,4 +271,8 @@ button.navbar-button {
 }
 .text-success {
   color: green;
+}
+
+table {
+  margin: 20px 0;
 }
