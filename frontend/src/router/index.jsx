@@ -75,6 +75,7 @@ export const router = createBrowserRouter([
                 path: 'admin-panel', 
                 element: <AdminPanel />,
                 children: [
+                    { path: '', element: <ContentAdminPanel /> },
                     { path: 'admin-equipos', element: <AdminTeams /> },
                     { path: 'admin-usuarios', element: <AdminUsers />},
                     { path: 'admin-reservas', element: <AdminReservations />},
