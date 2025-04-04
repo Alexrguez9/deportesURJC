@@ -19,11 +19,7 @@ import ContentProfile from '../components/contentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
 import PaymentSubscription from '../views/fitnessRooms/paymentSubscription/PaymentSubscription';
 import WalletReload from '../views/walletReload/WalletReload';
-import AdminPanel from '../views/admin/cover/AdminPanel';
-import AdminTeams from '../views/admin/cover/teams/AdminTeams';
-import AdminUsers from '../views/admin/cover/users/AdminUsers';
-import AdminReservations from '../views/admin/cover/reservation/AdminReservations';
-import AdminFacilities from '../views/admin/cover/facilities/AdminFacilities';
+
 import ContentAdminPanel from '../components/contentAdminPanel/ContentAdminPanel';
 import UserDetail from '../views/admin/cover/users/UserDetail';
 
@@ -71,17 +67,6 @@ export const router = createBrowserRouter([
             { 
                 path: 'monedero', 
                 element: <WalletReload />,
-            },
-            { 
-                path: 'admin-panel', 
-                element: <AdminPanel />,
-                children: [
-                    { path: '', element: <ContentAdminPanel /> },
-                    { path: 'admin-equipos', element: <AdminTeams /> },
-                    { path: 'admin-usuarios', element: <AdminUsers />},
-                    { path: 'admin-reservas', element: <AdminReservations />},
-                    { path: 'admin-instalaciones', element: <AdminFacilities />},
-                ]
             },
             { path: 'admin-panel/admin-usuarios/:id', element: <UserDetail /> },
         ]
