@@ -1,21 +1,19 @@
 name: CI - Frontend Tests
 
 on:
-  pull_request:
-    branches:
-      - main
-
   push:
     branches:
-      - main
-    tags:
-      - 'release-candidate-*'
+      - '**'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   test:
+    name: Run Frontend Tests
     runs-on: ubuntu-latest
     env:
-      TZ: "Europe/Madrid"  # Forzamos la zona horaria a España
+      TZ: "Europe/Madrid"  # Force timezone to Europe/Madrid
 
     steps:
       - name: Checkout repository
