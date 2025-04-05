@@ -6,8 +6,8 @@ import NotFound from '../views/notFound/NotFound';
 import Home from '../views/home/Home';
 import Rankings from '../views/ligas_internas/rankings/Rankings';
 import Results from '../views/ligas_internas/results/Results';
-import InternLeaguesContent from '../components/InternLeaguesContent/InternLeaguesContent';
-import FitnessRooms from '../views/FitnessRooms/FitnessRooms';
+import InternLeaguesContent from '../components/internLeaguesContent/InternLeaguesContent';
+import FitnessRooms from '../views/fitnessRooms/FitnessRooms';
 import FitnessRoomsContent from '../components/fitnessRoomsContent/FitnessRoomsContent';
 import Registration from '../views/fitnessRooms/registration/Registration';
 import FitnessRoomsReservations from '../views/fitnessRooms/fitnessRoomsReservations/FitnessRoomsReservations';
@@ -15,17 +15,17 @@ import Facilities from '../views/facilities/Facilities';
 import MyReservations from '../views/profile/myReservations/MyReservations';
 import MySubscriptions from '../views/profile/mySubscriptions/MySubscriptions';
 import SeeProfile from '../views/profile/seeProfile/SeeProfile';
-import ContentProfile from '../components/ContentProfile/ContentProfile';
+import ContentProfile from '../components/contentProfile/ContentProfile';
 import Login from '../views/profile/login/Login';
 import PaymentSubscription from '../views/fitnessRooms/paymentSubscription/PaymentSubscription';
 import WalletReload from '../views/walletReload/WalletReload';
 import AdminPanel from '../views/admin/cover/AdminPanel';
-import AdminTeams from '../views/admin/cover/Teams/AdminTeams';
-import AdminUsers from '../views/admin/cover/Users/AdminUsers';
-import AdminReservations from '../views/admin/cover/Reservation/AdminReservations';
-import AdminFacilities from '../views/admin/cover/Facilities/AdminFacilities';
-import ContentAdminPanel from '../components/ContentAdminPanel/ContentAdminPanel';
-import UserDetail from '../views/admin/cover/Users/UserDetail';
+import AdminTeams from '../views/admin/cover/teams/AdminTeams';
+import AdminUsers from '../views/admin/cover/users/AdminUsers';
+import AdminReservations from '../views/admin/cover/reservation/AdminReservations';
+import AdminFacilities from '../views/admin/cover/facilities/AdminFacilities';
+import ContentAdminPanel from '../components/contentAdminPanel/ContentAdminPanel';
+import UserDetail from '../views/admin/cover/users/UserDetail';
 
 export const router = createBrowserRouter([
     {
