@@ -24,6 +24,7 @@ import AdminTeams from '../views/admin/cover/teams/AdminTeams';
 import AdminUsers from '../views/admin/cover/users/AdminUsers';
 import AdminReservations from '../views/admin/cover/reservation/AdminReservations';
 import AdminFacilities from '../views/admin/cover/facilities/AdminFacilities';
+import ContentAdminPanel from '../components/contentAdminPanel/ContentAdminPanel';
 import UserDetail from '../views/admin/cover/users/UserDetail';
 
 export const router = createBrowserRouter([
