@@ -76,17 +76,11 @@ th, td {
 }
 
 @media (max-width: 768px) {
-    /* Estilos para pantallas pequeñas */
     .top-buttons-content {
+        padding: 0;
         /* flex-direction: column;
         align-items: flex-start;
         padding: 10px; */
-    }
-
-    .iconPlus {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
     }
 
     /* Ajustar la disposición de la tabla */

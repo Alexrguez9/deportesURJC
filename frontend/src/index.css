@@ -254,6 +254,13 @@ button.navbar-button {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+@media (max-width: 768px) {
+  .back-button {
+    font-size: 14px;
+    padding: 0.4em 0.8em;
+  }
+}
+
 .centered-div {
   display: grid;
   align-items: center;

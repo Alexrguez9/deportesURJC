@@ -22,12 +22,12 @@ const AdminReservations = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [maxPageButtons, setMaxPageButtons] = useState(5);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
   const reservationsPerPage = 10;
   const totalPages = Math.ceil(reservations.length / reservationsPerPage);
-  const maxPageButtons = 5;
 
   const paginatedReservations = reservations.slice(
     (currentPage - 1) * reservationsPerPage,
@@ -47,6 +47,21 @@ const AdminReservations = () => {
 
   useEffect(() => {
     if (isAdmin()) fetchReservations();
+  }, []);
+
+  useEffect(() => {
+    const updateMaxButtons = () => {
+      if (window.innerWidth <= 600) {
+        setMaxPageButtons(3); // Reduce buttons on small screens
+      } else {
+        setMaxPageButtons(5);
+      }
+    };
+  
+    updateMaxButtons(); // for initial load
+    window.addEventListener("resize", updateMaxButtons);
+  
+    return () => window.removeEventListener("resize", updateMaxButtons);
   }, []);
 
   const openModal = (reservation) => {
@@ -149,25 +164,35 @@ const AdminReservations = () => {
             </tbody>
           </table>
 
-          {/* Paginación */}
           {totalPages > 1 && (
             <div className="pagination">
-              <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}>
-                Anterior
+            <button
+              className="pagination-prev"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <span className="button-text">Anterior</span>
+            </button>
+          
+            {getVisiblePages().map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={page === currentPage ? 'active' : ''}
+              >
+                {page}
               </button>
-              {getVisiblePages().map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={page === currentPage ? 'active' : ''}
-                >
-                  {page}
-                </button>
-              ))}
-              <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>
-                Siguiente
-              </button>
-            </div>
+            ))}
+          
+            <button
+              className="pagination-next"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              <span className="button-text">Siguiente</span>
+            </button>
+          </div>
+          
           )}
         </section>
       </>
