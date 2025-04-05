@@ -1,14 +1,13 @@
 name: CD - Docker Publish
 
 on:
-  push:
+  pull_request:
     branches:
       - main
-    tags:
-      - 'release-candidate*'
 
 jobs:
   build-and-push:
+    name: Docker Build and Push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -16,16 +15,13 @@ jobs:
 
       - name: Extract release version
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/release-candidate-* ]]; then
-            # Triggered by release-candidate tag
-            ref=${GITHUB_REF#refs/tags/}
+          if [[ "$GITHUB_HEAD_REF" != "" ]]; then
+            sanitized_ref=$(echo "$GITHUB_HEAD_REF" | sed 's/\//-/g')
+            echo "RELEASE_NAME=pr-${sanitized_ref}" >> $GITHUB_ENV
+          else
+            ref=${GITHUB_REF#refs/heads/}
             sanitized_ref=$(echo "$ref" | sed 's/\//-/g')
             echo "RELEASE_NAME=$sanitized_ref" >> $GITHUB_ENV
-          elif [[ "$GITHUB_REF" == "refs/heads/main" ]]; then
-            # Triggered by push to main branch
-            echo "RELEASE_NAME=main-latest" >> $GITHUB_ENV # Tag fijo para main
-          else
-            echo "RELEASE_NAME=unknown-release" >> $GITHUB_ENV # Fallback, por si acaso (opcional)
           fi
 
       - name: Log in to DockerHub
