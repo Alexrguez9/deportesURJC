@@ -54,7 +54,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     overflow-x: auto;
-    table-layout: fixed;
 }
 
 thead {
@@ -92,7 +91,6 @@ th, td {
 
     th, td {
         padding: 8px;
-        min-width: 171px;
     }
 
     th {
