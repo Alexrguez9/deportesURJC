@@ -351,32 +351,68 @@ describe("Facilities Component", () => {
       });
     });
   });
-  it("generates time slots when selecting date", async () => {
-    const facility = {
+
+  it("should disable unavailable slots", async () => {
+    const facilityMock = {
       _id: '1',
       name: 'Pista 1',
       priceForHalfHour: 20,
-      capacity: 5,
+      capacity: 3,
       schedule: {
-        initialHour: new Date('2023-08-03T09:00'),
-        endHour: new Date('2023-08-03T11:00')
+        initialHour: '2025-04-01T09:00:00.000Z',
+        endHour: '2025-04-01T10:00:00.000Z',
       }
     };
-
-    mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([facility]);
-    mockFacilitiesAndReservationsContext.getFacility.mockResolvedValue(facility);
+  
+    const customSlots = [
+      {
+        time: '09:00',
+        available: false,
+        remaining: 0,
+        date: new Date('2025-04-01T09:00:00.000Z'),
+      },
+      {
+        time: '09:30',
+        available: true,
+        remaining: 3,
+        date: new Date('2025-04-01T09:30:00.000Z'),
+      },
+    ];
+  
+    jest.spyOn(require('../../utils/facilities'), 'generateTimeSlots').mockImplementation(
+      async (_facility, _date, countReservationsFn) => {
+        await countReservationsFn("1", new Date("2025-04-01T09:00:00.000Z"));
+        await countReservationsFn("1", new Date("2025-04-01T09:30:00.000Z"));
+        return customSlots;
+      }
+    );
+  
+    mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([facilityMock]);
+    mockFacilitiesAndReservationsContext.getFacility.mockResolvedValue(facilityMock);
     mockFacilitiesAndReservationsContext.countReservationsByTimeSlot.mockResolvedValue(0);
-
+  
     render(<Facilities />);
-
+  
     fireEvent.change(await screen.findByRole('combobox'), { target: { value: '1' } });
-
-    const datePicker = await screen.findByRole("textbox");
-    fireEvent.change(datePicker, { target: { value: '2025-04-05' } });
-
+  
+    const input = await screen.findByPlaceholderText(/Selecciona una fecha/i);
+    fireEvent.click(input);
+  
+    const allDayButtons = await screen.findAllByText("1");
+    const validDay = allDayButtons.find(el => el.getAttribute("aria-disabled") !== "true");
+    fireEvent.click(validDay);
+  
     await waitFor(() => {
       expect(mockFacilitiesAndReservationsContext.countReservationsByTimeSlot).toHaveBeenCalled();
     });
+  
+    const slotButtons = await screen.findAllByRole('button', { name: /09:/i });
+  
+    expect(slotButtons[0]).toBeDisabled();
+    expect(slotButtons[0].className).toMatch(/unavailable/);
+  
+    expect(slotButtons[1]).not.toBeDisabled();
+    expect(slotButtons[1].className).toMatch(/available/);
   });
 
   describe('Facilities - DatePicker and Time Slots', () => {
@@ -491,10 +527,11 @@ describe("Facilities Component", () => {
       fireEvent.click(validDay);
     
       const slots = await screen.findAllByTitle(/huecos disponibles/i);
-      fireEvent.click(slots[0]);
-    
+      const firstAvailable = slots.find((slot) => !slot.disabled && slot.className.includes('available'));
+      fireEvent.click(firstAvailable);
+          
       await waitFor(() => {
-        expect(slots[0].className).toContain('selected');
+        expect(firstAvailable.className).toContain('selected');
       });
     });
 

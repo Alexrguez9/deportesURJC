@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 20px; /* Ajusta los botones hacia los extremos */
     margin: 0;
     width: 100%;
     box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
@@ -55,7 +54,6 @@ table {
     width: 100%;
     border-collapse: collapse;
     overflow-x: auto;
-    table-layout: fixed;
 }
 
 thead {
@@ -76,17 +74,11 @@ th, td {
 }
 
 @media (max-width: 768px) {
-    /* Estilos para pantallas pequeñas */
     .top-buttons-content {
+        padding: 0;
         /* flex-direction: column;
         align-items: flex-start;
         padding: 10px; */
-    }
-
-    .iconPlus {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
     }
 
     /* Ajustar la disposición de la tabla */
@@ -99,7 +91,6 @@ th, td {
 
     th, td {
         padding: 8px;
-        min-width: 171px;
     }
 
     th {

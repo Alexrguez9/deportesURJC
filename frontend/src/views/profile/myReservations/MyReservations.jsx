@@ -42,7 +42,7 @@ const MyReservations = () => {
         }
     };
 
-    // 🔸 Cálculo de páginas
+    // Pages calculation
     const indexOfLast = currentPage * itemsPerPage;
     const indexOfFirst = indexOfLast - itemsPerPage;
     const currentReservations = filteredReservations.slice(indexOfFirst, indexOfLast);
@@ -96,7 +96,6 @@ const MyReservations = () => {
                                 </tbody>
                             </table>
 
-                            {/* 🔸 Controles de paginación */}
                             <div className="pagination">
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -104,7 +103,8 @@ const MyReservations = () => {
                                 >
                                     Anterior
                                 </button>
-                                <span>Página {currentPage} de {totalPages}</span>
+                                <span className="pagination-desktop">Página {currentPage} de {totalPages}</span>
+                                <span className="pagination-mobile">{currentPage} / {totalPages}</span>
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}

@@ -4,10 +4,25 @@
 
 .login-button {
   color: var(--secondary-color);
-  background-color: var(--white-color);
-    margin-bottom: 1rem;
+  background-color: var(--tertiary-color);
+  margin-bottom: 1rem;
 }
 
 .login-button:hover {
-  background-color: var(--tertiary-color);
+  color: var(--primary-color);
+}
+
+.profile-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#login-form, #register-form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }

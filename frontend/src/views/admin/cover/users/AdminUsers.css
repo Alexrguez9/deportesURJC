@@ -1,3 +1,7 @@
+#component-content.admin-users-container {
+  max-width: 1100px;
+}
+
 .tooltip-container {
   position: relative;
   display: inline-block;
@@ -28,26 +32,9 @@
   opacity: 1;
 }
 
-@media (max-width: 768px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  thead,
-  tbody {
-    display: block;
-  }
-
-  th,
-  td {
-    min-width: 120px;
-  }
-}
 
 .active-user {
-  background-color: #f0f0f0;
+  background-color: #c9e4f7;
 }
 
 .actions {

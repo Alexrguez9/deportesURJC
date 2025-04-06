@@ -88,7 +88,7 @@ const AdminTeams = () => {
                     <p>Si quieres añadir un equipo, la idea es añadirlo con 0 partidos ganados, 0 partidos perdidos y 0 partidos empatados.
                     <br/>De esta manera, después podrás añadir los resultados de dicho equipo.
                     </p>
-                    <p>IMPORTANTE! Si editas los puntos, no se editará ningún resultado. Solo usar esta opciçon en caso urgente.</p>
+                    <p>IMPORTANTE! Si editas los puntos, no se editará ningún resultado. Solo usar esta opción en caso urgente.</p>
                     <section>
                         <select value={filteredSport} onChange={handleDeporteChange}>
                             <option value="Todos">Todos</option>

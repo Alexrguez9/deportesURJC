@@ -5,10 +5,9 @@ const Profile = () => {
 
     return (
         <>
-            <div id="profile-content" className="content">
+            <div className="content">
                 <Outlet />
             </div>
-
         </>
     );
 };
