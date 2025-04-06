@@ -35,7 +35,16 @@ describe("AdminReservations Component", () => {
         require("react-router-dom").useNavigate.mockReturnValue(mockNavigate);
 
         mockAuthContext.isAdmin.mockReturnValue(true);
-        mockAuthContext.user = { name: "Admin" };
+        mockAuthContext.user = { name: "Juan Pérez" };
+        mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue([
+            { _id: "instalacion1", name: "Pista 1" },
+            { _id: "instalacion2", name: "Pista 2" },
+        ]);
+        
+        mockAuthContext.getAllUsers.mockResolvedValue([
+            { _id: "user1", name: "Juan Pérez" },
+            { _id: "user2", name: "Laura Gómez" },
+        ]);
         mockFacilitiesAndReservationsContext.getAllReservations.mockClear();
         mockFacilitiesAndReservationsContext.deleteReservation.mockClear();
         toast.success.mockClear();
@@ -69,8 +78,8 @@ describe("AdminReservations Component", () => {
 
         expect(screen.getByText("Reservas")).toBeInTheDocument();
         expect(mockFacilitiesAndReservationsContext.getAllReservations).toHaveBeenCalled();
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
-        expect(screen.getByText("instalacion1")).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
+        expect(screen.getByText("Pista 1")).toBeInTheDocument();
     });
 
     it("shows loading spinner while fetching reservations", async () => {
@@ -100,7 +109,7 @@ describe("AdminReservations Component", () => {
     it("opens modal to edit a reservation", async () => {
         render(<AdminReservations />);
 
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
         const editButton = document.querySelector(".editPencil");
         fireEvent.click(editButton);
         expect(screen.getByText("Editar reserva")).toBeInTheDocument();
@@ -125,7 +134,7 @@ describe("AdminReservations Component", () => {
     it("deletes a reservation and refetches reservations and shows success toast", async () => {
         mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue({ ok: true });
         render(<AdminReservations />);
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
         const deleteButtons = document.querySelectorAll(".deleteTrash");
         const deleteButton = deleteButtons[0];
         fireEvent.click(deleteButton);
@@ -140,7 +149,7 @@ describe("AdminReservations Component", () => {
     it("shows error toast when deleting a reservation fails", async () => {
         mockFacilitiesAndReservationsContext.deleteReservation.mockRejectedValue(new Error("Delete error"));
         render(<AdminReservations />);
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
         const deleteButtons = document.querySelectorAll(".deleteTrash");
         const deleteButton = deleteButtons[0];
         fireEvent.click(deleteButton);
@@ -153,7 +162,7 @@ describe("AdminReservations Component", () => {
 
     it("navigates to user profile when clicking user icon", async () => {
         render(<AdminReservations />);
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
         const userButtons = document.querySelectorAll(".infoButton");
         const userButton = userButtons[0];
         fireEvent.click(userButton);
@@ -179,15 +188,15 @@ describe("AdminReservations Component", () => {
 
     it("displays reservation data in table rows", async () => {
         render(<AdminReservations />);
-        await waitFor(() => expect(screen.getByText("user1")).toBeInTheDocument());
-        expect(screen.getByText("user1")).toBeInTheDocument();
-        expect(screen.getByText("instalacion1")).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
+        expect(screen.getByText("Juan Pérez")).toBeInTheDocument();
+        expect(screen.getByText("Pista 1")).toBeInTheDocument();
         expect(screen.getByText("1 de enero de 2024, 11:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("1 de enero de 2024, 12:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("50 €")).toBeInTheDocument();
 
-        expect(screen.getByText("user2")).toBeInTheDocument();
-        expect(screen.getByText("instalacion2")).toBeInTheDocument();
+        expect(screen.getByText("Laura Gómez")).toBeInTheDocument();
+        expect(screen.getByText("Pista 2")).toBeInTheDocument();
         expect(screen.getByText("2 de enero de 2024, 14:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("2 de enero de 2024, 15:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("100 €")).toBeInTheDocument();
@@ -212,7 +221,7 @@ describe("AdminReservations Component", () => {
         render(<AdminReservations />);
         await waitFor(() => {
             expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Error al obtener las reservas:", expect.any(Error));
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Error al cargar datos:", expect.any(Error));
         });
         consoleErrorSpy.mockRestore();
     });
@@ -229,6 +238,20 @@ describe("AdminReservations Component", () => {
                 isPaid: i % 2 === 0,
             }));
             mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(manyReservations);
+            mockAuthContext.getAllUsers.mockResolvedValue(
+                Array.from({ length: 12 }, (_, i) => ({
+                    _id: `user${i + 1}`,
+                    name: `Usuario ${i + 1}`
+                }))
+            );
+            
+            mockFacilitiesAndReservationsContext.getAllFacilities.mockResolvedValue(
+                Array.from({ length: 12 }, (_, i) => ({
+                    _id: `instalacion${i + 1}`,
+                    name: `Instalación ${i + 1}`
+                }))
+            );
+            
         });
 
         it("renders pagination when there are more reservations than per page", async () => {
@@ -251,7 +274,7 @@ describe("AdminReservations Component", () => {
         it("navigates to the second page", async () => {
             render(<AdminReservations />);
             await waitFor(() => {
-                expect(screen.getByText("user1")).toBeInTheDocument();
+                expect(screen.getByText("Usuario 1")).toBeInTheDocument();
             });
 
             const pageTwoBtn = Array.from(document.querySelectorAll(".pagination button"))
@@ -260,7 +283,7 @@ describe("AdminReservations Component", () => {
             fireEvent.click(pageTwoBtn);
 
             await waitFor(() => {
-                expect(screen.getByText("user11")).toBeInTheDocument();
+                expect(screen.getByText("Usuario 11")).toBeInTheDocument();
             });
         });
 

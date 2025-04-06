@@ -15,16 +15,18 @@ import { useFacilitiesAndReservations } from "../../../../context/FacilitiesAndR
 import { getPrettyDate } from "../../../../utils/dates";
 
 const AdminReservations = () => {
-  const { isAdmin } = useAuth();
-  const { getAllReservations, deleteReservation } = useFacilitiesAndReservations();
+  const { isAdmin, getAllUsers } = useAuth();
+  const { getAllReservations, deleteReservation, getAllFacilities } = useFacilitiesAndReservations();
   const navigate = useNavigate();
   const [reservations, setReservations] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [maxPageButtons, setMaxPageButtons] = useState(5);
+  const [users, setUsers] = useState([]);
+  const [facilities, setFacilities] = useState([]);
 
-  // Paginación
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const reservationsPerPage = 10;
   const totalPages = Math.ceil(reservations.length / reservationsPerPage);
@@ -34,35 +36,65 @@ const AdminReservations = () => {
     currentPage * reservationsPerPage
   );
 
-  const fetchReservations = async () => {
+  const reloadReservations = async () => {
     try {
-      setIsLoading(true);
-      const reservationList = await getAllReservations();
-      setReservations(reservationList || []);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error al obtener las reservas:", error);
+      const data = await getAllReservations();
+      setReservations(data || []);
+    } catch (err) {
+      console.error("Error al recargar reservas:", err);
+      toast.error("Error al recargar las reservas.");
     }
   };
 
   useEffect(() => {
-    if (isAdmin()) fetchReservations();
+    const fetchAllData = async () => {
+      if (!isAdmin()) return;
+  
+      try {
+        setIsLoading(true);
+  
+        const [usersData, facilitiesData, reservationsData] = await Promise.all([
+          getAllUsers(),
+          getAllFacilities(),
+          getAllReservations()
+        ]);
+  
+        setUsers(usersData || []);
+        setFacilities(facilitiesData || []);
+        setReservations(reservationsData || []);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+        toast.error("Error al cargar los datos");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchAllData();
   }, []);
 
   useEffect(() => {
     const updateMaxButtons = () => {
-      if (window.innerWidth <= 600) {
-        setMaxPageButtons(3); // Reduce buttons on small screens
-      } else {
-        setMaxPageButtons(5);
-      }
+      setMaxPageButtons(window.innerWidth <= 600 ? 3 : 5);
     };
   
-    updateMaxButtons(); // for initial load
+    updateMaxButtons(); // inicial
     window.addEventListener("resize", updateMaxButtons);
   
     return () => window.removeEventListener("resize", updateMaxButtons);
   }, []);
+  
+
+  const getUserName = (userId) => {
+    const user = users.find((u) => u._id === userId);
+    return user?.name || "Desconocido";
+  };
+  
+  const getFacilityName = (facilityId) => {
+    const facility = facilities.find((f) => f._id === facilityId);
+    return facility?.name || "Desconocida";
+  };
+  
 
   const openModal = (reservation) => {
     setPopupData(reservation || null);
@@ -72,7 +104,7 @@ const AdminReservations = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setPopupData(null);
-    fetchReservations();
+    reloadReservations();
   };
 
   const handleDeleteReservation = async (reservationId) => {
@@ -83,7 +115,7 @@ const AdminReservations = () => {
         return;
       }
       toast.success("Reserva eliminada correctamente");
-      fetchReservations();
+      reloadReservations();
     } catch (error) {
       toast.error("Error al eliminar reserva.");
     }
@@ -140,8 +172,8 @@ const AdminReservations = () => {
             <tbody>
               {paginatedReservations.map((reservation) => (
                 <tr key={reservation._id}>
-                  <td>{reservation.userId}</td>
-                  <td>{reservation.facilityId}</td>
+                  <td>{getUserName(reservation.userId)}</td>
+                  <td>{getFacilityName(reservation.facilityId)}</td>
                   <td>{getPrettyDate(reservation.initDate)}</td>
                   <td>{getPrettyDate(reservation.endDate)}</td>
                   <td>
@@ -157,7 +189,11 @@ const AdminReservations = () => {
                   <td>
                     <GoPencil onClick={() => openModal(reservation)} className="editPencil" />
                     <MdOutlineDelete onClick={() => handleDeleteReservation(reservation._id)} className="deleteTrash" />
-                    <IoPersonOutline onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation.userId}`)} className="infoButton" />
+                    <IoPersonOutline
+                      title="Ver detalles del usuario"
+                      onClick={() => navigate(`/admin-panel/admin-usuarios/${reservation.userId}`)}
+                      className="infoButton"
+                      />
                   </td>
                 </tr>
               ))}
