@@ -72,7 +72,7 @@ const AdminUsers = () => {
     }
 
     return (
-        <div id="component-content">
+        <div id="component-content" className="admin-users-container">
             { isLoading && <Spinner />}
             {isAdmin() ? (
                 <Fragment>
@@ -121,6 +121,7 @@ const AdminUsers = () => {
                                             <IoEyeOutline
                                                 onClick={() => navigate(`/admin-panel/admin-usuarios/${userInList._id}`)}
                                                 className="infoButton"
+                                                alt="Ver detalles"
                                             />
                                         </td>
                                     </tr>

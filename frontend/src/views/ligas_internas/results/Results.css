@@ -2,7 +2,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 20px; /* Ajusta los botones hacia los extremos */
     margin: 0;
     width: 100%;
     box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */

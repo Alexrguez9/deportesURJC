@@ -34,7 +34,9 @@ const UserDetail = () => {
 
     return (
         <div className="user-detail">
-            <BackButton />
+            <div className="top-buttons-content">
+                <BackButton />
+            </div>
             <h1>Detalles del Usuario</h1>
             <div className="user-info">
                 <div>

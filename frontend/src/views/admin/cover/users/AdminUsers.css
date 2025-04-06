@@ -1,3 +1,7 @@
+#component-content.admin-users-container {
+  max-width: 1000px;
+}
+
 .tooltip-container {
   position: relative;
   display: inline-block;

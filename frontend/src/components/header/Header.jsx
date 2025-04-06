@@ -89,7 +89,7 @@ const Header = () => {
                                             Panel Admin
                                         </Link>
                                     }
-                                    <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+                                    <button onClick={handleLogout} className="logout-button hamburger">Cerrar sesión</button>
                                 </>
                             ) : (
                                 <>
@@ -117,7 +117,7 @@ const Header = () => {
                                                     Panel Admin
                                                 </Link>
                                             }
-                                            <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+                                            <button onClick={handleLogout} className="logout-button hamburger">Cerrar sesión</button>
                                         </div>
                                     </div>
                                 </>

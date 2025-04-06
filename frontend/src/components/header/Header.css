@@ -172,3 +172,9 @@ header {
         margin-top: 2rem;
     }
 }
+
+
+.logout-button.hamburger {
+    background-color: var(--tertiary-color);
+    color: var(--primary-color);
+}
