@@ -121,7 +121,7 @@ const AdminUsers = () => {
                                             <IoEyeOutline
                                                 onClick={() => navigate(`/admin-panel/admin-usuarios/${userInList._id}`)}
                                                 className="infoButton"
-                                                alt="Ver detalles"
+                                                title="Ver detalles del usuario"
                                             />
                                         </td>
                                     </tr>
