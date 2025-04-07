@@ -5,7 +5,7 @@ const uri = process.env.NODE_ENV === 'test'
   ? process.env.MONGO_ATLAS_URI_TEST
   : process.env.MONGO_ATLAS_URI;
 
-if (!uri || (!uri.startsWith('mongodb://') && !uri.startsWith('mongodb+srv://'))) {
+if (!uri || (!uri.startsWith('mongodb+srv://'))) {
   throw new Error(`❌ La URI de MongoDB no es válida: "${uri}"`);
 }
 
