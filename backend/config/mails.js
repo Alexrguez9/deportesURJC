@@ -1,7 +1,7 @@
 const sgMail = require('@sendgrid/mail');
 
 const initMails = () => {
-  // Si estamos en test, devolvemos mocks
+  // If the environment is test, we mock the email sending functionality
   if (process.env.NODE_ENV === 'test') {
     return {
       sendEmail: async (to, subject, message) => {
@@ -11,7 +11,7 @@ const initMails = () => {
     };
   }
 
-  // Producción / desarrollo
+  // Production / Development
   if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_API_KEY.startsWith('SG.')) {
     console.warn('⚠️ SENDGRID_API_KEY no definido o inválido. No se enviarán correos.');
     return {

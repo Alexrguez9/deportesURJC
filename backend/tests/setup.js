@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 jest.setTimeout(20000); // 20 seconds timeout for tests
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.mongo_atlas_uri_test, {
+  await mongoose.connect(process.env.MONGO_ATLAS_URI_TEST, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   });
