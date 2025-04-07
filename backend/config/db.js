@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 
 // ERROR with:
 // mongodb://localhost:27017/deportesdb -> crashea en local
-const uri = process.env.mongo_atlas_uri;
+
+const uri = process.env.NODE_ENV === 'test'
+  ? process.env.mongo_atlas_uri_test
+  : process.env.mongo_atlas_uri;
 
 module.exports = async () => {
     try{

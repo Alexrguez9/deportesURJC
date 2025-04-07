@@ -42,7 +42,7 @@ exports.getOne = async (req, res) => {
 // Register a new user
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role, registration, balance } = req.body;
+        const { name, email, password, role, registration = {}, balance } = req.body;
         // Verificar si el correo ya está registrado
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -56,28 +56,28 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             registration: {
-                gym: {
-                  isActive: registration?.gym.isActive || null,
-                  initDate: registration?.gym.initDate || null,
-                  endDate: registration?.gym.endDate || null,
-                },
-                athletics: {
-                  isActive: registration?.athletics.isActive || null,
-                  initDate: registration?.athletics.initDate || null,
-                  endDate: registration?.athletics.endDate || null,
-                },
+              gym: {
+                isActive: registration?.gym?.isActive ?? null,
+                initDate: registration?.gym?.initDate ?? null,
+                endDate: registration?.gym?.endDate ?? null,
+              },
+              athletics: {
+                isActive: registration?.athletics?.isActive ?? null,
+                initDate: registration?.athletics?.initDate ?? null,
+                endDate: registration?.athletics?.endDate ?? null,
+              },
             },
             subscription: {
-                gym: {
-                  isActive: registration?.gym.isActive || null,
-                  initDate: registration?.gym.initDate || null,
-                  endDate: registration?.gym.endDate || null,
-                },
-                athletics: {
-                  isActive: registration?.athletics.isActive || null,
-                  initDate: registration?.athletics.initDate || null,
-                  endDate: registration?.athletics.endDate || null,
-                },
+              gym: {
+                isActive: registration?.gym?.isActive ?? null,
+                initDate: registration?.gym?.initDate ?? null,
+                endDate: registration?.gym?.endDate ?? null,
+              },
+              athletics: {
+                isActive: registration?.athletics?.isActive ?? null,
+                initDate: registration?.athletics?.initDate ?? null,
+                endDate: registration?.athletics?.endDate ?? null,
+              },
             },
             balance: balance || 0,
             role: role || 'user',
