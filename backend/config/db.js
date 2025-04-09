@@ -5,8 +5,12 @@ const uri = process.env.NODE_ENV === 'test'
   ? process.env.MONGO_ATLAS_URI_TEST
   : process.env.MONGO_ATLAS_URI;
 
-if (!uri || (!uri.startsWith('mongodb+srv://'))) {
-  throw new Error(`❌ La URI de MongoDB no es válida: "${uri}"`);
+if (!uri) {
+throw new Error(`❌ No se recibió la URI de MongoDB (${process.env.NODE_ENV})`);
+}
+
+if (!uri.startsWith('mongodb+srv://') && !uri.startsWith('mongodb://')) {
+console.warn(`⚠️ La URI de MongoDB no parece válida (no empieza por "mongodb+srv://" ni "mongodb://"): "${uri}"`);
 }
 
 module.exports = async () => {
