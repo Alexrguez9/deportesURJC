@@ -11,20 +11,13 @@ jobs:
     name: Run backend tests
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo:6
-        ports:
-          - 27017:27017
-        options: >-
-          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'" 
-          --health-interval=10s 
-          --health-timeout=5s 
-          --health-retries=5
-
     env:
       NODE_ENV: test
       MONGO_ATLAS_URI_TEST: ${{ secrets.MONGO_ATLAS_URI_TEST }}
+      ATLAS_PUBLIC_KEY: ${{ secrets.ATLAS_PUBLIC_KEY }}
+      ATLAS_PRIVATE_KEY: ${{ secrets.ATLAS_PRIVATE_KEY }}
+      ATLAS_PROJECT_ID: ${{ secrets.ATLAS_PROJECT_ID }}
+      ATLAS_API_URL: "https://cloud.mongodb.com/api/atlas/v1.0"
 
     steps:
       - uses: actions/checkout@v3
@@ -38,12 +31,30 @@ jobs:
         run: npm install
         working-directory: ./backend
 
-      - name: Debug env
-        run: |
-          echo "MONGO_ATLAS_URI_TEST=${MONGO_ATLAS_URI_TEST}"
-        working-directory: ./backend
+      - name: Get public IP
+        id: ip
+        run: echo "ip=$(curl -s https://api.ipify.org)" >> $GITHUB_OUTPUT
 
+      - name: Add IP to MongoDB Atlas whitelist
+        run: |
+          echo "🔐 Añadiendo IP ${{ steps.ip.outputs.ip }} a MongoDB Atlas..."
+          curl -s -u "${ATLAS_PUBLIC_KEY}:${ATLAS_PRIVATE_KEY}" \
+            --digest \
+            -H "Content-Type: application/json" \
+            -X POST "${ATLAS_API_URL}/groups/${ATLAS_PROJECT_ID}/accessList" \
+            --data "[{\"ipAddress\": \"${{ steps.ip.outputs.ip }}\", \"comment\": \"GitHub Actions runner\"}]"
+        env:
+          ATLAS_API_URL: ${{ env.ATLAS_API_URL }}
 
       - name: Run backend tests
         run: npm test
         working-directory: ./backend
+
+      - name: Remove IP from whitelist
+        if: always()
+        run: |
+          echo "🧹 Eliminando IP ${{ steps.ip.outputs.ip }} de la whitelist..."
+          curl -s -u "${ATLAS_PUBLIC_KEY}:${ATLAS_PRIVATE_KEY}" \
+            --digest \
+            -H "Content-Type: application/json" \
+            -X DELETE "${ATLAS_API_URL}/groups/${ATLAS_PROJECT_ID}/accessList/${{ steps.ip.outputs.ip }}"
