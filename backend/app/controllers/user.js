@@ -95,13 +95,12 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         let user = await User.findOne({ email });
-        
+
         if (!user) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
@@ -109,21 +108,38 @@ exports.login = async (req, res) => {
         user = cleanExpiredSubscriptions(user);
         await user.save();
 
-        // TODO: const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+        req.session.userId = user._id;
 
-        res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                subscription: user.subscription,
-                registration: user.registration,
-                balance: user.balance,
-                role: user.role,
-                //token
-        });
+        res.json({ message: 'Login exitoso' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al iniciar sesión', message: error.message });
+    }
+};
+
+exports.getSessionUser = async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({ message: 'No hay sesión activa' });
+        }
+
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            subscription: user.subscription,
+            registration: user.registration,
+            balance: user.balance,
+            role: user.role
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener usuario de la sesión', message: error.message });
     }
 };
 

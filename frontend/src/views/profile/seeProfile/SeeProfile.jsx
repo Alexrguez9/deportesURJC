@@ -7,7 +7,7 @@ import { useFacilitiesAndReservations } from "../../../context/FacilitiesAndRese
 import BackButton from "../../../components/backButton/BackButton";
 
 const SeeProfile = () => {
-    const { user, updateUserAndCookie, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
+    const { user, isAdmin, logout, deleteUser, updatePasswordAndName } = useAuth();
     const { reservations, deleteReservation } = useFacilitiesAndReservations();
     const navigate = useNavigate();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
