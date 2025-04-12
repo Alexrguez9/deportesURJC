@@ -37,12 +37,19 @@ describe('🧪 Auth tests', () => {
 
   it('debería loguear correctamente con el usuario', async () => {
     await request(app).post('/users/register').send(userData);
-    const res = await request(app).post('/users/login').send({
+  
+    const agent = request.agent(app); // Mantain session between requests
+  
+    const loginRes = await agent.post('/users/login').send({
       email: userData.email,
       password: userData.password
     });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.email).toBe(userData.email);
+  
+    expect(loginRes.statusCode).toBe(200);
+  
+    const sessionRes = await agent.get('/users/session');
+    expect(sessionRes.statusCode).toBe(200);
+    expect(sessionRes.body.email).toBe(userData.email);
   });
 
   it('debería obtener un usuario por ID', async () => {
