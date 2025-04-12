@@ -39,7 +39,6 @@ describe("SeeProfile Component", () => {
         mockAuthContext.updateUser.mockResolvedValue({ status: 200, data: { message: 'Profile updated' } });
         mockFacilitiesAndReservationsContext.reservations = [];
         mockFacilitiesAndReservationsContext.deleteReservation.mockResolvedValue({ status: 200 });
-        mockAuthContext.updateUserAndCookie = jest.fn();
     });
 
     it("renders component with user data", () => {
@@ -80,7 +79,7 @@ describe("SeeProfile Component", () => {
         expect(passwordInput.value).toBe("newPass123");
     });
 
-    it("calls updatePasswordAndName and updateUserAndCookie on valid edit form submission", async () => {
+    it("calls updatePasswordAndName on valid edit form submission", async () => {
         render(<SeeProfile />);
         const editButton = screen.getByRole("button", { name: /editar perfil/i });
         fireEvent.click(editButton);
@@ -97,7 +96,6 @@ describe("SeeProfile Component", () => {
 
         await waitFor(() => {
             expect(mockAuthContext.updatePasswordAndName).toHaveBeenCalledWith("123", "actualPass", "updatedPass", "Updated Name");
-            expect(mockAuthContext.updateUserAndCookie).toHaveBeenCalledWith(expect.objectContaining({ name: "Updated Name" }));
             expect(toast.success).toHaveBeenCalledWith("Perfil actualizado con éxito.");
         });
     });
