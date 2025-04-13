@@ -1,17 +1,22 @@
-FROM node:20.14.0-alpine AS build 
+# Etapa de build
+FROM node:20-alpine AS build
 
-# Crear el directorio de la app en el contenedor
 WORKDIR /app
 
-COPY package.json .
-
-COPY . .
-
+COPY package*.json ./
 RUN npm install
-# empaquetamos el código de producción
+COPY . .
 RUN npm run build
 
+# Etapa de producción
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instala 'serve' para servir archivos estáticos
+RUN npm install -g serve
+
+COPY --from=build /app/dist ./dist
+
 EXPOSE 8080
-
-CMD ["npm", "run", "dev"]
-
+CMD ["serve", "-s", "dist", "-l", "8080"]

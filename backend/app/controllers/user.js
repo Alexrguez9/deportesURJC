@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { cleanExpiredSubscriptions } = require('../utils/subscription');
 // const jwt = require('jsonwebtoken');
 
