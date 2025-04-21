@@ -65,14 +65,17 @@ Esto levantará los servicios de frontend y backend conectados a la base de dato
 
 
 ## 🧪 Tests
-### Ejecutar todos los tests
+### Frontend
 ```
-npm run test
+cd frontend
+npm test
+npm run test:coverage
 ```
 
-### Ejecutar tests con cobertura
+### Backend
 ```
-npm run test:coverage
+cd backend
+npm test
 ```
 
 ## ℹ️ Notas adicionales
