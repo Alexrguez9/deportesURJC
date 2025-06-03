@@ -18,7 +18,6 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
 ### Requisitos previos
 
 - Node.js instalado
-- Acceso a una base de datos MongoDB (como MongoDB Atlas)
 
 ### Pasos
 
@@ -29,14 +28,20 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
     ```
 
 2. Crea un archivo `.env` en la carpeta `backend/` con las siguientes variables:
+
     ```env
     NODE_ENV=development
     BACKEND_PORT=4000
     FRONTEND_URL=http://localhost:8080
-    MONGO_ATLAS_URI=<tu_uri_de_mongo_atlas>
-    SESSION_SECRET=<tu_clave_secreta_para_sesiones>
+    MONGO_ATLAS_URI=mongodb+srv://usuario_prueba:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/dbpruebas?retryWrites=true&w=majority&appName=Cluster-tfg-tests
+    SESSION_SECRET=<CLAVE_SECRETA_PARA_SESIONES>
     SENDGRID_API_KEY=<clave_sendgrid> # Opcional para pruebas de correo
     ```
+
+    ⚠️ **Importante:**  
+    - Sustituye `<password>` por la contraseña que se te proporcione de forma privada.  
+    - Sustituye `<CLAVE_SECRETA_PARA_SESIONES>` por una cadena segura y secreta que solo tú conozcas.  
+    - No subas este archivo `.env` al repositorio público.
 
 3. Abre dos terminales:
 
@@ -78,5 +83,19 @@ Este proyecto también puede ejecutarse en contenedores Docker para facilitar el
 ## 🧪 Tests
 
 - Ejecutar todos los tests:
-  ```bash
-  npm run test
+    ```bash
+    npm run test
+    ```
+- Ejecutar tests con cobertura:
+    ```bash
+    npm run test:coverage
+    ```
+
+---
+
+## ℹ️ Notas adicionales
+
+- La variable `SESSION_SECRET` es clave para la seguridad de las sesiones de usuario y debe mantenerse secreta.
+- Usa una contraseña fuerte y guárdala de forma segura.
+- Actualmente, la base de datos principal se gestiona con **MongoDB Atlas**, y la base de datos de pruebas permite a otros usuarios verificar la funcionalidad de la aplicación con datos de ejemplo.
+- Para producción, se recomienda gestionar las variables de entorno en la plataforma de despliegue y no subirlas al repositorio.
