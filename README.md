@@ -33,7 +33,7 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
     NODE_ENV=development
     BACKEND_PORT=4000
     FRONTEND_URL=http://localhost:8080
-    MONGO_ATLAS_URI=mongodb+srv://usuario_prueba:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/dbpruebas?retryWrites=true&w=majority&appName=Cluster-tfg-tests
+    MONGO_ATLAS_URI="mongodb+srv://usuario_prueba:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/db_pruebas?retryWrites=true&w=majority&appName=Cluster-tfg-tests
     SESSION_SECRET=<CLAVE_SECRETA_PARA_SESIONES>
     SENDGRID_API_KEY=<clave_sendgrid> # Opcional para pruebas de correo
     ```
