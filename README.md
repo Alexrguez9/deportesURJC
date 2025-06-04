@@ -1,80 +1,112 @@
 # DeportesURJC - Web App para Gestión Deportiva Universitaria
 
-Este proyecto forma parte de mi Trabajo de Fin de Grado.  
-Está desarrollado con el stack MERN: **MongoDB Atlas**, **Express.js**, **React** y **Node.js**.
+Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con el stack MERN: **MongoDB Atlas**, **Express.js**, **React** y **Node.js**.
+
+---
 
 ## 🔧 Tecnologías principales
 
-- **Frontend**: React
-- **Backend**: Node.js + Express
-- **Base de datos**: MongoDB Atlas
-- **Contenerización**: Docker + Docker Compose
+- **Frontend:** React
+- **Backend:** Node.js + Express
+- **Base de datos:** MongoDB Atlas
+- **Contenedores:** Docker + Docker Compose (opcional para desarrollo y pruebas)
+
 ---
 
 ## 🚀 Despliegue en local (modo desarrollo)
 
-### Requisitos:
-- Node.js instalado
-- Acceso a una base de datos MongoDB (como MongoDB Atlas)
+### Requisitos previos
 
-### Pasos:
+- Node.js instalado
+
+### Pasos
 
 1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/Alexrguez9/deportesURJC.git
-   cd deportesURJC
-   ```
-2. Crea un archivo .env en la raíz del proyecto con las siguientes variables:
-   ```
-   NODE_ENV=development
-   BACKEND_PORT=4000
-   FRONTEND_URL=http://localhost:8080
-   MONGO_ATLAS_URI=<tu_uri_de_mongo_atlas>
-   SESSION_SECRET=<tu_clave_secreta_para_sesiones>
-   SENDGRID_API_KEY=<clave_sendgrid> # Si no necesitas enviar correos reales (por ejemplo en desarrollo), puedes dejar esta variable vacía o sin definir.
-   ```
-3. Abre dos terminales:
+    ```bash
+    git clone https://github.com/Alexrguez9/deportesURJC.git
+    cd deportesURJC
+    ```
 
-**Terminal 1 (Frontend):**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+2. Crea un archivo `.env` en la carpeta `backend/` con las siguientes variables:
 
-**Terminal 1 (Backend):**
-   ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
+    ```env
+    NODE_ENV=development
+    BACKEND_PORT=4000
+    FRONTEND_URL=http://localhost:8080
+    MONGO_ATLAS_URI="mongodb+srv://usuario_prueba:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/db_pruebas?retryWrites=true&w=majority&appName=Cluster-tfg-tests"
+    MONGO_ATLAS_URI_TESTS="mongodb+srv://usuario_tests:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/db_tests?retryWrites=true&w=majority&appName=Cluster-tfg-tests"
+    SESSION_SECRET=<CLAVE_SECRETA_PARA_SESIONES>
+    SENDGRID_API_KEY=<clave_sendgrid> # Opcional para pruebas de correo
+    ```
 
-## 🐳 Despliegue con Docker
-Este proyecto puede ejecutarse en contenedores Docker. Las imágenes están disponibles en DockerHub bajo la cuenta del desarrollador.
+    (Cuando esté desplegada la aplicación en producción, algunas variables habrá que modificarlas).
 
-### Pasos:
-Asegúrate de tener Docker y Docker Compose instalados.
+    ⚠️ **Importante:**  
+    - Sustituye `<password>` por la contraseña que se te proporcione de forma privada.  
+    - Sustituye `<CLAVE_SECRETA_PARA_SESIONES>` por una cadena segura y secreta que solo tú conozcas.  
+    - No subas este archivo `.env` al repositorio público.
+  
+3. Crea un archivo .env en la carpeta frontend/ con la siguiente variable de entorno para definir la URL base de la API:
 
-Crea un archivo .env en la raíz del proyecto con las variables mencionadas arriba.
+    ```env
+    VITE_API_URL=http://localhost:4000
+    ```
+    Esto permitirá que las llamadas desde el frontend se conecten al backend a través de una URL configurable.
+    (Cuando esté desplegada la aplicación en producción, esta variable habrá que modificarla).
 
-Ejecuta:
-```
-docker-compose up --build
-```
-Esto levantará los servicios de frontend y backend conectados a la base de datos MongoDB Atlas.
+4. Abre dos terminales:
 
+    - **Terminal 1 (Frontend):**
+      ```bash
+      cd frontend
+      npm install
+      npm run dev
+      ```
+
+    - **Terminal 2 (Backend):**
+      ```bash
+      cd backend
+      npm install
+      npm run dev
+      ```
+
+---
+
+## 🐳 Despliegue con Docker (opcional)
+
+Este proyecto también puede ejecutarse en contenedores Docker para facilitar el despliegue y la replicabilidad en diferentes entornos.  
+> ⚠️ Actualmente, no se ha realizado un despliegue completo en producción en plataformas como Netlify, AWS o Vercel.
+
+### Pasos
+
+1. Asegúrate de tener **Docker** y **Docker Compose** instalados.
+
+2. Crea un archivo `.env` en la carpeta `backend/` con las variables mencionadas anteriormente.
+
+3. Ejecuta:
+    ```bash
+    docker-compose up --build
+    ```
+    Esto levantará los servicios de **frontend** y **backend** conectados a la base de datos **MongoDB Atlas**.
+
+---
 
 ## 🧪 Tests
-### Ejecutar todos los tests
-```
-npm run test
-```
 
-### Ejecutar tests con cobertura
-```
-npm run test:coverage
-```
+- Ejecutar todos los tests:
+    ```bash
+    npm run test
+    ```
+- Ejecutar tests con cobertura:
+    ```bash
+    npm run test:coverage
+    ```
+
+---
 
 ## ℹ️ Notas adicionales
-- El valor NODE_ENV puede cambiarse a production si se desea ejecutar en modo optimizado, por ejemplo al servir el frontend con serve o al desplegar en un servidor real.
-- Actualmente no se ha realizado un despliegue completo en producción (con dominio y servidor web), pero se han generado imágenes Docker listas para ello.
+
+- La variable `SESSION_SECRET` es clave para la seguridad de las sesiones de usuario y debe mantenerse secreta.
+- Usa una contraseña fuerte y guárdala de forma segura.
+- Actualmente, la base de datos principal se gestiona con **MongoDB Atlas**, y la base de datos de pruebas permite a otros usuarios verificar la funcionalidad de la aplicación con datos de ejemplo.
+- Para producción, se recomienda gestionar las variables de entorno en la plataforma de despliegue y no subirlas al repositorio.
