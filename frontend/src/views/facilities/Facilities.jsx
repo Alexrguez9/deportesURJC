@@ -63,7 +63,7 @@ const Facilities = () => {
     }, [selectedInstalacionId]);
 
     /* istanbul ignore next */
-    const handleReservation = async (data) => {
+    const handleReservation = async () => {
         if (!startDate) {
             toast.error('Por favor, selecciona una fecha de inicio.');
             return;
@@ -101,7 +101,10 @@ const Facilities = () => {
                 sendEmail(
                     user.email,
                     'DeportesURJC - Confirmación de reserva',
-                    `Hola ${user.name},\n\nTu reserva de la instalación ${completeFacility.name} ha sido realizada con éxito.\nFecha: ${startDate}.\nPrecio total: ${completeFacility.priceForHalfHour}€.\n\nGracias por utilizar nuestro servicio.\nDeportes URJC`
+                    `Hola ${user.name},\n\n
+                    Tu reserva de la instalación ${completeFacility.name} ha sido realizada con éxito.\n
+                    Fecha: ${startDate}.\nPrecio total: ${completeFacility.priceForHalfHour}€.\n\n
+                    Gracias por utilizar nuestro servicio.\nDeportes URJC`
                 );
                 toast.success(`Correo de confirmación enviado a: ${user.email}`);
 
@@ -120,7 +123,7 @@ const Facilities = () => {
         );
     };
 
-    const onSubmit = (data) => handleReservation(data);
+    const onSubmit = () => handleReservation();
 
     return (
         <div id='component-content' className="content">
@@ -195,7 +198,9 @@ const Facilities = () => {
                                 <button
                                     key={slot.time}
                                     disabled={!slot.available}
-                                    className={`slot ${slot.available ? 'available' : 'unavailable'} ${startDate?.getTime() === slot.date.getTime() ? 'selected' : ''}`}
+                                    className={`slot ${slot.available ? "available" : "unavailable"} ${
+                                        startDate?.getTime() === slot.date.getTime() ? "selected" : ""
+                                    }`}
                                     onClick={() => setStartDate(slot.date)}
                                     title={`${slot.remaining} huecos disponibles`}
                                 >

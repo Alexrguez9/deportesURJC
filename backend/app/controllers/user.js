@@ -43,7 +43,7 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, registration = {}, balance } = req.body;
-        // Verificar si el correo ya está registrado
+        // Verify if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });

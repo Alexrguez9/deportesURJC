@@ -2,7 +2,7 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 const uri = process.env.NODE_ENV === 'test'
-  ? process.env.MONGO_ATLAS_URI_TEST
+  ? process.env.MONGO_ATLAS_URI_TESTS
   : process.env.MONGO_ATLAS_URI;
 
 if (!uri) {

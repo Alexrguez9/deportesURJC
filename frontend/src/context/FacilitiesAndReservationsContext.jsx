@@ -189,7 +189,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         // Filter reservations by facilityId and date
         const reservasFiltradas = reservations.filter(
             (reserva) => {
-              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date ? reserva.initDate : new Date(reserva.initDate);
+              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date
+              ? reserva.initDate
+              : new Date(reserva.initDate);
         
               return (
                 reserva.facilityId === facilityId &&
