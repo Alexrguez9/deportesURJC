@@ -39,12 +39,22 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
     SENDGRID_API_KEY=<clave_sendgrid> # Opcional para pruebas de correo
     ```
 
+    (Cuando esté desplegada la aplicación en producción, algunas variables habrá que modificarlas).
+
     ⚠️ **Importante:**  
     - Sustituye `<password>` por la contraseña que se te proporcione de forma privada.  
     - Sustituye `<CLAVE_SECRETA_PARA_SESIONES>` por una cadena segura y secreta que solo tú conozcas.  
     - No subas este archivo `.env` al repositorio público.
+  
+3. Crea un archivo .env en la carpeta frontend/ con la siguiente variable de entorno para definir la URL base de la API:
 
-3. Abre dos terminales:
+    ```env
+    VITE_API_URL=http://localhost:4000
+    ```
+    Esto permitirá que las llamadas desde el frontend se conecten al backend a través de una URL configurable.
+    (Cuando esté desplegada la aplicación en producción, esta variable habrá que modificarla).
+
+4. Abre dos terminales:
 
     - **Terminal 1 (Frontend):**
       ```bash
