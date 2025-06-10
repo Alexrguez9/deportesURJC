@@ -229,21 +229,21 @@ exports.deleteOne = async (req, res) => {
 
 require("dotenv").config(); // Import dotenv to use environment variables
 
-// Function to verify if email is equal to ADMIN_EMAIL from .env
-exports.checkIfAdmin = (req, res) => {
+// Function to verify if the user is admin (based on DB)
+exports.checkIfAdmin = async (req, res) => {
     try {
         const { email } = req.body;
-        const adminEmail = process.env.ADMIN_EMAIL;
-
         if (!email) {
             return res.status(400).json({ error: "Email es requerido" });
         }
 
-        if (!adminEmail) {
-            return res.status(500).json({ error: "ADMIN_EMAIL no está configurado en el servidor" });
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        const isAdmin = email === adminEmail;
+        const isAdmin = user.role === 'admin';
+        console.log('---isAdmin:', isAdmin);
 
         return res.json({ isAdmin });
     } catch (error) {
@@ -251,4 +251,3 @@ exports.checkIfAdmin = (req, res) => {
         return res.status(500).json({ error: "Error en la verificación de admin", message: error.message });
     }
 };
-
