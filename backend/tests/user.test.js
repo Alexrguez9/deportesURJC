@@ -22,20 +22,20 @@ describe('🧪 Auth tests', () => {
     }
   };
 
-  it('debería registrar un usuario nuevo', async () => {
+  it('should register a new user', async () => {
     const res = await request(app).post('/users/register').send(userData);
     expect(res.statusCode).toBe(201);
     expect(res.body.email).toBe(userData.email);
   });
 
-  it('debería fallar al registrar un email ya existente', async () => {
+  it('should fail to register an existing user', async () => {
     await request(app).post('/users/register').send(userData);
     const res = await request(app).post('/users/register').send(userData);
     expect(res.statusCode).toBe(409);
     expect(res.body.error).toMatch(/ya está registrado/);
   });
 
-  it('debería loguear correctamente con el usuario', async () => {
+  it('should login a user', async () => {
     await request(app).post('/users/register').send(userData);
   
     const agent = request.agent(app); // Mantain session between requests
@@ -52,14 +52,14 @@ describe('🧪 Auth tests', () => {
     expect(sessionRes.body.email).toBe(userData.email);
   });
 
-  it('debería obtener un usuario por ID', async () => {
+  it('should obtain an user by ID', async () => {
     const reg = await request(app).post('/users/register').send(userData);
     const res = await request(app).get(`/users/${reg.body._id}`);
     expect(res.statusCode).toBe(200);
     expect(res.body.email).toBe(userData.email);
   });
 
-  it('debería actualizar nombre y contraseña', async () => {
+  it('should update correctly users name and password', async () => {
     const reg = await request(app).post('/users/register').send(userData);
     const res = await request(app).put(`/users/${reg.body._id}/profile`).send({
       currentPassword: userData.password,
@@ -70,7 +70,7 @@ describe('🧪 Auth tests', () => {
     expect(res.body.user.name).toBe('Nuevo Nombre');
   });
 
-  it('debería eliminar un usuario', async () => {
+  it('should delete correctly a user', async () => {
     const reg = await request(app).post('/users/register').send({
       ...userData,
       email: 'delete@test.com'

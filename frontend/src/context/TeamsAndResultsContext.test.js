@@ -1,6 +1,11 @@
 import { render, waitFor, act } from "@testing-library/react";
 import { TeamsAndResultsProvider, useTeamsAndResults } from "../context/TeamsAndResultsContext";
 
+jest.mock('../config/env', () => ({
+  __esModule: true,
+  default: 'http://localhost:4000'
+}));
+
 // Global fetch mock to simulate API calls
 global.fetch = jest.fn();
 

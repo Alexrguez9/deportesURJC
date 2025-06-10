@@ -4,6 +4,7 @@ import {
     useState,
     useEffect
 } from 'react';
+import API_URL from "../config/env";
 
 const TeamsAndResultsContext = createContext();
 
@@ -18,7 +19,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const fetchTeams = async () => {
         try {
-            const response = await fetch('http://localhost:4000/teams');
+            const response = await fetch(`${API_URL}/teams`);
             if (!response?.ok) {
                 throw new Error('Error al cargar los equipos');
             }
@@ -32,7 +33,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const fetchResults = async () => {
         try {
-            const response = await fetch('http://localhost:4000/results');
+            const response = await fetch(`${API_URL}/results`);
             if (!response?.ok) {
                 throw new Error('Error al cargar los resultados');
             }
@@ -46,7 +47,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const addTeam = async (newTeam) => {
         try {
-            const response = await fetch('http://localhost:4000/teams', {
+            const response = await fetch(`${API_URL}/teams`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 date: new Date(newData.date).toISOString(), // Ensure ISO format
             };
 
-            const response = await fetch('http://localhost:4000/results', {
+            const response = await fetch(`${API_URL}/results`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const updateTeam = async (equipoId, updateData) => {
         try {
-            const response = await fetch(`http://localhost:4000/teams/${equipoId}`, {
+            const response = await fetch(`${API_URL}/teams/${equipoId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,7 +129,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 date: new Date(updateData.date)?.toISOString(), // Asegura que sea formato ISO
             };
 
-            const response = await fetch(`http://localhost:4000/results/${resultId}`, {
+            const response = await fetch(`${API_URL}/results/${resultId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -150,7 +151,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const deleteTeam = async (teamId) => {
         try {
-            const response = await fetch(`http://localhost:4000/teams/${teamId}`, {
+            const response = await fetch(`${API_URL}/teams/${teamId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -171,7 +172,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const deleteResult = async (resultId) => {
         try {
-            const response = await fetch(`http://localhost:4000/results/${resultId}`, {
+            const response = await fetch(`${API_URL}/results/${resultId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -192,7 +193,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
 
     const updateResultsWithNewTeamName = async (teamId, newTeamName) => {
         try {
-            const response = await fetch(`http://localhost:4000/results/byTeam/${teamId}`);
+            const response = await fetch(`${API_URL}/results/byTeam/${teamId}`);
             if (!response?.ok) {
                 throw new Error('Error al cargar los resultados');
             }
@@ -203,7 +204,7 @@ export const TeamsAndResultsProvider = ({ children }) => {
                 const isLocal = result.localTeamId === teamId;
                 const updatedFields = isLocal ? { localTeam: newTeamName } : { visitorTeam: newTeamName };
     
-                await fetch(`http://localhost:4000/results/${result._id}`, {
+                await fetch(`${API_URL}/results/${result._id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

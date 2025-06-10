@@ -1,6 +1,11 @@
 import { render, waitFor, act } from "@testing-library/react";
 import { FacilitiesAndReservationsProvider, useFacilitiesAndReservations } from "../context/FacilitiesAndReservationsContext";
 
+jest.mock('../config/env', () => ({
+  __esModule: true,
+  default: 'http://localhost:4000'
+}));
+
 // Mock de fetch global para simular las llamadas a la API
 global.fetch = jest.fn();
 

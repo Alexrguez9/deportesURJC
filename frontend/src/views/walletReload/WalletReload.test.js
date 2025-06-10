@@ -4,6 +4,10 @@ import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 import { sendEmail } from "../../utils/mails";
 
+jest.mock('../../config/env', () => ({
+  getApiUrl: jest.fn(() => 'http://localhost:4000')
+}));
+
 // Mocks
 jest.mock("../../context/AuthContext");
 jest.mock("sonner", () => ({

@@ -3,15 +3,13 @@ import { defaults } from 'jest-config';
 
 export default {
   transform: {
-    "^.+\\.jsx?$": ["babel-jest", {
-      presets: [
-        ["@babel/preset-react", { runtime: 'automatic' }],
-        // "@babel/preset-env" // Añadir en caso de necesitarlo para el entorno de test
-      ]
-    }]
+    "^.+\\.jsx?$": "babel-jest"
   },
   testEnvironment: "jsdom",
-  setupFilesAfterEnv: ["<rootDir>/setupTests.js"],
+  setupFilesAfterEnv: [
+    "<rootDir>/setupTests.js",
+    "<rootDir>/jest.setupEnv.js"
+  ],
   testMatch: ["<rootDir>/src/**/*.test.js"],
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/__mocks__/fileMock.js",
