@@ -15,6 +15,7 @@ const PaymentSubscription = () => {
     const { user, updateUser, isStudent, isAdmin } = useAuth();
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
+    const [paymentCompleted, setPaymentCompleted] = useState(false);
 
     const registrationGymState = user?.registration?.gym?.isActive;
     const registrationAthleticsState = user?.registration?.athletics?.isActive;
@@ -58,6 +59,7 @@ const PaymentSubscription = () => {
                             `Tu pago del Abono de ${filteredSport} ha sido completado con éxito.\n¡Nos vemos pronto!\n\n` +
                             `Gracias por utilizar nuestro servicio.\nDeportes URJC`
                         );
+                        setPaymentCompleted(true);
                     } else {
                         console.error('Error al actualizar el usuario:', response.data.message);
                         toast.error('Error al dar de alta. Inténtalo de nuevo más tarde.');
@@ -109,7 +111,7 @@ const PaymentSubscription = () => {
                                         <button onClick={handlePago}>Obtener gratis</button>
                                     )
                                 )
-                                    : <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />
+                                    : (!paymentCompleted && <PaymentForm externalPrice={externalPrice} onPayment={handlePago} />)
                                 }
                             </div>
                         }
