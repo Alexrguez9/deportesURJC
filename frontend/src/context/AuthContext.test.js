@@ -2,6 +2,11 @@ import { render, waitFor, act } from "@testing-library/react";
 import { AuthProvider, useAuth } from "../context/AuthContext";
 import { mockAuthContext } from "../utils/mocks";
 
+jest.mock('../config/env', () => ({
+  __esModule: true,
+  default: 'http://localhost:4000'
+}));
+
 // Global fetch mock to prevent making real requests on API
 global.fetch = jest.fn();
 

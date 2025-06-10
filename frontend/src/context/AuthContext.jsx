@@ -4,6 +4,7 @@ import {
     useContext,
     useEffect
 } from "react";
+import API_URL from "../config/env";
 
 const AuthContext = createContext();
 
@@ -14,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const fetchSession = async () => {
             try {
-                const res = await fetch('http://localhost:4000/users/session', {
+                const res = await fetch(`${API_URL}/users/session`, {
                     credentials: 'include'
                 });
                 if (res.ok) {
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     const getAllUsers = async () => {
         try {
-            const response = await fetch('http://localhost:4000/users', {
+            const response = await fetch(`${API_URL}/users`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (userData, navigate) => {
         try {
-            const response = await fetch('http://localhost:4000/users/login', {
+            const response = await fetch(`${API_URL}/users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     
             if (response.ok) {
                 // Check user in session
-                const sessionResponse = await fetch('http://localhost:4000/users/session', {
+                const sessionResponse = await fetch(`${API_URL}/users/session`, {
                     credentials: 'include'
                 });
     
@@ -95,7 +96,7 @@ export const AuthProvider = ({ children }) => {
 
     const addUser = async (userData, navigate) => {
         try {
-            const response = await fetch('http://localhost:4000/users/register', {
+            const response = await fetch(`${API_URL}/users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -129,7 +130,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            const response = await fetch('http://localhost:4000/users/logout', {
+            const response = await fetch(`${API_URL}/users/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -147,7 +148,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateUser = async (userId, updateData) => {
         try {
-            const response = await fetch(`http://localhost:4000/users/${userId}`, {
+            const response = await fetch(`${API_URL}/users/${userId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ export const AuthProvider = ({ children }) => {
 
     const updatePasswordAndName = async (userId, currentPassword, newPassword, name) => {
         try {
-            const response = await fetch(`http://localhost:4000/users/${userId}/profile`, {
+            const response = await fetch(`${API_URL}/users/${userId}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -200,7 +201,7 @@ export const AuthProvider = ({ children }) => {
 
     const deleteUser = async (userId) => {
         try {
-          const response = await fetch(`http://localhost:4000/users/${userId}`, {
+          const response = await fetch(`${API_URL}/users/${userId}`, {
             method: 'DELETE',
             credentials: 'include'
           });
@@ -242,7 +243,7 @@ export const AuthProvider = ({ children }) => {
     */
     const handleAdmin = async (data) => {
         try {
-            const response = await fetch("http://localhost:4000/users/check-admin", {
+            const response = await fetch(`${API_URL}/users/check-admin`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
