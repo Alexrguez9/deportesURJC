@@ -1,62 +1,22 @@
 const mongoose = require('mongoose');
 
-const resultSchema = new mongoose.Schema(
-  {
-    sport: {
-      type: String,
-      required: true
-    },
-    round: {
-      type: Number,
-      default: 0,
-      required: true
-    },
-    date: {
-      type: Date,
-      required: true
-    },
-    hour: {
-      type: String,
-      required: true
-    },
-    place: {
-      type: String,
-      required: true
-    },
-    localTeamId: {
-      type: String,
-      required: true
-    },
-    visitorTeamId: {
-      type: String,
-      required: true
-    },
-    localTeam: {
-      type: String,
-      required: true
-    },
-    visitorTeam: {
-      type: String,
-      required: true
-    },
-    localGoals: {
-      type: Number,
-      required: true
-    },
-    visitorGoals: {
-      type: Number,
-      required: true
-    },
-    result: {
-      type: String,
-      required: true
-    }
-  },
-  {
-    versionKey: false,
-    timestamps: true
-  }
-);
+const resultSchema = new mongoose.Schema({
+  sport: { type: String, required: true },
+  round: { type: Number, default: 0, required: true },
+  date: { type: Date, required: true },
+  hour: { type: String, required: true },
+  place: { type: String, required: true },
+  localTeamId: { type: mongoose.Schema.Types.ObjectId, ref: 'teams', required: true },
+  visitorTeamId: { type: mongoose.Schema.Types.ObjectId, ref: 'teams', required: true },
+  localTeam: { type: String, required: true },
+  visitorTeam: { type: String, required: true },
+  localGoals: { type: Number, required: true },
+  visitorGoals: { type: Number, required: true },
+  result: { type: String, required: true }
+}, {
+  versionKey: false,
+  timestamps: true
+});
 
 // Middleware for validating and formatting data before saving
 resultSchema.pre('save', function (next) {

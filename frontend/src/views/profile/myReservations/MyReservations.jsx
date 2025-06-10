@@ -12,6 +12,10 @@ const MyReservations = () => {
     const { facilities, deleteReservation, getAllReservations } = useFacilitiesAndReservations();
     const [filteredReservations, setFilteredReservations] = useState([]);
 
+    // 🔸 Paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
+
     const fetchReservas = async () => {
         const reservations = await getAllReservations();
         if (user) {
@@ -38,6 +42,12 @@ const MyReservations = () => {
         }
     };
 
+    // Pages calculation
+    const indexOfLast = currentPage * itemsPerPage;
+    const indexOfFirst = indexOfLast - itemsPerPage;
+    const currentReservations = filteredReservations.slice(indexOfFirst, indexOfLast);
+    const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
+
     return (
         <div id="component-content" className="content">
             <div className="top-buttons-content">
@@ -45,9 +55,9 @@ const MyReservations = () => {
             </div>
             <h1>Mis Reservas</h1>
             <div className='content-mis-reservas'>
-                {user ? ( 
-                    filteredReservations.length <= 0  ? ( 
-                        <p>No tienes reservas.</p> 
+                {user ? (
+                    filteredReservations.length <= 0 ? (
+                        <p>No tienes reservas.</p>
                     ) : (
                         <>
                             <table className="table-mis-reservas">
@@ -61,7 +71,7 @@ const MyReservations = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredReservations.map((reserva) => (
+                                    {currentReservations.map((reserva) => (
                                         <tr key={reserva._id}>
                                             <td>{facilities.find(facility => facility._id === reserva.facilityId)?.name}</td>
                                             <td>{getPrettyDate(reserva.initDate)}</td>
@@ -85,9 +95,28 @@ const MyReservations = () => {
                                     ))}
                                 </tbody>
                             </table>
+
+                            <div className="pagination">
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    Anterior
+                                </button>
+                                <span className="pagination-desktop">Página {currentPage} de {totalPages}</span>
+                                <span className="pagination-mobile">{currentPage} / {totalPages}</span>
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Siguiente
+                                </button>
+                            </div>
                         </>
-                    ))
-                : <p>Inicia sesión para acceder a tus reservas</p>}
+                    )
+                ) : (
+                    <p>Inicia sesión para acceder a tus reservas</p>
+                )}
             </div>
         </div>
     );

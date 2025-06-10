@@ -1,4 +1,4 @@
-import { isSubscriptionExpired } from '../utils/user';
+import { isSubscriptionExpired } from '../user';
 
 describe('isSubscriptionExpired', () => {
   it('returns true if subscription is null or undefined', () => {

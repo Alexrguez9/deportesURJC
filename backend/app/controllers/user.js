@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { cleanExpiredSubscriptions } = require('../utils/subscription');
 // const jwt = require('jsonwebtoken');
 
@@ -42,8 +42,8 @@ exports.getOne = async (req, res) => {
 // Register a new user
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, role, registration, balance } = req.body;
-        // Verificar si el correo ya está registrado
+        const { name, email, password, role, registration = {}, balance } = req.body;
+        // Verify if the user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
@@ -56,28 +56,28 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             registration: {
-                gym: {
-                  isActive: registration?.gym.isActive || null,
-                  initDate: registration?.gym.initDate || null,
-                  endDate: registration?.gym.endDate || null,
-                },
-                athletics: {
-                  isActive: registration?.athletics.isActive || null,
-                  initDate: registration?.athletics.initDate || null,
-                  endDate: registration?.athletics.endDate || null,
-                },
+              gym: {
+                isActive: registration?.gym?.isActive ?? null,
+                initDate: registration?.gym?.initDate ?? null,
+                endDate: registration?.gym?.endDate ?? null,
+              },
+              athletics: {
+                isActive: registration?.athletics?.isActive ?? null,
+                initDate: registration?.athletics?.initDate ?? null,
+                endDate: registration?.athletics?.endDate ?? null,
+              },
             },
             subscription: {
-                gym: {
-                  isActive: registration?.gym.isActive || null,
-                  initDate: registration?.gym.initDate || null,
-                  endDate: registration?.gym.endDate || null,
-                },
-                athletics: {
-                  isActive: registration?.athletics.isActive || null,
-                  initDate: registration?.athletics.initDate || null,
-                  endDate: registration?.athletics.endDate || null,
-                },
+              gym: {
+                isActive: registration?.gym?.isActive ?? null,
+                initDate: registration?.gym?.initDate ?? null,
+                endDate: registration?.gym?.endDate ?? null,
+              },
+              athletics: {
+                isActive: registration?.athletics?.isActive ?? null,
+                initDate: registration?.athletics?.initDate ?? null,
+                endDate: registration?.athletics?.endDate ?? null,
+              },
             },
             balance: balance || 0,
             role: role || 'user',
@@ -95,13 +95,12 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         let user = await User.findOne({ email });
-        
+
         if (!user) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciales inválidas' });
         }
@@ -109,21 +108,38 @@ exports.login = async (req, res) => {
         user = cleanExpiredSubscriptions(user);
         await user.save();
 
-        // TODO: const token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
+        req.session.userId = user._id;
 
-        res.json({
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                subscription: user.subscription,
-                registration: user.registration,
-                balance: user.balance,
-                role: user.role,
-                //token
-        });
+        res.json({ message: 'Login exitoso' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al iniciar sesión', message: error.message });
+    }
+};
+
+exports.getSessionUser = async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({ message: 'No hay sesión activa' });
+        }
+
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            subscription: user.subscription,
+            registration: user.registration,
+            balance: user.balance,
+            role: user.role
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener usuario de la sesión', message: error.message });
     }
 };
 

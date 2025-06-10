@@ -58,24 +58,24 @@ const Login = () => {
     const onSubmitRegister = handleSubmitRegister(async (data) => {
         clearErrorsRegister(); // Clear previous errors
         setIsRegisterLoading(true);
-        try{ 
+        try {
             if (!user) {
                 const updatedData = await handleAdmin(data);
                 const resRegister = await addUser(updatedData, navigate);
                 if (resRegister.ok) {
                     navigate("/profile");
                     resetRegister();
-                } else if ( resRegister.status === 500 ) {
+                } else if (resRegister.status === 500) {
                     setErrorRegister("register", {
                         type: "manual",
                         message: "Email ya en uso"
                     });
-                } else if ( resRegister.status === 409 ) {
+                } else if (resRegister.status === 409) {
                     setErrorRegister("register", {
                         type: "manual",
                         message: "Correo ya está registrado.Prueba con otro"
                     });
-                } else if ( !resRegister.ok ) {
+                } else if (!resRegister.ok) {
                     setErrorRegister("register", {
                         type: "manual",
                         message: "Se ha producido un error. Por favor, inténtalo de nuevo."
@@ -91,7 +91,7 @@ const Login = () => {
             setIsRegisterLoading(false);
         }
     });
-    
+
     const onSubmitLogin = handleSubmitLogin(async (data) => {
         clearErrorsLogin(); // Clear previous errors
         setIsLoginLoading(true);
@@ -104,12 +104,12 @@ const Login = () => {
         try {
             const resLogin = await login(dataWatch, navigate);
 
-            if ( resLogin.status === 401 ) {
+            if (resLogin.status === 401) {
                 setErrorLogin("login", {
                     type: "manual",
                     message: "Email o contraseña incorrectos"
                 });
-            } else if ( !resLogin.ok ) {
+            } else if (!resLogin.ok) {
                 setErrorLogin("login", {
                     type: "manual",
                     message: "Se ha producido un error. Por favor, inténtalo de nuevo."
@@ -163,7 +163,7 @@ const Login = () => {
                 consultar y modificar tu perfil.
             </p>
             <div className="profile-content">
-            <div id="profile-card">
+                <div id="profile-card" className="card-no-hover">
                     <div className="profile-card-content">
                         <h3>Iniciar sesión</h3>
                         <form onSubmit={onSubmitLogin} id="login-form">
@@ -200,80 +200,78 @@ const Login = () => {
                         </form>
                     </div>
                 </div>
-                <div id="profile-card">
+                <div id="profile-card" className="card-no-hover">
                     <div className="profile-card-content">
-                        <section>
-                            <h3>Registrarse</h3>
-                            <form onSubmit={onSubmitRegister} id="register-form">
-                                <div className="inputs">
-                                    <div className="input-container">
-                                        <label>
-                                            Nombre:
-                                            <input
-                                                type="text"
-                                                {...registerRegister("name", {
-                                                    required: "Por favor, introduce tu nombre",
-                                                    minLength: {
-                                                        value: 3,
-                                                        message: "El nombre debe tener al menos 3 caracteres"
-                                                    },
-                                                    maxLength: 40,
-                                                })}
-                                            />
-                                            {errorsRegister.name && <span className="error-message">{errorsRegister.name.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Email:
-                                            <input
-                                                type="email"
-                                                {...registerRegister("email", {
-                                                    required: "Por favor, introduce tu email",
-                                                })}
-                                                onBlur={handleEmailValidationRegister}
-                                            />
-                                            {errorsRegister.email && <span className="error-message">{errorsRegister.email.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Contraseña:
-                                            <input
-                                                type="password"
-                                                {...registerRegister("password", {
-                                                    required: true,
-                                                    minLength: {
-                                                        value: 8,
-                                                        message: "La contraseña debe tener al menos 8 caracteres"
-                                                    }
-                                                })}
-                                                onBlur={handlePasswordValidationRegister}
-                                            />
-                                            {errorsRegister.password && <span className="error-message">{errorsRegister.password.message}</span>}
-                                        </label>
-                                    </div>
-                                    <div className="input-container">
-                                        <label>
-                                            Repetir contraseña:
-                                            <input
-                                                type="password"
-                                                {...registerRegister("repeatPassword", {
-                                                    required: "Por favor, repite la contraseña",
-                                                    validate: (value) => value === watchRegister("password") || "Las contraseñas no coinciden",
-                                                })}
-                                                onBlur={handlePasswordValidationRegister}
-                                            />
-                                            {errorsRegister.repeatPassword && <span className="error-message">{errorsRegister.repeatPassword.message}</span>}
-                                        </label>
-                                    </div>
+                        <h3>Registrarse</h3>
+                        <form onSubmit={onSubmitRegister} id="register-form">
+                            <div className="inputs">
+                                <div className="input-container">
+                                    <label>
+                                        Nombre:
+                                        <input
+                                            type="text"
+                                            {...registerRegister("name", {
+                                                required: "Por favor, introduce tu nombre",
+                                                minLength: {
+                                                    value: 3,
+                                                    message: "El nombre debe tener al menos 3 caracteres"
+                                                },
+                                                maxLength: 40,
+                                            })}
+                                        />
+                                        {errorsRegister.name && <span className="error-message">{errorsRegister.name.message}</span>}
+                                    </label>
                                 </div>
-                                <div>
-                                    {!isRegisterLoading ? <button type="submit">Registrarse</button> : <Spinner />}
+                                <div className="input-container">
+                                    <label>
+                                        Email:
+                                        <input
+                                            type="email"
+                                            {...registerRegister("email", {
+                                                required: "Por favor, introduce tu email",
+                                            })}
+                                            onBlur={handleEmailValidationRegister}
+                                        />
+                                        {errorsRegister.email && <span className="error-message">{errorsRegister.email.message}</span>}
+                                    </label>
                                 </div>
-                                {errorsRegister.register && <span className="error-message">{errorsRegister.register.message}</span>}
-                            </form>
-                        </section>
+                                <div className="input-container">
+                                    <label>
+                                        Contraseña:
+                                        <input
+                                            type="password"
+                                            {...registerRegister("password", {
+                                                required: true,
+                                                minLength: {
+                                                    value: 8,
+                                                    message: "La contraseña debe tener al menos 8 caracteres"
+                                                }
+                                            })}
+                                            onBlur={handlePasswordValidationRegister}
+                                        />
+                                        {errorsRegister.password && <span className="error-message">{errorsRegister.password.message}</span>}
+                                    </label>
+                                </div>
+                                <div className="input-container">
+                                    <label>
+                                        Repetir contraseña:
+                                        <input
+                                            type="password"
+                                            {...registerRegister("repeatPassword", {
+                                                required: "Por favor, repite la contraseña",
+                                                validate: (value) => value === watchRegister("password") || "Las contraseñas no coinciden",
+                                            })}
+                                            onBlur={handlePasswordValidationRegister}
+                                        />
+                                        {errorsRegister.repeatPassword && <span className="error-message">{errorsRegister.repeatPassword.message}</span>}
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                {!isRegisterLoading ? <button type="submit" className="login-button">Registrarse</button> : <Spinner />}
+                            </div>
+                            {errorsRegister.register && <span className="error-message">{errorsRegister.register.message}</span>}
+                        </form>
                     </div>
                 </div>
             </div>

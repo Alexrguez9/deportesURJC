@@ -4,9 +4,6 @@ export const mockAuthContext = {
     setUser: jest.fn((newUser) => {
         mockAuthContext.user = newUser;
     }),
-    updateUserAndCookie: jest.fn((updatedUser) => {
-        mockAuthContext.user = updatedUser;
-    }),
     login: jest.fn().mockImplementation(async (credentials, callback) => {
         const mockUser = { _id: "123", email: credentials.email, role: "admin" };
         mockAuthContext.user = mockUser;
@@ -25,14 +22,14 @@ export const mockAuthContext = {
     updateUser: jest.fn().mockImplementation(async (id, data) => {
         if (mockAuthContext.user?._id === id) {
             const updated = { ...mockAuthContext.user, ...data };
-            mockAuthContext.updateUserAndCookie(updated);
+            mockAuthContext.user = updated;
             return updated;
         }
         return { _id: id, ...data };
     }),
     updatePasswordAndName: jest.fn().mockImplementation(async (id, currentPassword, newPassword, name) => {
         const updated = { ...mockAuthContext.user, name };
-        mockAuthContext.updateUserAndCookie(updated);
+        mockAuthContext.user = updated;
         return updated;
     }),
     deleteUser: jest.fn().mockResolvedValue(true),

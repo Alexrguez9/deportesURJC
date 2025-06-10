@@ -1,6 +1,8 @@
+import API_URL from "../config/env";
+
 export const sendEmail = async (to, subject, message) => {
     try {
-        const response = await fetch('http://localhost:4000/send-email', {
+        const response = await fetch(`${API_URL}/send-email`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ to, subject, message })

@@ -4,6 +4,7 @@ import {
     useState,
     useEffect
 } from 'react';
+import API_URL from "../config/env";
 
 const FacilitiesAndReservationsContext = createContext();
 
@@ -23,7 +24,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const getAllFacilities = async () => {
         try {
-            const response = await fetch('http://localhost:4000/facilities');
+            const response = await fetch(`${API_URL}/facilities`);
             if (!response.ok) {
                 console.error("Error al obtener la lista de instalaciones:", response.status);
                 return null;
@@ -40,7 +41,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const getAllReservations = async () => {
         try {
-            const response = await fetch('http://localhost:4000/reservations');
+            const response = await fetch(`${API_URL}/reservations`);
             if (!response.ok) {
                 console.error("Error al obtener la lista de reservas:", response.status);
                 return null;
@@ -57,7 +58,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const addReservation = async (reserva) => {
         try {
-            const response = await fetch('http://localhost:4000/reservations', {
+            const response = await fetch(`${API_URL}/reservations`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -79,7 +80,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const addFacility = async (facility) => {
         try {
-            const response = await fetch('http://localhost:4000/facilities', {
+            const response = await fetch(`${API_URL}/facilities`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -102,7 +103,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const updateReservation = async (reservaId, reserva) => {
         try {
-            const response = await fetch(`http://localhost:4000/reservations/${reservaId}`, {
+            const response = await fetch(`${API_URL}/reservations/${reservaId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const updateFacility = async (facilityId, facility) => {
         try {
-            const response = await fetch(`http://localhost:4000/facilities/${facilityId}`, {
+            const response = await fetch(`${API_URL}/facilities/${facilityId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const deleteReservation = async (reservaId) => {
         try {
-          const response = await fetch(`http://localhost:4000/reservations/${reservaId}`, {
+          const response = await fetch(`${API_URL}/reservations/${reservaId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -164,7 +165,7 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
 
     const deleteFacility = async (facilityId) => {
         try {
-          const response = await fetch(`http://localhost:4000/facilities/${facilityId}`, {
+          const response = await fetch(`${API_URL}/facilities/${facilityId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -189,7 +190,9 @@ export const FacilitiesAndReservationsProvider = ({ children }) => {
         // Filter reservations by facilityId and date
         const reservasFiltradas = reservations.filter(
             (reserva) => {
-              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date ? reserva.initDate : new Date(reserva.initDate);
+              const reservaDate = typeof reserva.initDate === 'object' && reserva.initDate instanceof Date
+              ? reserva.initDate
+              : new Date(reserva.initDate);
         
               return (
                 reserva.facilityId === facilityId &&

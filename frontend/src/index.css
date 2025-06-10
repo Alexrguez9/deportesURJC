@@ -127,8 +127,8 @@ button:hover {
 }
 
 .logout-button {
-  color: var(--primary-color);
-  background-color: var(--tertiary-color);
+  color: var(--white-color);
+  background-color: var(--primary-color);
   border-radius: 20px;
   border: 1px solid transparent;
   padding: 0.6em 0.8em;
@@ -140,12 +140,12 @@ button:hover {
 }
 
 .logout-button:hover {
-  color: var(--white-color);
-  background-color: var(--primary-color)
+  color: var(--primary-color);
+  background-color: var(--tertiary-color)
 }
 
 .delete-profile-button {
-  color: var(--white-color);
+  color: var(--primary-color);
   background-color: transparent;
 }
 
@@ -233,7 +233,9 @@ button.navbar-button {
 }
 
 #component-content{
-  padding: 0px 0.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 0.5rem 0.5rem 0.5rem;
 }
 
 .back-button {
@@ -247,13 +249,17 @@ button.navbar-button {
   white-space: nowrap
 }
 
-
-
 .back-button:hover {
   background-color: var(--tertiary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+@media (max-width: 768px) {
+  .back-button {
+    font-size: 14px;
+    padding: 0.4em 0.8em;
+  }
+}
 
 .centered-div {
   display: grid;
@@ -272,4 +278,8 @@ button.navbar-button {
 }
 .text-success {
   color: green;
+}
+
+table {
+  margin: 20px 0;
 }

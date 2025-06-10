@@ -34,7 +34,8 @@ describe("MyReservations Component", () => {
         mockAuthContext.user = { _id: '123', name: 'Test User' };
         mockFacilitiesAndReservationsContext.facilities = [{ _id: '1', name: 'Gimnasio' }, { _id: '2', name: 'Pista Atletismo' }];
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([
-            { _id: 'res1',
+            {
+                _id: 'res1',
                 userId: '123',
                 facilityId: '1',
                 initDate: new Date('2024-07-15T10:00:00.000Z'),
@@ -42,14 +43,15 @@ describe("MyReservations Component", () => {
                 totalPrice: 15,
                 isPaid: true
             },
-            { _id: 'res2',
+            {
+                _id: 'res2',
                 userId: '123',
                 facilityId: '2',
-                initDate: new Date('2024-07-20T15:00:00.000Z'), 
+                initDate: new Date('2024-07-20T15:00:00.000Z'),
                 endDate: new Date('2024-07-20T16:00:00.000Z'),
                 totalPrice: 20,
                 isPaid: false
-             }
+            }
         ]);
         mockFacilitiesAndReservationsContext.deleteReservation = jest.fn().mockImplementation(async () => {
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -109,14 +111,14 @@ describe("MyReservations Component", () => {
 
     it("updates reservation list after successful deletion", async () => {
         mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue([{
-                _id: 'res2',
-                userId: '123',
-                facilityId: '2',
-                initDate: new Date('2024-07-20T15:00:00.000Z'),
-                endDate: new Date('2024-07-20T16:00:00.000Z'),
-                totalPrice: 20,
-                isPaid: true
-            }
+            _id: 'res2',
+            userId: '123',
+            facilityId: '2',
+            initDate: new Date('2024-07-20T15:00:00.000Z'),
+            endDate: new Date('2024-07-20T16:00:00.000Z'),
+            totalPrice: 20,
+            isPaid: true
+        }
         ]);
         render(<MyReservations />);
         let deleteButtons;
@@ -184,6 +186,55 @@ describe("MyReservations Component", () => {
         await waitFor(() => {
             expect(mockFacilitiesAndReservationsContext.deleteReservation).toHaveBeenCalledWith('res1');
             expect(toast.error).toHaveBeenCalledWith('Error al eliminar la reserva. Inténtalo de nuevo.'); // Verifica que se muestra el toast de error
+        });
+    });
+
+    describe("Pagination", () => {
+        it("renders pagination buttons correctly", async () => {
+            render(<MyReservations />);
+            await waitFor(() => {
+                expect(screen.getByRole("button", { name: /anterior/i })).toBeInTheDocument();
+                expect(screen.getByRole("button", { name: /siguiente/i })).toBeInTheDocument();
+            });
+        });
+
+        it("disables 'Anterior' button on first page", async () => {
+            render(<MyReservations />);
+            await waitFor(() => {
+                expect(screen.getByRole("button", { name: /anterior/i })).toBeDisabled();
+            });
+        });
+
+        it("disables 'Siguiente' button on last page", async () => {
+            mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(new Array(5).fill({}).map((_, index) => ({
+                _id: `res${index}`, userId: '123', facilityId: '1', initDate: new Date(), endDate: new Date(), totalPrice: 15, isPaid: true
+            })));
+            render(<MyReservations />);
+            await waitFor(() => {
+                expect(screen.getByRole("button", { name: /siguiente/i })).toBeDisabled();
+            });
+        });
+
+        it("enables 'Anterior' button when not on first page", async () => {
+            mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(new Array(10).fill({}).map((_, index) => ({
+                _id: `res${index}`, userId: '123', facilityId: '1', initDate: new Date(), endDate: new Date(), totalPrice: 15, isPaid: true
+            })));
+            render(<MyReservations />);
+            await waitFor(() => {
+                fireEvent.click(screen.getByRole("button", { name: /siguiente/i }));
+                expect(screen.getByRole("button", { name: /anterior/i })).not.toBeDisabled();
+            });
+        });
+
+        it("enables 'Siguiente' button when not on last page", async () => {
+            mockFacilitiesAndReservationsContext.getAllReservations.mockResolvedValue(new Array(20).fill({}).map((_, index) => ({
+                _id: `res${index}`, userId: '123', facilityId: '1', initDate: new Date(), endDate: new Date(), totalPrice: 15, isPaid: true
+            })));
+            render(<MyReservations />);
+            await waitFor(() => {
+                fireEvent.click(screen.getByRole("button", { name: /siguiente/i }));
+                expect(screen.getByRole("button", { name: /siguiente/i })).not.toBeDisabled();
+            });
         });
     });
 });

@@ -1,8 +1,44 @@
 .content-mis-reservas {
-    display: flex;
-    place-content: center;
+  display: flex;
+  place-content: center;
+  flex-direction: column;
 }
 .table-mis-reservas > tbody > tr > * {
-    padding: 1rem;;
+  padding: 1rem;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-mobile {
+  display: none;
+}
+
+.pagination-desktop {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .pagination-desktop {
+    display: none;
+  }
+
+  .pagination-mobile {
+    display: inline;
+  }
+}

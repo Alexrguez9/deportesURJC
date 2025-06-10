@@ -4,7 +4,7 @@ import {
     useContext,
     useEffect
 } from "react";
-import Cookies from 'js-cookie';
+import API_URL from "../config/env";
 
 const AuthContext = createContext();
 
@@ -13,17 +13,30 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        const cookieUser = Cookies.get('user');
-        if (cookieUser && !user) {
-            const parsed = JSON.parse(cookieUser);
-            setUser(parsed);
-            setIsAuthenticated(true);
-        }
+        const fetchSession = async () => {
+            try {
+                const res = await fetch(`${API_URL}/users/session`, {
+                    credentials: 'include'
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setUser(data);
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.error("Error al verificar sesión:", error);
+            }
+        };
+    
+        fetchSession();
     }, []);
 
     const getAllUsers = async () => {
         try {
-            const response = await fetch('http://localhost:4000/users', {
+            const response = await fetch(`${API_URL}/users`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (userData, navigate) => {
         try {
-            const response = await fetch('http://localhost:4000/users/login', {
+            const response = await fetch(`${API_URL}/users/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,27 +69,34 @@ export const AuthProvider = ({ children }) => {
                 body: JSON.stringify(userData),
                 credentials: 'include'
             });
-
+    
             if (response.ok) {
-                const loggedInUser = await response.json();
-                setUser(loggedInUser);
-                setIsAuthenticated(true);
-                Cookies.set('user', JSON.stringify(loggedInUser), { expires: 7 }); // Set cookie with user data for 7 days
-                navigate("/");
-                return response;
+                // Check user in session
+                const sessionResponse = await fetch(`${API_URL}/users/session`, {
+                    credentials: 'include'
+                });
+    
+                if (sessionResponse.ok) {
+                    const sessionUser = await sessionResponse.json();
+                    setUser(sessionUser);
+                    setIsAuthenticated(true);
+                    navigate("/");
+                }
             } else {
-                console.error("Error en el fetch al back de iniciar sesión:", response.status);
-                return response;
+                console.error("Error al iniciar sesión:", response.status);
             }
+    
+            return response;
         } catch (error) {
-            console.error("Error2 al iniciar sesión:", error);
+            console.error("Error en login:", error);
             return error;
         }
     };
+    
 
     const addUser = async (userData, navigate) => {
         try {
-            const response = await fetch('http://localhost:4000/users/register', {
+            const response = await fetch(`${API_URL}/users/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -110,27 +130,25 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            // Llamamos al backend para cerrar sesión
-            const response = await fetch('http://localhost:4000/users/logout', {
+            const response = await fetch(`${API_URL}/users/logout`, {
                 method: 'POST',
-                credentials: 'include' // Incluir credenciales para que el servidor pueda identificar al usuario
+                credentials: 'include'
             });
+    
             if (response.ok) {
                 setUser(null);
                 setIsAuthenticated(false);
-                Cookies.remove('user');
             } else {
                 console.error("Error al cerrar sesión:", response.status);
             }
         } catch (error) {
             console.error("Error al cerrar sesión:", error);
-            // Manejar errores según sea necesario
         }
     };
 
     const updateUser = async (userId, updateData) => {
         try {
-            const response = await fetch(`http://localhost:4000/users/${userId}`, {
+            const response = await fetch(`${API_URL}/users/${userId}`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -142,7 +160,7 @@ export const AuthProvider = ({ children }) => {
             if (response.ok) {
                 const updatedUser = await response.json();
                 if (user?._id === userId) {
-                    updateUserAndCookie(updatedUser);
+                    setUser(updatedUser);
                 }
                 return response;
             } else {
@@ -157,7 +175,7 @@ export const AuthProvider = ({ children }) => {
 
     const updatePasswordAndName = async (userId, currentPassword, newPassword, name) => {
         try {
-            const response = await fetch(`http://localhost:4000/users/${userId}/profile`, {
+            const response = await fetch(`${API_URL}/users/${userId}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -172,7 +190,7 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(data.message || "Error al actualizar el perfil");
             }
     
-            updateUserAndCookie(data.user);
+            setUser(data.user);
             return data.user;
     
         } catch (error) {
@@ -183,7 +201,7 @@ export const AuthProvider = ({ children }) => {
 
     const deleteUser = async (userId) => {
         try {
-          const response = await fetch(`http://localhost:4000/users/${userId}`, {
+          const response = await fetch(`${API_URL}/users/${userId}`, {
             method: 'DELETE',
             credentials: 'include'
           });
@@ -225,7 +243,7 @@ export const AuthProvider = ({ children }) => {
     */
     const handleAdmin = async (data) => {
         try {
-            const response = await fetch("http://localhost:4000/users/check-admin", {
+            const response = await fetch(`${API_URL}/users/check-admin`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -247,11 +265,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const updateUserAndCookie = (updatedUser) => {
-        setUser(updatedUser);
-        Cookies.set('user', JSON.stringify(updatedUser), { expires: 7 });
-    };
-
     return (
         <AuthContext.Provider value={{
             user,
@@ -267,7 +280,6 @@ export const AuthProvider = ({ children }) => {
             isStudent,
             handleAdmin,
             updatePasswordAndName,
-            updateUserAndCookie
         }}>
         {children}
         </AuthContext.Provider>

@@ -1,0 +1,28 @@
+.pagination button.active {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.pagination-prev::before,
+.pagination-next::before {
+  content: '';
+}
+
+@media (max-width: 600px) {
+  .pagination-prev::before {
+    content: "<";
+  }
+
+  .pagination-next::before {
+    content: ">";
+  }
+
+  .pagination-prev .button-text,
+  .pagination-next .button-text {
+    display: none; /* Hide text on small screens */
+  }
+}
+
+.pagination > button {
+  margin: 0;
+}
