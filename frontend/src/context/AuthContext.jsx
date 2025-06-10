@@ -237,9 +237,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     /* 
-    * IS ONLY USED IN THE APPLICATION REGISTER.
-    * Initial function to assign a first admin user and thus be able to edit the roles of the other users...
-    * Modify according to the needs of the application.
+    * Check if admin from the backend.
     */
     const handleAdmin = async (data) => {
         try {
