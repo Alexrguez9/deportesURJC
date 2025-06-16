@@ -19,6 +19,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Instala 'serve' para servir archivos estáticos
 RUN npm install -g serve
 
 COPY --from=build /app/dist ./dist
