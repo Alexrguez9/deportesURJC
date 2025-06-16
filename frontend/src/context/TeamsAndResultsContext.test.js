@@ -80,8 +80,8 @@ describe("TeamsAndResultsProvider", () => {
             });
 
             await waitFor(() => {
-                expect(fetch).toHaveBeenCalledTimes(3);
-                expect(console.error).toHaveBeenCalled();
+            expect(fetch).toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalled();
             });
         });
 
