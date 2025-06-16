@@ -30,7 +30,9 @@ jobs:
 
       - name: Build and push Docker image frontend
         run: |
-          docker build -t alexrguez9/deportes_urjc:frontend-${{ env.RELEASE_NAME }} ./frontend
+          docker build \
+            --build-arg VITE_API_URL=http://backend:4000/api \
+            -t alexrguez9/deportes_urjc:frontend-${{ env.RELEASE_NAME }} ./frontend
           docker push alexrguez9/deportes_urjc:frontend-${{ env.RELEASE_NAME }}
 
       - name: Build and push Docker image backend
