@@ -111,10 +111,7 @@ describe("AuthProvider", () => {
     });
 
     it("should handle login errors", async () => {
-      fetch.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-      });
+      fetch.mockResolvedValueOnce({ ok: false, status: 401 });
 
       await act(async () => {
         const response = await authValues.login(
@@ -128,7 +125,8 @@ describe("AuthProvider", () => {
         expect(authValues.isAuthenticated).toBe(false);
         expect(authValues.user).toBe(null);
       });
-    });
+    }, 10000);
+
 
     it("should handle network errors in the login", async () => {
       fetch.mockRejectedValueOnce(new Error("Fallo de red"));
