@@ -376,6 +376,7 @@ describe("AuthProvider", () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(updateData),
+          credentials: 'include',
         }
       );
     });
