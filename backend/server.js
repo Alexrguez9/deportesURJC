@@ -7,11 +7,15 @@ const mailsRouters = require('./app/routes/mail');
 const app = express();
 const port = process.env.BACKEND_PORT;
 
+const corsOptions = {
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middlewares y rutas
-app.use(cors({
-    origin: [process.env.FRONTEND_URL],
-    credentials: true
-}));
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));

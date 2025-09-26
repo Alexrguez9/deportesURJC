@@ -149,12 +149,13 @@ export const AuthProvider = ({ children }) => {
     const updateUser = async (userId, updateData) => {
         try {
             const response = await fetch(`${API_URL}/users/${userId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                // Add authorization header if necessary (e.g., with token)
-              },
-              body: JSON.stringify(updateData),
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add authorization header if necessary (e.g., with token)
+                },
+                body: JSON.stringify(updateData),
+                credentials: 'include'
             });
       
             if (response.ok) {
