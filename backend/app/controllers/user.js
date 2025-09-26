@@ -145,8 +145,18 @@ exports.getSessionUser = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        req.session.destroy();
-        res.json({ message: 'Sesión cerrada exitosamente' });
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error al cerrar sesión:', err);
+                return res.status(500).json({ error: 'Error al cerrar sesión' });
+            }
+            res.clearCookie('connect.sid', {
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                sameSite: 'None'
+            });
+            res.json({ message: 'Sesión cerrada exitosamente' });
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al cerrar sesión', message: error.message });
