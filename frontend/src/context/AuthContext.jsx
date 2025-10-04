@@ -71,21 +71,31 @@ export const AuthProvider = ({ children }) => {
             });
     
             if (response.ok) {
-                // Pequeño delay para asegurar que la cookie se establece
-                await new Promise(resolve => setTimeout(resolve, 100));
+                const loginData = await response.json();
                 
-                // Check user in session
-                const sessionResponse = await fetch(`${API_URL}/users/session`, {
-                    credentials: 'include'
-                });
-    
-                if (sessionResponse.ok) {
-                    const sessionUser = await sessionResponse.json();
-                    setUser(sessionUser);
+                // If loginData contains user info, set it directly
+                if (loginData.user) {
+                    setUser(loginData.user);
                     setIsAuthenticated(true);
                     navigate("/");
                 } else {
-                    console.error("Error al obtener sesión después del login:", sessionResponse.status);
+                    // Fallback: verificar sesión como antes (para compatibilidad)
+                    // Delay to ensure session is set before fetching session user
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    // Check user in session
+                    const sessionResponse = await fetch(`${API_URL}/users/session`, {
+                        credentials: 'include'
+                    });
+        
+                    if (sessionResponse.ok) {
+                        const sessionUser = await sessionResponse.json();
+                        setUser(sessionUser);
+                        setIsAuthenticated(true);
+                        navigate("/");
+                    } else {
+                        console.error("Error al obtener sesión después del login:", sessionResponse.status);
+                    }
                 }
             } else {
                 console.error("Error al iniciar sesión:", response.status);

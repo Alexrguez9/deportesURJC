@@ -85,7 +85,7 @@ exports.register = async (req, res) => {
 
         const savedUser = await newUser.save();
 
-        // Configurar la sesión
+        // Configure session
         req.session.userId = savedUser._id;
         req.session.save((err) => {
             if (err) {
@@ -93,7 +93,16 @@ exports.register = async (req, res) => {
             }
         });
 
-        res.status(201).json(savedUser);
+        // Return user data directly
+        res.status(201).json({
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            subscription: savedUser.subscription,
+            registration: savedUser.registration,
+            balance: savedUser.balance,
+            role: savedUser.role
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });
@@ -121,6 +130,7 @@ exports.login = async (req, res) => {
         req.session.save((err) => {
             if (err) {
                 console.error('Error al guardar la sesión:', err);
+                return res.status(500).json({ error: 'Error al guardar la sesión' });
             } else {
                 console.log('✅ Sesión guardada correctamente para usuario:', user._id);
                 console.log('Session ID:', req.sessionID);
@@ -128,7 +138,20 @@ exports.login = async (req, res) => {
         });
 
         console.log('🍪 Headers de respuesta para login:', res.getHeaders());
-        res.status(200).json({ message: 'Login exitoso' });
+        
+        // Return user data directly
+        res.status(200).json({ 
+            message: 'Login exitoso',
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                subscription: user.subscription,
+                registration: user.registration,
+                balance: user.balance,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al iniciar sesión', message: error.message });
