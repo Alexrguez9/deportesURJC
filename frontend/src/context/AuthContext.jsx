@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             });
     
             if (response.ok) {
-                // Pequeño delay para asegurar que la cookie se establece
+                // Delay to ensure session is set before fetching session user
                 await new Promise(resolve => setTimeout(resolve, 100));
                 
                 // Check user in session
