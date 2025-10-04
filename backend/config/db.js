@@ -10,7 +10,7 @@ throw new Error(`❌ No se recibió la URI de MongoDB (${process.env.NODE_ENV})`
 }
 
 if (!uri.startsWith('mongodb+srv://') && !uri.startsWith('mongodb://')) {
-  // Invalid MongoDB URI format
+  console.warn('⚠️  MongoDB URI does not start with expected protocol: ' + uri);
 }
 
 module.exports = async () => {
