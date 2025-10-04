@@ -71,6 +71,9 @@ export const AuthProvider = ({ children }) => {
             });
     
             if (response.ok) {
+                // Pequeño delay para asegurar que la cookie se establece
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 // Check user in session
                 const sessionResponse = await fetch(`${API_URL}/users/session`, {
                     credentials: 'include'
@@ -81,6 +84,8 @@ export const AuthProvider = ({ children }) => {
                     setUser(sessionUser);
                     setIsAuthenticated(true);
                     navigate("/");
+                } else {
+                    console.error("Error al obtener sesión después del login:", sessionResponse.status);
                 }
             } else {
                 console.error("Error al iniciar sesión:", response.status);

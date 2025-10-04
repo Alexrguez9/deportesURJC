@@ -121,9 +121,13 @@ exports.login = async (req, res) => {
         req.session.save((err) => {
             if (err) {
                 console.error('Error al guardar la sesión:', err);
+            } else {
+                console.log('✅ Sesión guardada correctamente para usuario:', user._id);
+                console.log('Session ID:', req.sessionID);
             }
         });
 
+        console.log('🍪 Headers de respuesta para login:', res.getHeaders());
         res.status(200).json({ message: 'Login exitoso' });
     } catch (error) {
         console.error(error);
@@ -133,7 +137,14 @@ exports.login = async (req, res) => {
 
 exports.getSessionUser = async (req, res) => {
     try {
+        console.log('🔍 Verificando sesión...');
+        console.log('Session ID recibido:', req.sessionID);
+        console.log('Session userId:', req.session.userId);
+        console.log('Cookies recibidas:', req.cookies);
+        console.log('Headers recibidos:', req.headers.cookie);
+        
         if (!req.session.userId) {
+            console.log('❌ No hay sesión activa');
             return res.status(401).json({ message: 'No hay sesión activa' });
         }
 
