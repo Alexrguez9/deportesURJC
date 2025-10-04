@@ -9,7 +9,6 @@ router.post('/send-email', async (req, res) => {
     const { to, subject, message } = req.body;
 
     if (!to || !subject || !message) {
-        console.error('Campos faltantes');
         return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
 
