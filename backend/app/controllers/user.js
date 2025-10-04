@@ -127,7 +127,7 @@ exports.login = async (req, res) => {
             }
         });
 
-        console.log('🍪 Headers de respuesta para login:', res.getHeaders());
+        console.log('Headers de respuesta para login:', res.getHeaders());
         res.status(200).json({ message: 'Login exitoso' });
     } catch (error) {
         console.error(error);
