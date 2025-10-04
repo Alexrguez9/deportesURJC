@@ -71,8 +71,7 @@ export const AuthProvider = ({ children }) => {
             });
     
             if (response.ok) {
-                // Delay to ensure session is set before fetching session user
-                await new Promise(resolve => setTimeout(resolve, 100));
+                const loginData = await response.json();
                 
                 // If loginData contains user info, set it directly
                 if (loginData.user) {

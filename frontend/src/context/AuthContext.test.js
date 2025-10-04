@@ -86,14 +86,11 @@ describe("AuthProvider", () => {
     it("should authenticate the user correctly after a successful login", async () => {
       const mockUser = { _id: "123", email: "test@admin.com", role: "admin" };
     
-      // First response: login
-      fetch.mockResolvedValueOnce({ ok: true }); 
-    
-      // Second response: session
-      fetch.mockResolvedValueOnce({
+      // Login response now includes user data directly
+      fetch.mockResolvedValueOnce({ 
         ok: true,
-        json: async () => mockUser,
-      });
+        json: async () => ({ message: 'Login exitoso', user: mockUser })
+      }); 
     
       await act(async () => {
         await authValues.login(
@@ -104,7 +101,6 @@ describe("AuthProvider", () => {
     
       await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith("http://localhost:4000/users/login", expect.anything());
-        expect(fetch).toHaveBeenCalledWith("http://localhost:4000/users/session", { credentials: 'include' });
         expect(authValues.user).toEqual(mockUser);
         expect(authValues.isAuthenticated).toBe(true);
       });
