@@ -20,23 +20,35 @@ const corsOptions = {
 // Middlewares y rutas
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(session({
+
+// Session configuration with conditional store for testing
+const sessionConfig = {
     name: 'connect.sid',
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'test-secret',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGO_ATLAS_URI,
-        collectionName: 'sessions',
-        ttl: 60 * 60 // 1 hora
-    }),
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
         maxAge: 60 * 60 * 1000 // 1 hora
     }
-}));
+};
+
+// Only use MongoStore if not in test environment
+const mongoUri = process.env.NODE_ENV === 'test' 
+    ? process.env.MONGO_ATLAS_URI_TESTS 
+    : process.env.MONGO_ATLAS_URI;
+
+if (mongoUri && process.env.NODE_ENV !== 'test') {
+    sessionConfig.store = MongoStore.create({
+        mongoUrl: mongoUri,
+        collectionName: 'sessions',
+        ttl: 60 * 60 // 1 hora
+    });
+}
+
+app.use(session(sessionConfig));
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
