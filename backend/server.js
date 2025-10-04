@@ -21,7 +21,6 @@ const corsOptions = {
             process.env.FRONTEND_URL,
             'http://localhost:8080',
             'http://localhost:3000',
-            'https://deportes-urjc.vercel.app'
         ].filter(Boolean);
         
         if (allowedOrigins.includes(origin)) {

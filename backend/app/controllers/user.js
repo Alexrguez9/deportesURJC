@@ -168,7 +168,6 @@ exports.logout = async (req, res) => {
                 secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
                 sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-                domain: process.env.NODE_ENV === 'production' ? undefined : undefined
             });
             res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
