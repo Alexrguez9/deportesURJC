@@ -11,10 +11,29 @@ const port = process.env.BACKEND_PORT;
 const cookieParser = require('cookie-parser');
 
 const corsOptions = {
-    origin: process.env.FRONTEND_URL,
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin && process.env.NODE_ENV !== 'production') {
+            return callback(null, true);
+        }
+        
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            'http://localhost:8080',
+            'http://localhost:3000',
+        ].filter(Boolean);
+        
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            console.error(`CORS error: Origin ${origin} not allowed`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Set-Cookie'],
+    exposedHeaders: ['Set-Cookie']
 };
 
 // Middlewares y rutas
@@ -32,6 +51,7 @@ const sessionConfig = {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
         maxAge: 60 * 60 * 1000 // 1 hora
+        // domain omitted: Let the browser determine the domain
     }
 };
 
@@ -67,14 +87,14 @@ app.use(instalacionesRouters);
 app.use(reservasRouters);
 app.use(mailsRouters);
 
-// Solo si es el archivo principal
+// Init DB and start server only if this file is run directly
 if (require.main === module) {
     app.listen(port, () => {
         console.log(`La app está en línea en el puerto ${port}`);
-        initDB(); // Aquí dentro
+        initDB();
     });
 } else {
-    initDB(); // También la inicializamos para los tests
+    initDB(); // Also initialize for tests
 }
 
 // Exportamos para usarlo en tests
