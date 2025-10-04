@@ -167,7 +167,8 @@ exports.logout = async (req, res) => {
             res.clearCookie('connect.sid', {
                 secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
-                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+                domain: process.env.NODE_ENV === 'production' ? undefined : undefined
             });
             res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
