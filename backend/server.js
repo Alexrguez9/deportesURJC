@@ -51,8 +51,8 @@ const sessionConfig = {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-        maxAge: 60 * 60 * 1000, // 1 hora
-        domain: process.env.NODE_ENV === 'production' ? undefined : undefined // Let the browser determine the domain
+        maxAge: 60 * 60 * 1000 // 1 hora
+        // domain omitted: Let the browser determine the domain
     }
 };
 
