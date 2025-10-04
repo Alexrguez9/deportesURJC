@@ -6,10 +6,26 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
 
 ## 🔧 Tecnologías principales
 
-- **Frontend:** React
+- **Frontend:** React + Vite
 - **Backend:** Node.js + Express
 - **Base de datos:** MongoDB Atlas
+- **Autenticación:** Express Session + Connect-Mongo
+- **Testing:** Jest + React Testing Library
 - **Contenedores:** Docker + Docker Compose (opcional para desarrollo y pruebas)
+
+---
+
+## ✨ Características principales
+
+- **🔐 Sistema de autenticación completo**: Login/logout con sesiones persistentes
+- **👥 Gestión de usuarios**: Registro, perfiles, roles (admin/usuario)
+- **🏢 Gestión de instalaciones deportivas**: Salas, gimnasios, pistas
+- **📅 Sistema de reservas**: Reserva de instalaciones por franjas horarias
+- **🏆 Ligas internas**: Gestión de equipos y resultados deportivos
+- **💰 Sistema de saldo**: Recarga virtual para pagos de servicios
+- **📧 Notificaciones por email**: Confirmaciones y recordatorios
+- **📱 Diseño responsive**: Optimizado para móvil y escritorio
+- **🧪 Testing completo**: Cobertura de tests para frontend y backend
 
 ---
 
@@ -33,18 +49,22 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
     NODE_ENV=development
     BACKEND_PORT=4000
     FRONTEND_URL=http://localhost:8080
-    MONGO_ATLAS_URI="mongodb+srv://usuario_prueba:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/db_pruebas?retryWrites=true&w=majority&appName=Cluster-tfg-tests"
-    MONGO_ATLAS_URI_TESTS="mongodb+srv://usuario_tests:<password>@cluster-tfg-tests.9fiqgkl.mongodb.net/db_tests?retryWrites=true&w=majority&appName=Cluster-tfg-tests"
+    MONGO_ATLAS_URI="mongodb+srv://username:<password>@cluster.mongodb.net/database?retryWrites=true&w=majority"
+    MONGO_ATLAS_URI_TESTS="mongodb+srv://username:<password>@cluster.mongodb.net/database_test?retryWrites=true&w=majority"
     SESSION_SECRET=<CLAVE_SECRETA_PARA_SESIONES>
     SENDGRID_API_KEY=<clave_sendgrid> # Opcional para pruebas de correo
+    EMAIL_SENDER=<tu_email_verificado_en_sendgrid>
+    ADMIN_EMAIL=<email_del_administrador>
     ```
 
-    (Cuando esté desplegada la aplicación en producción, algunas variables habrá que modificarlas).
+    **📱 Aplicación en producción**: [https://deportes-urjc.vercel.app/](https://deportes-urjc.vercel.app/)
 
     ⚠️ **Importante:**  
-    - Sustituye `<password>` por la contraseña que se te proporcione de forma privada.  
-    - Sustituye `<CLAVE_SECRETA_PARA_SESIONES>` por una cadena segura y secreta que solo tú conozcas.  
-    - No subas este archivo `.env` al repositorio público.
+    - Sustituye `<password>` por la contraseña de tu base de datos MongoDB Atlas.  
+    - Sustituye `<CLAVE_SECRETA_PARA_SESIONES>` por una cadena segura y secreta que solo tú conozcas.
+    - Configura `<tu_email_verificado_en_sendgrid>` con un email verificado en SendGrid para el envío de correos.
+    - Define `<email_del_administrador>` para identificar cuentas administrativas.
+    - **NUNCA subas el archivo `.env` al repositorio público** - está incluido en `.gitignore` por seguridad.
   
 3. Crea un archivo .env en la carpeta frontend/ con la siguiente variable de entorno para definir la URL base de la API:
 
@@ -52,7 +72,6 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
     VITE_API_URL=http://localhost:4000
     ```
     Esto permitirá que las llamadas desde el frontend se conecten al backend a través de una URL configurable.
-    (Cuando esté desplegada la aplicación en producción, esta variable habrá que modificarla).
 
 4. Abre dos terminales:
 
@@ -72,10 +91,28 @@ Este proyecto forma parte de mi Trabajo de Fin de Grado y está desarrollado con
 
 ---
 
+## 🌐 Aplicación en Producción
+
+La aplicación está desplegada y disponible en:
+**🔗 [https://deportes-urjc.vercel.app/](https://deportes-urjc.vercel.app/)**
+
+### Configuración de Producción
+- **Frontend**: Desplegado en Vercel
+- **Backend**: Desplegado en Render
+- **Base de datos**: MongoDB Atlas (producción)
+- **Variables de entorno**: Configuradas en las respectivas plataformas de despliegue
+
+### Diferencias con desarrollo local
+- `NODE_ENV=production`
+- `FRONTEND_URL=https://deportes-urjc.vercel.app`
+- `VITE_API_URL` apunta al backend en producción
+- Cookies configuradas con `sameSite: 'None'` y `secure: true`
+
+---
+
 ## 🐳 Despliegue con Docker (opcional)
 
-Este proyecto también puede ejecutarse en contenedores Docker para facilitar el despliegue y la replicabilidad en diferentes entornos.  
-> ⚠️ Actualmente, no se ha realizado un despliegue completo en producción en plataformas como Netlify, AWS o Vercel.
+Este proyecto también puede ejecutarse en contenedores Docker para facilitar el despliegue y la replicabilidad en diferentes entornos.
 
 ### Pasos
 
@@ -93,20 +130,47 @@ Este proyecto también puede ejecutarse en contenedores Docker para facilitar el
 
 ## 🧪 Tests
 
-- Ejecutar todos los tests:
-    ```bash
-    npm run test
-    ```
-- Ejecutar tests con cobertura:
-    ```bash
-    npm run test:coverage
-    ```
+El proyecto incluye tests completos para ambos componentes:
+
+### Backend Tests
+```bash
+cd backend
+npm test                    # Ejecutar todos los tests
+npm run test:coverage      # Ejecutar tests con cobertura
+```
+
+### Frontend Tests
+```bash
+cd frontend
+npm test                    # Ejecutar todos los tests
+npm run test:coverage      # Ejecutar tests con cobertura
+```
+
+### Tests en CI/CD
+Los tests se ejecutan automáticamente en GitHub Actions para cada pull request y push a las ramas principales.
 
 ---
 
 ## ℹ️ Notas adicionales
 
+### Seguridad y Configuración
 - La variable `SESSION_SECRET` es clave para la seguridad de las sesiones de usuario y debe mantenerse secreta.
-- Usa una contraseña fuerte y guárdala de forma segura.
-- Actualmente, la base de datos principal se gestiona con **MongoDB Atlas**, y la base de datos de pruebas permite a otros usuarios verificar la funcionalidad de la aplicación con datos de ejemplo.
-- Para producción, se recomienda gestionar las variables de entorno en la plataforma de despliegue y no subirlas al repositorio.
+- Usa contraseñas fuertes y guárdalas de forma segura.
+- Para producción, gestiona las variables de entorno en la plataforma de despliegue y nunca las subas al repositorio.
+
+### Base de Datos
+- La base de datos principal se gestiona con **MongoDB Atlas**.
+- Se incluye una base de datos separada para tests que permite verificar la funcionalidad sin afectar datos de desarrollo.
+- Las sesiones se almacenan persistentemente en MongoDB usando `connect-mongo`.
+
+### Arquitectura
+- **Frontend**: React con Vite para desarrollo rápido y builds optimizados.
+- **Backend**: Express.js con arquitectura MVC (Modelos, Vistas, Controladores).
+- **Autenticación**: Sistema de sesiones seguras sin tokens JWT, ideal para aplicaciones web.
+- **Testing**: Cobertura completa con Jest y React Testing Library.
+
+### Despliegue
+- **Frontend**: Desplegado en **Vercel** ([https://deportes-urjc.vercel.app/](https://deportes-urjc.vercel.app/))
+- **Backend**: Configurado para **Render** u otras plataformas Node.js
+- **Docker**: Opcional para desarrollo local y testing de integración
+- **CI/CD**: GitHub Actions para testing automático
