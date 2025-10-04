@@ -43,7 +43,7 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, registration = {}, balance } = req.body;
-        // Verify if the user already exists
+        // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
@@ -84,6 +84,15 @@ exports.register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
+
+        // Configurar la sesión
+        req.session.userId = savedUser._id;
+        req.session.save((err) => {
+            if (err) {
+                console.error('Error al guardar la sesión:', err);
+            }
+        });
+
         res.status(201).json(savedUser);
     } catch (error) {
         console.error(error);
@@ -109,8 +118,13 @@ exports.login = async (req, res) => {
         await user.save();
 
         req.session.userId = user._id;
+        req.session.save((err) => {
+            if (err) {
+                console.error('Error al guardar la sesión:', err);
+            }
+        });
 
-        res.json({ message: 'Login exitoso' });
+        res.status(200).json({ message: 'Login exitoso' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al iniciar sesión', message: error.message });
@@ -128,7 +142,7 @@ exports.getSessionUser = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        res.json({
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -153,9 +167,9 @@ exports.logout = async (req, res) => {
             res.clearCookie('connect.sid', {
                 secure: process.env.NODE_ENV === 'production',
                 httpOnly: true,
-                sameSite: 'None'
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
             });
-            res.json({ message: 'Sesión cerrada exitosamente' });
+            res.status(200).json({ message: 'Sesión cerrada exitosamente' });
         });
     } catch (error) {
         console.error(error);
@@ -253,9 +267,8 @@ exports.checkIfAdmin = async (req, res) => {
         }
 
         const isAdmin = user.role === 'admin';
-        console.log('---isAdmin:', isAdmin);
 
-        return res.json({ isAdmin });
+        return res.status(200).json({ isAdmin });
     } catch (error) {
         console.error("❌ Error en checkIfAdmin:", error);
         return res.status(500).json({ error: "Error en la verificación de admin", message: error.message });

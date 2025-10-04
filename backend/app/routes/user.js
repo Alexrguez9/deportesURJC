@@ -24,6 +24,6 @@ router.put(`/${path}/:id/profile`, controller.updatePasswordAndName);
 router.delete(`/${path}/:id`, controller.deleteOne);
 
 // Checks admin user email from .env
-router.post(`/${path}/check-admin`, controller.checkIfAdmin );
+router.post(`/${path}/check-admin`, controller.checkIfAdmin);
 
 module.exports = router;

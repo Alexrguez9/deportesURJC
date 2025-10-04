@@ -3,9 +3,12 @@ const session = require('express-session');
 const initDB = require('./config/db');
 const cors = require('cors');
 const mailsRouters = require('./app/routes/mail');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const port = process.env.BACKEND_PORT;
+
+const cookieParser = require('cookie-parser');
 
 const corsOptions = {
     origin: process.env.FRONTEND_URL,
@@ -16,25 +19,27 @@ const corsOptions = {
 
 // Middlewares y rutas
 app.use(cors(corsOptions));
-app.use((req, res, next) => {
-    console.log('Cookies:', req.cookies);
-    console.log('Session:', req.session);
-    next();
-});
-
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
+app.use(cookieParser());
 app.use(session({
+    name: 'connect.sid',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_ATLAS_URI,
+        collectionName: 'sessions',
+        ttl: 60 * 60 // 1 hora
+    }),
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 60 * 60 * 1000
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+        maxAge: 60 * 60 * 1000 // 1 hora
     }
 }));
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Rutas
 const teamRouters = require('./app/routes/team');
