@@ -292,7 +292,7 @@ section[aria-label*="Notifications"] {
   margin: 0 !important;
 }
 
-/* También aplicar estilos a los contenedores de Sonner cuando no hay notificaciones */
+/* Also apply styles to Sonner containers when there are no notifications */
 [data-sonner-toaster] {
   background-color: transparent !important;
 }
