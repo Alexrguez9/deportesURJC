@@ -283,3 +283,16 @@ button.navbar-button {
 table {
   margin: 20px 0;
 }
+
+/* Fix para la sección de notificaciones de Sonner - que tenga el mismo fondo que el footer */
+section[aria-label*="Notifications"] {
+  background-color: var(--secondary-color) !important; /* Mismo color que el footer (negro) */
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* También aplicar estilos a los contenedores de Sonner cuando no hay notificaciones */
+[data-sonner-toaster] {
+  background-color: transparent !important;
+}
