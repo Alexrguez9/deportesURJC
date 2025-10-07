@@ -284,7 +284,7 @@ table {
   margin: 20px 0;
 }
 
-/* Fix para la sección de notificaciones de Sonner - que tenga el mismo fondo que el footer */
+/* Fix for the Sonner notifications section - to have the same background as the footer */
 section[aria-label*="Notifications"] {
   background-color: var(--secondary-color) !important; /* Mismo color que el footer (negro) */
   min-height: 0 !important;
