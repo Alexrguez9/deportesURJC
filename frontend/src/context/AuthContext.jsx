@@ -71,16 +71,31 @@ export const AuthProvider = ({ children }) => {
             });
     
             if (response.ok) {
-                // Check user in session
-                const sessionResponse = await fetch(`${API_URL}/users/session`, {
-                    credentials: 'include'
-                });
-    
-                if (sessionResponse.ok) {
-                    const sessionUser = await sessionResponse.json();
-                    setUser(sessionUser);
+                const loginData = await response.json();
+                
+                // If loginData contains user info, set it directly
+                if (loginData.user) {
+                    setUser(loginData.user);
                     setIsAuthenticated(true);
                     navigate("/");
+                } else {
+                    // Fallback: verificar sesión como antes (para compatibilidad)
+                    // Delay to ensure session is set before fetching session user
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    
+                    // Check user in session
+                    const sessionResponse = await fetch(`${API_URL}/users/session`, {
+                        credentials: 'include'
+                    });
+        
+                    if (sessionResponse.ok) {
+                        const sessionUser = await sessionResponse.json();
+                        setUser(sessionUser);
+                        setIsAuthenticated(true);
+                        navigate("/");
+                    } else {
+                        console.error("Error al obtener sesión después del login:", sessionResponse.status);
+                    }
                 }
             } else {
                 console.error("Error al iniciar sesión:", response.status);
@@ -149,12 +164,13 @@ export const AuthProvider = ({ children }) => {
     const updateUser = async (userId, updateData) => {
         try {
             const response = await fetch(`${API_URL}/users/${userId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                // Add authorization header if necessary (e.g., with token)
-              },
-              body: JSON.stringify(updateData),
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add authorization header if necessary (e.g., with token)
+                },
+                body: JSON.stringify(updateData),
+                credentials: 'include'
             });
       
             if (response.ok) {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Header.css';
-import logoURJCDeportes from '../../assets/logo_urjc_deportes.jpg';
+import logoURJCDeportes from '../../assets/favicon.jpg';
 import { FiUser } from "react-icons/fi";
 import { PiCalendarCheck, PiWallet } from "react-icons/pi";
 import { MdAdminPanelSettings } from "react-icons/md";

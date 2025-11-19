@@ -10,15 +10,12 @@ throw new Error(`❌ No se recibió la URI de MongoDB (${process.env.NODE_ENV})`
 }
 
 if (!uri.startsWith('mongodb+srv://') && !uri.startsWith('mongodb://')) {
-console.warn(`
-  ⚠️ La URI de MongoDB no parece válida (no empieza por "mongodb+srv://" ni "mongodb://"): "${uri}"
-  `);
+  console.warn('⚠️  MongoDB URI does not start with expected protocol: ' + uri);
 }
 
 module.exports = async () => {
   try {
     await mongoose.connect(uri);
-    console.log('✅ Conectado a la base de datos');
   } catch (error) {
     console.error('❌ Error conectando a la base de datos', error);
   }

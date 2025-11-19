@@ -43,7 +43,7 @@ exports.getOne = async (req, res) => {
 exports.register = async (req, res) => {
     try {
         const { name, email, password, role, registration = {}, balance } = req.body;
-        // Verify if the user already exists
+        // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(409).json({ error: 'El correo ya está registrado.' });
@@ -84,7 +84,25 @@ exports.register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        res.status(201).json(savedUser);
+
+        // Configure session
+        req.session.userId = savedUser._id;
+        req.session.save((err) => {
+            if (err) {
+                console.error('Error al guardar la sesión:', err);
+            }
+        });
+
+        // Return user data directly
+        res.status(201).json({
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            subscription: savedUser.subscription,
+            registration: savedUser.registration,
+            balance: savedUser.balance,
+            role: savedUser.role
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al registrar usuario', message: error.message });
@@ -109,8 +127,26 @@ exports.login = async (req, res) => {
         await user.save();
 
         req.session.userId = user._id;
-
-        res.json({ message: 'Login exitoso' });
+        req.session.save((err) => {
+            if (err) {
+                console.error('Error al guardar la sesión:', err);
+                return res.status(500).json({ error: 'Error al guardar la sesión' });
+            }
+        });
+        
+        // Return user data directly
+        res.status(200).json({ 
+            message: 'Login exitoso',
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                subscription: user.subscription,
+                registration: user.registration,
+                balance: user.balance,
+                role: user.role
+            }
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al iniciar sesión', message: error.message });
@@ -128,7 +164,7 @@ exports.getSessionUser = async (req, res) => {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
-        res.json({
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -145,8 +181,18 @@ exports.getSessionUser = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        req.session.destroy();
-        res.json({ message: 'Sesión cerrada exitosamente' });
+        req.session.destroy((err) => {
+            if (err) {
+                console.error('Error al cerrar sesión:', err);
+                return res.status(500).json({ error: 'Error al cerrar sesión' });
+            }
+            res.clearCookie('connect.sid', {
+                secure: process.env.NODE_ENV === 'production',
+                httpOnly: true,
+                sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+            });
+            res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al cerrar sesión', message: error.message });
@@ -243,9 +289,8 @@ exports.checkIfAdmin = async (req, res) => {
         }
 
         const isAdmin = user.role === 'admin';
-        console.log('---isAdmin:', isAdmin);
 
-        return res.json({ isAdmin });
+        return res.status(200).json({ isAdmin });
     } catch (error) {
         console.error("❌ Error en checkIfAdmin:", error);
         return res.status(500).json({ error: "Error en la verificación de admin", message: error.message });
