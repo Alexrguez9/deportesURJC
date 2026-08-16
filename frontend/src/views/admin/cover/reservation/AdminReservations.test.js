@@ -55,8 +55,8 @@ describe("AdminReservations Component", () => {
                 _id: "001",
                 userId: "user1",
                 facilityId: "instalacion1",
-                initDate: '2024-01-01T10:00:00.000Z',
-                endDate: '2024-01-01T11:00:00.000Z',
+                initDate: '2024-01-01T10:00:00',
+                endDate: '2024-01-01T11:00:00',
                 totalPrice: 50,
                 isPaid: true,
             },
@@ -64,8 +64,8 @@ describe("AdminReservations Component", () => {
                 _id: "002",
                 userId: "user2",
                 facilityId: "instalacion2",
-                initDate: '2024-01-02T13:00:00.000Z',
-                endDate: '2024-01-02T14:00:00.000Z',
+                initDate: '2024-01-02T13:00:00',
+                endDate: '2024-01-02T14:00:00',
                 totalPrice: 100,
                 isPaid: false,
             },
@@ -191,14 +191,14 @@ describe("AdminReservations Component", () => {
         await waitFor(() => expect(screen.getByText("Juan Pérez")).toBeInTheDocument());
         expect(screen.getByText("Juan Pérez")).toBeInTheDocument();
         expect(screen.getByText("Pista 1")).toBeInTheDocument();
+        expect(screen.getByText("1 de enero de 2024, 10:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("1 de enero de 2024, 11:00")).toBeInTheDocument(); // Date in Spanish format
-        expect(screen.getByText("1 de enero de 2024, 12:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("50 €")).toBeInTheDocument();
 
         expect(screen.getByText("Laura Gómez")).toBeInTheDocument();
         expect(screen.getByText("Pista 2")).toBeInTheDocument();
+        expect(screen.getByText("2 de enero de 2024, 13:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("2 de enero de 2024, 14:00")).toBeInTheDocument(); // Date in Spanish format
-        expect(screen.getByText("2 de enero de 2024, 15:00")).toBeInTheDocument(); // Date in Spanish format
         expect(screen.getByText("100 €")).toBeInTheDocument();
     });
 
